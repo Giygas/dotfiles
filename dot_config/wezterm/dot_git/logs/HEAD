@@ -1,0 +1,15 @@
+0000000000000000000000000000000000000000 a42b5c6aad9d2458a6d65fe4d6143a9a34603d54 Giygas <gustavorossich@gmail.com> 1737240668 +0100	commit (initial): Initial commit
+a42b5c6aad9d2458a6d65fe4d6143a9a34603d54 1ce457bf81fa243b2a666e5672e64db29248be9d Giygas <gustavorossich@gmail.com> 1737243430 +0100	commit: Wezterm navigation almost working
+1ce457bf81fa243b2a666e5672e64db29248be9d 1ce457bf81fa243b2a666e5672e64db29248be9d Giygas <gustavorossich@gmail.com> 1737278180 +0100	checkout: moving from main to minimal_config
+1ce457bf81fa243b2a666e5672e64db29248be9d b12a95f07233976df44057314ce5a4e16ed71e4e Giygas <gustavorossich@gmail.com> 1737278500 +0100	commit: working minimal config
+b12a95f07233976df44057314ce5a4e16ed71e4e 1ce457bf81fa243b2a666e5672e64db29248be9d Giygas <gustavorossich@gmail.com> 1737278507 +0100	checkout: moving from minimal_config to main
+1ce457bf81fa243b2a666e5672e64db29248be9d e8132755fa62a2cf594c3c9fd2a5ca5a454ffaba Giygas <gustavorossich@gmail.com> 1737278965 +0100	commit: feat: navigation between vim and wezterm
+e8132755fa62a2cf594c3c9fd2a5ca5a454ffaba 1d3c4a3c1eacc0c09b6ed43ef608c066cd6359b9 Giygas <gustavorossich@gmail.com> 1737318406 +0100	commit: deleted old config
+1d3c4a3c1eacc0c09b6ed43ef608c066cd6359b9 dfebef7493928dc06c95b34e02e16f002f8f46d2 Giygas <gustavorossich@gmail.com> 1737663524 +0100	commit: basic sessionizer working
+dfebef7493928dc06c95b34e02e16f002f8f46d2 7e118832521af4ead431a2e193b06df1ee29606c Giygas <gustavorossich@gmail.com> 1737670090 +0100	commit: projects working
+7e118832521af4ead431a2e193b06df1ee29606c 7e118832521af4ead431a2e193b06df1ee29606c Giygas <gustavorossich@gmail.com> 1737670112 +0100	checkout: moving from main to smart_workspace_switcher
+7e118832521af4ead431a2e193b06df1ee29606c 7e118832521af4ead431a2e193b06df1ee29606c Giygas <gustavorossich@gmail.com> 1737670444 +0100	checkout: moving from smart_workspace_switcher to main
+7e118832521af4ead431a2e193b06df1ee29606c 821f0f2f823a4039ab03594cbc73112adf8275c4 Giygas <gustavorossich@gmail.com> 1737671390 +0100	commit: sessionizer working
+821f0f2f823a4039ab03594cbc73112adf8275c4 821f0f2f823a4039ab03594cbc73112adf8275c4 Giygas <gustavorossich@gmail.com> 1737671401 +0100	checkout: moving from main to old-sessionizer
+821f0f2f823a4039ab03594cbc73112adf8275c4 3d67c466fe695bd4ebf64e9b22759eaddbbe7a1f Giygas <gustavorossich@gmail.com> 1737671780 +0100	commit: old-sessionizer working
+3d67c466fe695bd4ebf64e9b22759eaddbbe7a1f 821f0f2f823a4039ab03594cbc73112adf8275c4 Giygas <gustavorossich@gmail.com> 1737671786 +0100	checkout: moving from old-sessionizer to main
