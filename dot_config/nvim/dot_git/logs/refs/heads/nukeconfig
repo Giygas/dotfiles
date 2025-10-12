@@ -1,0 +1,15 @@
+0000000000000000000000000000000000000000 3f0824a875540b52cf5dd871b0d86691c53fc4b9 Giygas <gustavorossich@gmail.com> 1756398763 +0200	branch: Created from refs/heads/main
+3f0824a875540b52cf5dd871b0d86691c53fc4b9 c1bf9dcb61d61888f41f79325b58e00cf882ee66 Giygas <gustavorossich@gmail.com> 1756571206 +0200	commit: WIP
+c1bf9dcb61d61888f41f79325b58e00cf882ee66 46c592f3e7588c5c8ee7c650265cbd3275999ccd Giygas <gustavorossich@gmail.com> 1756575984 +0200	commit: finally a working config
+46c592f3e7588c5c8ee7c650265cbd3275999ccd 1b8d27c0c67f04f92e5c53c5af7be8a8e70ea0a8 Giygas <gustavorossich@gmail.com> 1756577946 +0200	commit: added typescript and tailwind servers to lsp
+1b8d27c0c67f04f92e5c53c5af7be8a8e70ea0a8 9e9349505246d37140276be04e77118b7f30090d Giygas <gustavorossich@gmail.com> 1756580228 +0200	commit: added autopairs config, css and eslint lsp config
+9e9349505246d37140276be04e77118b7f30090d e0ebd43dca2ebbaa8e94af914fbb2610fa9ae683 Giygas <gustavorossich@gmail.com> 1756581217 +0200	commit: fixed diagnostics
+e0ebd43dca2ebbaa8e94af914fbb2610fa9ae683 44cb014ee69e9b2336b24f638fbcb3a0902f4b57 Giygas <gustavorossich@gmail.com> 1756598869 +0200	commit: new colorscheme
+44cb014ee69e9b2336b24f638fbcb3a0902f4b57 449f3cb10fa71efbe192bd2820b0d1270f00904a Giygas <gustavorossich@gmail.com> 1756601079 +0200	commit: fixed old colorschemes
+449f3cb10fa71efbe192bd2820b0d1270f00904a 91a6738ebce946764f50011f8f59e3c9e6781520 Giygas <gustavorossich@gmail.com> 1756602745 +0200	commit: added noice
+91a6738ebce946764f50011f8f59e3c9e6781520 54040f7c3555dfcc69f8805e266ee37303fc9bdc Giygas <gustavorossich@gmail.com> 1756608575 +0200	commit: removed fidget.lua
+54040f7c3555dfcc69f8805e266ee37303fc9bdc dc6b3624f0490edd9d5e88691d82141346168b7f Giygas <gustavorossich@gmail.com> 1756656861 +0200	commit: added noice keybinds
+dc6b3624f0490edd9d5e88691d82141346168b7f 25dd2f25ba294c183172d155ff92c947ec33ae6c Giygas <gustavorossich@gmail.com> 1756743887 +0200	commit: added cool notifications
+25dd2f25ba294c183172d155ff92c947ec33ae6c a770443f9089745f3a2cf312895ba16920faebe4 Giygas <gustavorossich@gmail.com> 1756743930 +0200	commit (amend): added cool notifications
+a770443f9089745f3a2cf312895ba16920faebe4 541ddd9ca5d21a4502fd90fdfda4b8aa3b445f5f Giygas <gustavorossich@gmail.com> 1756755180 +0200	commit: bug: double tsserver and ts_ls
+541ddd9ca5d21a4502fd90fdfda4b8aa3b445f5f a8006accc4d0c6b2448467694964dd26451f0de8 Giygas <gustavorossich@gmail.com> 1757345431 +0200	commit: working stuff

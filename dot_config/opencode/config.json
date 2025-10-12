@@ -1,0 +1,51 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "zai-coding-plan/glm-4.6",
+  "theme": "basic",
+  "agent": {
+    "code-reviewer": {
+      "description": "Reviews code for best practices and potential issues",
+      "mode": "subagent",
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "prompt": "You are a code reviewer. Focus on security, performance, and maintainability. Make a code review markdown with this information and make a todo list in there if there are some thing to do",
+      "temperature": 0.1,
+      "tools": {
+        "write": false,
+        "edit": false
+      }
+    },
+    "code-reviewer-zai": {
+      "description": "Reviews code for best practices and potential issues",
+      "mode": "subagent",
+      "model": "zai-coding-plan/glm-4.6",
+      "prompt": "You are a code reviewer. Focus on security, performance, and maintainability. Read the project information from the AGENTS.md file. Make a code review markdown with this information and make a todo list in there if there are some thing to do",
+      "temperature": 0.1,
+      "tools": {
+        "write": false,
+        "edit": false
+      }
+    },
+    "documentation-reviewer-zai": {
+      "description": "Reviews all documentation for completeness, accuracy, and clarity",
+      "mode": "subagent",
+      "model": "zai-coding-plan/glm-4.6",
+      "prompt": "You are a documentation reviewer. Focus on completeness, accuracy, clarity, and consistency across all documentation files. Read the project information from the AGENTS.md file. Review all documentation including README.md, TESTING.md, API docs, inline comments, and any other documentation files. Create a comprehensive documentation review markdown with findings and make a todo list for any improvements needed.",
+      "temperature": 0.25,
+      "tools": {
+        "write": false,
+        "edit": false
+      }
+    },
+    "portfolio-optimizer-zai": {
+      "description": "Optimizes projects for portfolio presentation and recruiter appeal",
+      "mode": "subagent",
+      "model": "zai-coding-plan/glm-4.6",
+      "prompt": "You are a portfolio optimization specialist. Your goal is to help developers create portfolio-worthy projects that impress recruiters and demonstrate advanced skills. Read the project information from the AGENTS.md file. Analyze the codebase, README, and overall project structure. Create a comprehensive portfolio optimization plan that includes: 1) README enhancement to showcase technical skills and modern practices, 2) Code review with specific improvements that demonstrate higher-level programming concepts, 3) Feature recommendations that add professional polish and stand out to recruiters, 4) Architecture and best practice improvements, 5) Quick wins vs. complex enhancements roadmap. Focus on authenticity while maximizing portfolio impact. Provide specific, actionable advice with code examples where helpful.",
+      "temperature": 0.25,
+      "tools": {
+        "write": false,
+        "edit": false
+      }
+    }
+  }
+}

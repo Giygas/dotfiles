@@ -10,17 +10,17 @@ return {
 	-- },
 	-- SESSION MANAGEMENT
 	-- Attach to muxer
-	{
-		key = "a",
-		mods = "LEADER",
-		action = w.action.AttachDomain("unix"),
-	},
+	-- {
+	-- 	key = "a",
+	-- 	mods = "LEADER",
+	-- 	action = w.action.AttachDomain("unix"),
+	-- },
 	-- Detach from muxer
-	{
-		key = "d",
-		mods = "LEADER",
-		action = w.action.DetachDomain({ DomainName = "unix" }),
-	},
+	-- {
+	-- 	key = "d",
+	-- 	mods = "LEADER",
+	-- 	action = w.action.DetachDomain({ DomainName = "unix" }),
+	-- },
 	-- Rename current session; analagous to command in tmux
 	{
 		key = "$",
@@ -155,12 +155,12 @@ return {
 	},
 	-- Next and previous tab
 	{
-		key = "n",
+		key = "l",
 		mods = "LEADER",
 		action = w.action.ActivateTabRelative(1),
 	},
 	{
-		key = "p",
+		key = "h",
 		mods = "LEADER",
 		action = w.action.ActivateTabRelative(-1),
 	},
@@ -182,4 +182,11 @@ return {
 		mods = "LEADER|SHIFT",
 		action = w.action.PaneSelect({ mode = "SwapWithActiveKeepFocus" }),
 	},
+
+	-- Move tab
+	{ key = "1", mods = "LEADER|ALT", action = w.action({ MoveTab = 0 }) },
+	{ key = "2", mods = "LEADER|ALT", action = w.action({ MoveTab = 1 }) },
+	{ key = "3", mods = "LEADER|ALT", action = w.action({ MoveTab = 2 }) },
+	{ key = "4", mods = "LEADER|ALT", action = w.action({ MoveTab = 3 }) },
+	{ key = "5", mods = "LEADER|ALT", action = w.action({ MoveTab = 4 }) },
 }

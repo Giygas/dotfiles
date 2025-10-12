@@ -9,6 +9,8 @@ config.leader = { key = "a", mods = "CTRL" }
 -- Keybinds configuration
 local keys = require("keybinds")
 config.keys = keys
+-- Disable all base keybindings
+config.disable_default_key_bindings = true
 
 -- Disable ligatures
 config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
@@ -18,14 +20,19 @@ config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
 local smart_splits = wezterm.plugin.require("https://github.com/mrjones2014/smart-splits.nvim")
 smart_splits.apply_to_config(config)
 
-local wezterm_sessionizer = require("config.(old)wezterm_sessionizer")
-wezterm_sessionizer.apply_keybinds(config)
+local wpr = wezterm.plugin.require("https://github.com/vieitesss/workspacesionizer.wezterm")
+wpr.apply_to_config(config, {
+	paths = { "~/Projects/", "~/.config" },
+	git_repos = true,
+	show = "full",
+	binding = {
+		key = "f",
+		mods = "CTRL",
+	},
+})
 
-local wezterm_resurrect = require("config.wezterm_resurrect")
-wezterm_resurrect.apply_keybinds(config)
-
--- Disable all base keybindings
-config.disable_default_key_bindings = true
+-- local wezterm_resurrect = require("config.wezterm_resurrect")
+-- wezterm_resurrect.apply_keybinds(config)
 
 -- Config mux domains
 config.unix_domains = {
@@ -40,7 +47,7 @@ config.tab_max_width = 20
 config.switch_to_last_active_tab_when_closing_tab = true
 
 -- Font settings
-config.font_size = 19
+config.font_size = 18
 config.font = wezterm.font("JetBrains Mono")
 config.line_height = 1.2
 
@@ -49,7 +56,8 @@ config.colors = {
 	cursor_bg = "yellow",
 	cursor_border = "yellow",
 	-- background = "#0e0e0e",
-    background = "#1e2326",
+	-- background = "#1e2326",
+	background = "#1F2528",
 
 	ansi = {
 		"#588E6E",
@@ -95,22 +103,22 @@ wezterm.on("format-tab-title", functions.custom_tab)
 
 wezterm.on("update-right-status", functions.right_status)
 
--- loads the state whenever I create a new workspace
-wezterm.on("smart_workspace_switcher.workspace_switcher.created", function(window, path, label)
-	local workspace_state = resurrect.workspace_state
-
-	workspace_state.restore_workspace(resurrect.load_state(label, "workspace"), {
-		window = window,
-		relative = true,
-		restore_text = true,
-		on_pane_restore = resurrect.tab_state.default_on_pane_restore,
-	})
-end)
-
--- Saves the state whenever I select a workspace
-wezterm.on("smart_workspace_switcher.workspace_switcher.selected", function(window, path, label)
-	local workspace_state = resurrect.workspace_state
-	resurrect.save_state(workspace_state.get_workspace_state())
-end)
+-- -- loads the state whenever I create a new workspace
+-- wezterm.on("smart_workspace_switcher.workspace_switcher.created", function(window, path, label)
+-- 	local workspace_state = resurrect.workspace_state
+--
+-- 	workspace_state.restore_workspace(resurrect.load_state(label, "workspace"), {
+-- 		window = window,
+-- 		relative = true,
+-- 		restore_text = true,
+-- 		on_pane_restore = resurrect.tab_state.default_on_pane_restore,
+-- 	})
+-- end)
+--
+-- -- Saves the state whenever I select a workspace
+-- wezterm.on("smart_workspace_switcher.workspace_switcher.selected", function(window, path, label)
+-- 	local workspace_state = resurrect.workspace_state
+-- 	resurrect.save_state(workspace_state.get_workspace_state())
+-- end)
 
 return config

@@ -1,0 +1,224 @@
+{
+  "$schema": "https://opencode.ai/theme.json",
+  "defs": {
+    "everforest_bg0": "#262F33",
+    "everforest_bg1": "#1E2528",
+    "everforest_bg2": "#4A585C",
+    "everforest_bg3": "#58686D",
+    "everforest_bg4": "#6F8788",
+    "everforest_fg": "#F8F9E8",
+    "everforest_red": "#F57F82",
+    "everforest_orange": "#F7A182",
+    "everforest_yellow": "#F5D098",
+    "everforest_green": "#CBE3B3",
+    "everforest_aqua": "#B3E3CA",
+    "everforest_blue": "#B2CAED",
+    "everforest_purple": "#D2BDF3",
+    "everforest_grey0": "#96B4AA",
+    "everforest_grey1": "#ADC9BC",
+    "everforest_grey2": "#839E9A"
+  },
+
+  "theme": {
+    "primary": {
+      "dark": "everforest_blue",
+      "light": "everforest_blue"
+    },
+    "secondary": {
+      "dark": "everforest_aqua",
+      "light": "everforest_aqua"
+    },
+    "accent": {
+      "dark": "everforest_green",
+      "light": "everforest_green"
+    },
+    "error": {
+      "dark": "everforest_red",
+      "light": "everforest_red"
+    },
+    "warning": {
+      "dark": "everforest_orange",
+      "light": "everforest_orange"
+    },
+    "success": {
+      "dark": "everforest_green",
+      "light": "everforest_green"
+    },
+    "info": {
+      "dark": "everforest_blue",
+      "light": "everforest_blue"
+    },
+    "text": {
+      "dark": "everforest_fg",
+      "light": "everforest_fg"
+    },
+    "textMuted": {
+      "dark": "everforest_grey1",
+      "light": "everforest_grey1"
+    },
+    "background": {
+      "dark": "none",
+      "light": "none"
+    },
+    "backgroundPanel": {
+      "dark": "everforest_bg1",
+      "light": "everforest_bg1"
+    },
+    "backgroundElement": {
+      "dark": "everforest_bg2",
+      "light": "everforest_bg2"
+    },
+    "border": {
+      "dark": "everforest_bg3",
+      "light": "everforest_bg3"
+    },
+    "borderActive": {
+      "dark": "everforest_bg4",
+      "light": "everforest_bg4"
+    },
+    "borderSubtle": {
+      "dark": "everforest_bg3",
+      "light": "everforest_bg3"
+    },
+    "diffAdded": {
+      "dark": "everforest_green",
+      "light": "everforest_green"
+    },
+    "diffRemoved": {
+      "dark": "everforest_red",
+      "light": "everforest_red"
+    },
+    "diffContext": {
+      "dark": "everforest_grey0",
+      "light": "everforest_grey0"
+    },
+    "diffHunkHeader": {
+      "dark": "everforest_grey1",
+      "light": "everforest_grey1"
+    },
+    "diffHighlightAdded": {
+      "dark": "everforest_green",
+      "light": "everforest_green"
+    },
+    "diffHighlightRemoved": {
+      "dark": "everforest_red",
+      "light": "everforest_red"
+    },
+    "diffAddedBg": {
+      "dark": "everforest_bg1",
+      "light": "everforest_bg1"
+    },
+    "diffRemovedBg": {
+      "dark": "everforest_bg1",
+      "light": "everforest_bg1"
+    },
+    "diffContextBg": {
+      "dark": "everforest_bg0",
+      "light": "everforest_bg0"
+    },
+    "diffLineNumber": {
+      "dark": "everforest_bg3",
+      "light": "everforest_bg3"
+    },
+    "diffAddedLineNumberBg": {
+      "dark": "everforest_bg1",
+      "light": "everforest_bg1"
+    },
+    "diffRemovedLineNumberBg": {
+      "dark": "everforest_bg1",
+      "light": "everforest_bg1"
+    },
+    "markdownText": {
+      "dark": "everforest_fg",
+      "light": "everforest_fg"
+    },
+    "markdownHeading": {
+      "dark": "everforest_blue",
+      "light": "everforest_blue"
+    },
+    "markdownLink": {
+      "dark": "everforest_aqua",
+      "light": "everforest_aqua"
+    },
+    "markdownLinkText": {
+      "dark": "everforest_green",
+      "light": "everforest_green"
+    },
+    "markdownCode": {
+      "dark": "everforest_green",
+      "light": "everforest_green"
+    },
+    "markdownBlockQuote": {
+      "dark": "everforest_grey0",
+      "light": "everforest_grey0"
+    },
+    "markdownEmph": {
+      "dark": "everforest_orange",
+      "light": "everforest_orange"
+    },
+    "markdownStrong": {
+      "dark": "everforest_yellow",
+      "light": "everforest_yellow"
+    },
+    "markdownHorizontalRule": {
+      "dark": "everforest_grey0",
+      "light": "everforest_grey0"
+    },
+    "markdownListItem": {
+      "dark": "everforest_blue",
+      "light": "everforest_blue"
+    },
+    "markdownListEnumeration": {
+      "dark": "everforest_green",
+      "light": "everforest_green"
+    },
+    "markdownImage": {
+      "dark": "everforest_aqua",
+      "light": "everforest_aqua"
+    },
+    "markdownImageText": {
+      "dark": "everforest_green",
+      "light": "everforest_green"
+    },
+    "markdownCodeBlock": {
+      "dark": "everforest_fg",
+      "light": "everforest_fg"
+    },
+    "syntaxComment": {
+      "dark": "everforest_grey0",
+      "light": "everforest_grey0"
+    },
+    "syntaxKeyword": {
+      "dark": "everforest_aqua",
+      "light": "everforest_aqua"
+    },
+    "syntaxFunction": {
+      "dark": "everforest_blue",
+      "light": "everforest_blue"
+    },
+    "syntaxVariable": {
+      "dark": "everforest_green",
+      "light": "everforest_green"
+    },
+    "syntaxString": {
+      "dark": "everforest_green",
+      "light": "everforest_green"
+    },
+    "syntaxNumber": {
+      "dark": "everforest_purple",
+      "light": "everforest_purple"
+    },
+    "syntaxType": {
+      "dark": "everforest_yellow",
+      "light": "everforest_yellow"
+    },
+    "syntaxOperator": {
+      "dark": "everforest_aqua",
+      "light": "everforest_aqua"
+    },
+    "syntaxPunctuation": {
+      "dark": "everforest_fg",
+      "light": "everforest_fg"
+    }
+  }
+}

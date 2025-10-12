@@ -5,3 +5,6 @@ e8132755fa62a2cf594c3c9fd2a5ca5a454ffaba 1d3c4a3c1eacc0c09b6ed43ef608c066cd6359b
 1d3c4a3c1eacc0c09b6ed43ef608c066cd6359b9 dfebef7493928dc06c95b34e02e16f002f8f46d2 Giygas <gustavorossich@gmail.com> 1737663524 +0100	commit: basic sessionizer working
 dfebef7493928dc06c95b34e02e16f002f8f46d2 7e118832521af4ead431a2e193b06df1ee29606c Giygas <gustavorossich@gmail.com> 1737670090 +0100	commit: projects working
 7e118832521af4ead431a2e193b06df1ee29606c 821f0f2f823a4039ab03594cbc73112adf8275c4 Giygas <gustavorossich@gmail.com> 1737671390 +0100	commit: sessionizer working
+821f0f2f823a4039ab03594cbc73112adf8275c4 e6f1dbc5068d1e80fe9be279bb0ae4508905a935 Giygas <gustavorossich@gmail.com> 1743614409 +0200	commit: Removed old sessionizer
+e6f1dbc5068d1e80fe9be279bb0ae4508905a935 ae189e2a892b4bd86f230a5e8823bd1368015580 Giygas <gustavorossich@gmail.com> 1743614690 +0200	commit (amend): Removed old sessionizer
+ae189e2a892b4bd86f230a5e8823bd1368015580 f2a88a8c71a4d57427f2e24a047eae897429f3bf Giygas <gustavorossich@gmail.com> 1743614717 +0200	commit (amend): Removed old sessionizer
