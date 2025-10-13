@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+set -e
+
+echo "🔧 Starting dev environment setup..."
+
+# -------------------------------
+# Determine OS and home directory
+# -------------------------------
+OS="{{ .chezmoi.os }}"
+HOME_DIR="{{ .chezmoi.home }}"
+USER_NAME=$(whoami)
+
+echo "OS detected: $OS"
+echo "User: $USER_NAME"
+echo "Home directory: $HOME_DIR"
+
+# -------------------------------
+# macOS setup
+# -------------------------------
+if [[ "$OS" == "darwin" ]]; then
+    echo "📦 Setting up macOS dev environment..."
+
+    # Ensure Homebrew is installed
+    if ! command -v brew &>/dev/null; then
+        echo "Installing Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+
+    echo "Installing Homebrew packages..."
+    brew update
+    brew install \
+        black cocoapods colima docker efm-langserver fd ffmpeg flyctl fzf ghostscript \
+        git git-filter-repo gnupg go htop icu4c@76 imagemagick isort jsonlint lazygit \
+        lua-language-server markdownlint-cli marksman mongosh neovim pandoc pinentry-mac pipx \
+        plow postgresql@17 powerlevel10k prettier prettierd pyright python-lsp-server python@3.13 \
+        qemu ranger ripgrep ruff visidata sst/tap/opencode stylua supabase/tap/supabase tmux \
+        tursodatabase/tap/turso typescript-language-server uvicorn vale watchman wrk yadm \
+        yaml-language-server yt-dlp zoxide zsh
+fi
+
+# -------------------------------
+# Linux (Ubuntu) setup
+# -------------------------------
+if [[ "$OS" == "linux" ]]; then
+    echo "📦 Setting up Linux dev environment (user: $USER_NAME)..."
+
+    # Check for essential system packages
+    REQUIRED=("git" "python3" "pip3" "npm" "curl")
+    MISSING=()
+    for pkg in "${REQUIRED[@]}"; do
+        if ! command -v "$pkg" &>/dev/null; then
+            MISSING+=("$pkg")
+        fi
+    done
+
+    if [ ${#MISSING[@]} -ne 0 ]; then
+        echo "⚠️  The following system packages are missing: ${MISSING[*]}"
+        echo "Please install them first. Example for Ubuntu/Debian:"
+        echo "sudo apt update && sudo apt install -y ${MISSING[*]}"
+        exit 1
+    fi
+
+    # Local bin setup
+    mkdir -p "$HOME_DIR/.local/bin"
+    export PATH="$HOME_DIR/.local/bin:$PATH"
+
+    # Python tools
+    echo "Installing Python packages..."
+    pip3 install --user \
+        black isort fastapi uvicorn python-lsp-server ruff visidata \
+        markdownlint-cli pyright
+
+    # Node / npm tools
+    echo "Installing Node tools..."
+    NPM_PREFIX="$HOME_DIR/.npm-global"
+    mkdir -p "$NPM_PREFIX"
+    npm config set prefix "$NPM_PREFIX"
+    export PATH="$NPM_PREFIX/bin:$PATH"
+
+    npm install -g prettier prettierd typescript-language-server yaml-language-server
+
+    # Binary tools helper
+    install_bin() {
+        url="$1"
+        name="$2"
+        dest="$HOME_DIR/.local/bin/$name"
+        if ! command -v "$name" &>/dev/null; then
+            tmp=$(mktemp)
+            curl -sSL "$url" -o "$tmp"
+            chmod +x "$tmp"
+            mv "$tmp" "$dest"
+            echo "✅ Installed $name"
+        else
+            echo "✅ $name already installed"
+        fi
+    }
+
+    # User binaries
+    install_bin "https://github.com/jesseduffield/lazygit/releases/download/v0.42.2/lazygit_0.42.2_Linux_x86_64.tar.gz" "lazygit"
+    install_bin "https://github.com/JohnnyMorganz/StyLua/releases/download/v0.13.0/stylua" "stylua"
+    install_bin "https://github.com/supabase/cli/releases/download/v1.79.0/supabase_linux_amd64" "supabase"
+    install_bin "https://github.com/errata-ai/vale/releases/download/v2.28.1/vale_linux_amd64" "vale"
+    install_bin "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp" "yt-dlp"
+    install_bin "https://github.com/ajeetdsouza/zoxide/releases/download/v0.9.0/zoxide-x86_64-unknown-linux-gnu" "zoxide"
+
+fi
+
+# -------------------------------
+# Powerlevel10k for both OS
+# -------------------------------
+if [ ! -d "$HOME_DIR/.powerlevel10k" ]; then
+    echo "Installing powerlevel10k..."
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME_DIR/.powerlevel10k"
+fi
+
+# -------------------------------
+# Add local bin to PATH in shell rc
+# -------------------------------
+for shell_rc in "$HOME_DIR/.bashrc" "$HOME_DIR/.zshrc"; do
+    if [ -f "$shell_rc" ] && ! grep -q ".local/bin" "$shell_rc"; then
+        echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$shell_rc"
+    fi
+    if [ -f "$shell_rc" ] && ! grep -q ".npm-global/bin" "$shell_rc"; then
+        echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> "$shell_rc"
+    fi
+done
+
+echo "🎉 Dev environment setup complete for $USER_NAME on $OS!"
