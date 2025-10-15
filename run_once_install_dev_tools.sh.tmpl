@@ -82,13 +82,31 @@ if [[ "$OS" == "linux" ]]; then
     # Install pnpm
     if ! command -v pnpm &>/dev/null; then
         echo "Installing pnpm..."
-        curl -fsSL https://get.pnpm.io/install.sh | sh -
+        
+        # Install pnpm using npm (more reliable in containers)
+        npm install -g pnpm
+        
+        # Set up pnpm environment
         export PNPM_HOME="$HOME_DIR/.local/share/pnpm"
         export PATH="$PNPM_HOME:$PATH"
+        
+        # Run pnpm setup to create global bin directory
+        pnpm setup
+        
+        # Add to shell rc files
         echo 'export PNPM_HOME="$HOME/.local/share/pnpm"' >> "$HOME_DIR/.bashrc"
         echo 'export PATH="$PNPM_HOME:$PATH"' >> "$HOME_DIR/.bashrc"
         echo 'export PNPM_HOME="$HOME/.local/share/pnpm"' >> "$HOME_DIR/.zshrc"
         echo 'export PATH="$PNPM_HOME:$PATH"' >> "$HOME_DIR/.zshrc"
+        
+        # Source the pnpm environment
+        if [ -f "$HOME_DIR/.local/share/pnpm/pnpm" ]; then
+            source "$HOME_DIR/.local/share/pnpm/pnpm" || true
+        fi
+    else
+        # Ensure pnpm environment is set even if already installed
+        export PNPM_HOME="$HOME_DIR/.local/share/pnpm"
+        export PATH="$PNPM_HOME:$PATH"
     fi
 
     # Local bin setup
@@ -131,6 +149,10 @@ if [[ "$OS" == "linux" ]]; then
 
     # Node / pnpm tools
     echo "Installing Node tools with pnpm..."
+    
+    # Ensure pnpm environment is available
+    export PNPM_HOME="$HOME_DIR/.local/share/pnpm"
+    export PATH="$PNPM_HOME:$PATH"
     
     # Install opencode using recommended method
     if ! command -v opencode &>/dev/null; then
