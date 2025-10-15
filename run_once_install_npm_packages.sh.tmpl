@@ -1,11 +1,8 @@
+#!/usr/bin/env bash
 {{ if or (eq .chezmoi.os "darwin") (eq .chezmoi.os "linux") }}
-#!/bin/bash
 
 # Exit immediately on error
 set -e
-
-# Detect architecture
-ARCH="{{ .chezmoi.arch }}"
 
 # Ensure npm is available
 if ! command -v npm &>/dev/null; then
@@ -14,7 +11,6 @@ if ! command -v npm &>/dev/null; then
 fi
 
 echo "📦 Installing global npm packages..."
-echo "Detected OS: {{ .chezmoi.os }}, Architecture: $ARCH"
 
 # List of global npm packages you want installed
 packages=(
@@ -50,5 +46,5 @@ for pkg in "${packages[@]}"; do
   fi
 done
 
-echo "🎉 Global npm packages setup complete."
 {{ end }}
+echo "🎉 Global npm packages setup complete."
