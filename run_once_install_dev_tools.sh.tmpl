@@ -45,7 +45,7 @@ if [[ "$OS" == "linux" ]]; then
     echo "📦 Setting up Linux dev environment (user: $USER_NAME)..."
 
     # Check for essential system packages
-    REQUIRED=("git" "python3" "pip3" "npm" "curl")
+    REQUIRED=("git" "python3" "pip3" "curl")
     MISSING=()
     for pkg in "${REQUIRED[@]}"; do
         if ! command -v "$pkg" &>/dev/null; then
@@ -60,24 +60,69 @@ if [[ "$OS" == "linux" ]]; then
         exit 1
     fi
 
+    # Install pnpm
+    if ! command -v pnpm &>/dev/null; then
+        echo "Installing pnpm..."
+        curl -fsSL https://get.pnpm.io/install.sh | sh -
+        export PNPM_HOME="$HOME_DIR/.local/share/pnpm"
+        export PATH="$PNPM_HOME:$PATH"
+        echo 'export PNPM_HOME="$HOME/.local/share/pnpm"' >> "$HOME_DIR/.bashrc"
+        echo 'export PATH="$PNPM_HOME:$PATH"' >> "$HOME_DIR/.bashrc"
+        echo 'export PNPM_HOME="$HOME/.local/share/pnpm"' >> "$HOME_DIR/.zshrc"
+        echo 'export PATH="$PNPM_HOME:$PATH"' >> "$HOME_DIR/.zshrc"
+    fi
+
     # Local bin setup
     mkdir -p "$HOME_DIR/.local/bin"
     export PATH="$HOME_DIR/.local/bin:$PATH"
+
+    # Install system packages via apt
+    echo "Installing system packages..."
+    sudo apt update
+    sudo apt install -y \
+        fd-find fzf htop neovim tmux zsh ranger ripgrep gnupg git \
+        ffmpeg ghostscript imagemagick qemu-kvm libvirt-daemon-system \
+        libvirt-clients bridge-utils virtinst virt-manager postgresql postgresql-contrib \
+        yadm watchman
+
+    # Install Go
+    if ! command -v go &>/dev/null; then
+        echo "Installing Go..."
+        GO_VERSION="1.23.2"
+        wget -q https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz
+        sudo rm -rf /usr/local/go
+        sudo tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz
+        export PATH=$PATH:/usr/local/go/bin
+        echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME_DIR/.bashrc"
+        echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME_DIR/.zshrc"
+        source "$HOME_DIR/.bashrc" || source "$HOME_DIR/.zshrc" || true
+    fi
 
     # Python tools
     echo "Installing Python packages..."
     pip3 install --user \
         black isort fastapi uvicorn python-lsp-server ruff visidata \
-        pyright
+        pyright pipx jsonlint
 
-    # Node / npm tools
-    echo "Installing Node tools..."
-    NPM_PREFIX="$HOME_DIR/.npm-global"
-    mkdir -p "$NPM_PREFIX"
-    npm config set prefix "$NPM_PREFIX"
-    export PATH="$NPM_PREFIX/bin:$PATH"
+    # Install additional Python tools via pipx
+    if command -v pipx &>/dev/null; then
+        echo "Installing Python tools via pipx..."
+        pipx install git-filter-repo
+    fi
 
-    npm install -g prettier @fsouza/prettierd typescript-language-server yaml-language-server @fsouza/prettierd markdownlint-cli
+    # Node / pnpm tools
+    echo "Installing Node tools with pnpm..."
+    
+    # Install opencode using recommended method
+    if ! command -v opencode &>/dev/null; then
+        echo "Installing OpenCode..."
+        curl -fsSL https://opencode.ai/install | bash -
+    fi
+    
+    # Install other tools with pnpm
+    pnpm add -g \
+        prettier @fsouza/prettierd typescript-language-server yaml-language-server \
+        @fsouza/prettierd markdownlint-cli @supabase/supabase-js
 
 
     # Binary tools helper
@@ -87,10 +132,39 @@ if [[ "$OS" == "linux" ]]; then
         dest="$HOME_DIR/.local/bin/$name"
         if ! command -v "$name" &>/dev/null; then
             tmp=$(mktemp)
+            tmpdir=$(mktemp -d)
+            
+            echo "Downloading $name..."
             curl -sSL "$url" -o "$tmp"
-            chmod +x "$tmp"
-            mv "$tmp" "$dest"
-            echo "✅ Installed $name"
+            
+            # Check if it's a tar.gz archive
+            if [[ "$url" == *.tar.gz ]]; then
+                echo "Extracting $name..."
+                tar -xzf "$tmp" -C "$tmpdir"
+                
+                # Find the executable in the extracted directory
+                executable=$(find "$tmpdir" -type f -name "$name" -executable | head -1)
+                if [[ -z "$executable" ]]; then
+                    # Try to find any executable with similar name
+                    executable=$(find "$tmpdir" -type f -executable | head -1)
+                fi
+                
+                if [[ -n "$executable" ]]; then
+                    mv "$executable" "$dest"
+                    echo "✅ Installed $name"
+                else
+                    echo "❌ Could not find executable for $name"
+                    rm -rf "$tmpdir" "$tmp"
+                    return 1
+                fi
+            else
+                # Direct binary download
+                mv "$tmp" "$dest"
+                chmod +x "$dest"
+                echo "✅ Installed $name"
+            fi
+            
+            rm -rf "$tmpdir" "$tmp"
         else
             echo "✅ $name already installed"
         fi
@@ -98,11 +172,36 @@ if [[ "$OS" == "linux" ]]; then
 
     # User binaries
     install_bin "https://github.com/jesseduffield/lazygit/releases/download/v0.42.2/lazygit_0.42.2_Linux_x86_64.tar.gz" "lazygit"
-    install_bin "https://github.com/JohnnyMorganz/StyLua/releases/download/v0.13.0/stylua" "stylua"
-    install_bin "https://github.com/supabase/cli/releases/download/v1.79.0/supabase_linux_amd64" "supabase"
+    install_bin "https://github.com/JohnnyMorganz/StyLua/releases/download/v0.13.0/stylua-linux-x64" "stylua"
+    install_bin "https://github.com/supabase/cli/releases/download/v2.51.0/supabase_linux_amd64" "supabase"
     install_bin "https://github.com/errata-ai/vale/releases/download/v2.28.1/vale_linux_amd64" "vale"
     install_bin "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp" "yt-dlp"
     install_bin "https://github.com/ajeetdsouza/zoxide/releases/download/v0.9.0/zoxide-x86_64-unknown-linux-gnu" "zoxide"
+    install_bin "https://github.com/mattn/efm-langserver/releases/download/v0.0.48/efm-langserver_linux_amd64.tar.gz" "efm-langserver"
+    install_bin "https://github.com/superfly/flyctl/releases/latest/download/flyctl_linux_amd64.tar.gz" "flyctl"
+    install_bin "https://github.com/artempyanykh/marksman/releases/download/v2023-12-23/marksman-linux-x64" "marksman"
+    install_bin "https://github.com/mongodb/mongosh/releases/latest/download/mongosh-linux-x64.tgz" "mongosh"
+    install_bin "https://github.com/jgm/pandoc/releases/latest/download/pandoc-3.1.11.1-linux-amd64.tar.gz" "pandoc"
+    install_bin "https://github.com/charmbracelet/gum/releases/latest/download/gum_linux_amd64.tar.gz" "gum"
+    install_bin "https://github.com/tsenart/vegeta/releases/latest/download/vegeta_linux_amd64.tar.gz" "vegeta"
+    install_bin "https://github.com/wg/wrk/releases/latest/download/wrk-linux-amd64.tar.gz" "wrk"
+    install_bin "https://github.com/tursodatabase/turso-cli/releases/latest/download/turso-cli-linux-amd64.tar.gz" "turso"
+
+    # Install Lua language server
+    if ! command -v "lua-language-server" &>/dev/null; then
+        echo "Installing Lua language server..."
+        mkdir -p "$HOME_DIR/.local/lua-language-server"
+        cd "$HOME_DIR/.local/lua-language-server"
+        wget -q https://github.com/LuaLS/lua-language-server/releases/download/v3.9.3/lua-language-server-3.9.3-linux-x64.tar.gz
+        tar -xzf lua-language-server-3.9.3-linux-x64.tar.gz
+        ln -sf "$HOME_DIR/.local/lua-language-server/bin/lua-language-server" "$HOME_DIR/.local/bin/lua-language-server"
+        cd - > /dev/null
+    fi
+
+    # Create symlinks for tools with different names
+    if command -v fdfind &>/dev/null && ! command -v fd &>/dev/null; then
+        ln -sf "$(which fdfind)" "$HOME_DIR/.local/bin/fd"
+    fi
 
 fi
 
@@ -123,6 +222,10 @@ for shell_rc in "$HOME_DIR/.bashrc" "$HOME_DIR/.zshrc"; do
     fi
     if [ -f "$shell_rc" ] && ! grep -q ".npm-global/bin" "$shell_rc"; then
         echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> "$shell_rc"
+    fi
+    if [ -f "$shell_rc" ] && ! grep -q "pnpm" "$shell_rc"; then
+        echo 'export PNPM_HOME="$HOME/.local/share/pnpm"' >> "$shell_rc"
+        echo 'export PATH="$PNPM_HOME:$PATH"' >> "$shell_rc"
     fi
 done
 

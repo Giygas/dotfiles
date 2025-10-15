@@ -14,14 +14,14 @@ echo "📦 Installing global npm packages..."
 
 # List of global npm packages you want installed
 packages=(
-  "@compodoc/live-server@1.2.3"
-  "@olrtg/emmet-language-server@2.8.0"
-  "@tailwindcss/language-server@0.14.26"
+  "@compodoc/live-server"
+  "@olrtg/emmet-language-server"
+  "@tailwindcss/language-server"
   "corepack@0.34.0"
   "eas-cli@16.19.1"
-  "npm@11.6.0"
+  "npm"
   "pnpm@latest"
-  "svelte-language-server@0.17.21"
+  "svelte-language-server"
 )
 
 # Ensure npm global installs don't require sudo
@@ -46,5 +46,11 @@ for pkg in "${packages[@]}"; do
   fi
 done
 
-{{ end }}
 echo "🎉 Global npm packages setup complete."
+
+{{ else }}
+
+echo "Windows env detected, good luck."
+
+{{ end }}
+
