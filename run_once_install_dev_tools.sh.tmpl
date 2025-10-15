@@ -68,7 +68,7 @@ if [[ "$OS" == "linux" ]]; then
     echo "Installing Python packages..."
     pip3 install --user \
         black isort fastapi uvicorn python-lsp-server ruff visidata \
-        markdownlint-cli pyright
+        pyright
 
     # Node / npm tools
     echo "Installing Node tools..."
@@ -77,7 +77,8 @@ if [[ "$OS" == "linux" ]]; then
     npm config set prefix "$NPM_PREFIX"
     export PATH="$NPM_PREFIX/bin:$PATH"
 
-    npm install -g prettier prettierd typescript-language-server yaml-language-server
+    npm install -g prettier @fsouza/prettierd typescript-language-server yaml-language-server @fsouza/prettierd markdownlint-cli
+
 
     # Binary tools helper
     install_bin() {
