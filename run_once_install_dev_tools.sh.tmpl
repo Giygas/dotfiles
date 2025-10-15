@@ -247,6 +247,14 @@ if [[ "$OS" == "linux" ]]; then
 fi
 
 # -------------------------------
+# Oh My Zsh for both OS
+# -------------------------------
+if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
+    echo "Installing Oh My Zsh..."
+    RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+fi
+
+# -------------------------------
 # Powerlevel10k for both OS
 # -------------------------------
 if [ ! -d "$HOME_DIR/.powerlevel10k" ]; then
