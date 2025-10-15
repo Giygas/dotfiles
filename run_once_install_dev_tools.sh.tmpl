@@ -213,20 +213,48 @@ if [[ "$OS" == "linux" ]]; then
 
     # User binaries
     install_bin "https://github.com/jesseduffield/lazygit/releases/download/v0.42.2/lazygit_0.42.2_Linux_x86_64.tar.gz" "lazygit"
-    install_bin "https://github.com/JohnnyMorganz/StyLua/releases/download/v0.13.0/stylua-linux-x64" "stylua"
-    install_bin "https://github.com/supabase/cli/releases/download/v2.51.0/supabase_linux_amd64" "supabase"
-    install_bin "https://github.com/errata-ai/vale/releases/download/v2.28.1/vale_linux_amd64" "vale"
+    install_bin "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.3.0/stylua-linux-x86_64.zip" "stylua"
+    install_bin "https://github.com/supabase/cli/releases/download/v2.51.0/supabase_linux_amd64.tar.gz" "supabase"
+    install_bin "https://github.com/errata-ai/vale/releases/download/v3.12.0/vale_3.12.0_Linux_64-bit.tar.gz" "vale"
     install_bin "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp" "yt-dlp"
-    install_bin "https://github.com/ajeetdsouza/zoxide/releases/download/v0.9.0/zoxide-x86_64-unknown-linux-gnu" "zoxide"
+    install_bin "https://github.com/ajeetdsouza/zoxide/releases/download/v0.9.8/zoxide-0.9.8-x86_64-unknown-linux-musl.tar.gz" "zoxide"
     install_bin "https://github.com/mattn/efm-langserver/releases/download/v0.0.54/efm-langserver_v0.0.54_linux_amd64.tar.gz" "efm-langserver"
     install_bin "https://github.com/superfly/flyctl/releases/download/v0.3.195/flyctl_0.3.195_Linux_x86_64.tar.gz" "flyctl"
-    install_bin "https://github.com/artempyanykh/marksman/releases/download/v2023-12-23/marksman-linux-x64" "marksman"
-    install_bin "https://github.com/mongodb/mongosh/releases/latest/download/mongosh-linux-x64.tgz" "mongosh"
-    install_bin "https://github.com/jgm/pandoc/releases/latest/download/pandoc-3.1.11.1-linux-amd64.tar.gz" "pandoc"
-    install_bin "https://github.com/charmbracelet/gum/releases/latest/download/gum_linux_amd64.tar.gz" "gum"
-    install_bin "https://github.com/tsenart/vegeta/releases/latest/download/vegeta_linux_amd64.tar.gz" "vegeta"
-    install_bin "https://github.com/wg/wrk/releases/latest/download/wrk-linux-amd64.tar.gz" "wrk"
-    install_bin "https://github.com/tursodatabase/turso-cli/releases/latest/download/turso-cli-linux-amd64.tar.gz" "turso"
+    install_bin "https://github.com/artempyanykh/marksman/releases/download/2024-12-18/marksman-linux-x64" "marksman"
+    # Install mongosh using official MongoDB repository
+    if ! command -v "mongosh" &>/dev/null; then
+        echo "Installing mongosh..."
+        # Import MongoDB public key
+        wget -qO- https://www.mongodb.org/static/pgp/server-8.0.asc | sudo tee /etc/apt/trusted.gpg.d/server-8.0.asc > /dev/null
+        # Add MongoDB repository
+        echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list > /dev/null
+        # Update package list and install mongosh
+        sudo apt-get update
+        sudo apt-get install -y mongodb-mongosh
+        echo "✅ Installed mongosh"
+    fi
+    install_bin "https://github.com/jgm/pandoc/releases/download/3.8.2/pandoc-3.8.2-linux-amd64.tar.gz" "pandoc"
+    install_bin "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_x86_64.tar.gz" "gum"
+    install_bin "https://github.com/tsenart/vegeta/releases/download/v12.12.0/vegeta_linux_amd64.tar.gz" "vegeta"
+    # wrk needs to be built from source since it doesn't have releases
+    if ! command -v "wrk" &>/dev/null; then
+        echo "Installing wrk..."
+        wrk_dir="$HOME_DIR/.local/src/wrk"
+        mkdir -p "$wrk_dir"
+        git clone https://github.com/wg/wrk.git "$wrk_dir"
+        cd "$wrk_dir"
+        make
+        ln -sf "$wrk_dir/wrk" "$HOME_DIR/.local/bin/wrk"
+        cd - > /dev/null
+        echo "✅ Installed wrk"
+    fi
+    
+    # Install turso using official installer
+    if ! command -v "turso" &>/dev/null; then
+        echo "Installing turso..."
+        curl --proto '=https' --tlsv1.2 -LsSf https://github.com/tursodatabase/turso/releases/latest/download/turso_cli-installer.sh | sh
+        echo "✅ Installed turso"
+    fi
 
     # Install Lua language server
     if ! command -v "lua-language-server" &>/dev/null; then
