@@ -83,15 +83,22 @@ if [[ "$OS" == "linux" ]]; then
     if ! command -v pnpm &>/dev/null; then
         echo "Installing pnpm..."
         
-        # Install pnpm using npm (more reliable in containers)
-        npm install -g pnpm
+        # Install pnpm using npm in user directory (avoids --force issue)
+        npm install -g pnpm --prefix="$HOME_DIR/.local"
         
-        # Set up pnpm environment
+        # Set up pnpm environment for current script session
         export PNPM_HOME="$HOME_DIR/.local/share/pnpm"
-        export PATH="$PNPM_HOME:$PATH"
+        export PATH="$HOME_DIR/.local/bin:$PNPM_HOME:$PATH"
         
-        # Run pnpm setup to create global bin directory
-        pnpm setup
+        # Create symlink if pnpm was installed via npm to local bin
+        if [ -f "$HOME_DIR/.local/node_modules/.bin/pnpm" ]; then
+            ln -sf "$HOME_DIR/.local/node_modules/.bin/pnpm" "$HOME_DIR/.local/bin/pnpm"
+        fi
+        
+        # Make sure pnpm is executable
+        if [ -f "$HOME_DIR/.local/bin/pnpm" ]; then
+            chmod +x "$HOME_DIR/.local/bin/pnpm"
+        fi
         
         # Add to shell rc files
         echo 'export PNPM_HOME="$HOME/.local/share/pnpm"' >> "$HOME_DIR/.bashrc"
@@ -154,16 +161,40 @@ if [[ "$OS" == "linux" ]]; then
     export PNPM_HOME="$HOME_DIR/.local/share/pnpm"
     export PATH="$PNPM_HOME:$PATH"
     
+    # Make sure pnpm is accessible in this session
+    if ! command -v pnpm &>/dev/null; then
+        echo "Setting up pnpm environment..."
+        # Try to find and source the pnpm binary
+        if [ -f "$HOME_DIR/.local/share/pnpm/pnpm" ]; then
+            chmod +x "$HOME_DIR/.local/share/pnpm/pnpm"
+            export PATH="$HOME_DIR/.local/share/pnpm:$PATH"
+        elif [ -d "$HOME_DIR/.local/share/pnpm/.tools" ]; then
+            # Find the latest pnpm version
+            PNPMDIR=$(find "$HOME_DIR/.local/share/pnpm/.tools" -name "pnpm-exe" -type d | head -1)
+            if [ -n "$PNPMDIR" ] && [ -f "$PNPMDIR"/*/pnpm ]; then
+                chmod +x "$PNPMDIR"/*/pnpm
+                export PATH="$PNPMDIR:$PATH"
+                # Create symlink for easier access
+                ln -sf "$PNPMDIR"/*/pnpm "$HOME_DIR/.local/bin/pnpm"
+            fi
+        fi
+    fi
+    
     # Install opencode using recommended method
     if ! command -v opencode &>/dev/null; then
         echo "Installing OpenCode..."
         curl -fsSL https://opencode.ai/install | bash -
     fi
     
-    # Install other tools with pnpm
-    pnpm add -g \
-        prettier @fsouza/prettierd typescript-language-server yaml-language-server \
-        @fsouza/prettierd markdownlint-cli @supabase/supabase-js
+    # Install other tools with pnpm (only if pnpm is available)
+    if command -v pnpm &>/dev/null; then
+        echo "Installing Node.js tools with pnpm..."
+        pnpm add -g \
+            prettier @fsouza/prettierd typescript-language-server yaml-language-server \
+            @fsouza/prettierd markdownlint-cli @supabase/supabase-js
+    else
+        echo "⚠️ pnpm not available, skipping Node.js tools installation"
+    fi
 
 
     # Binary tools helper
