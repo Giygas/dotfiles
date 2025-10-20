@@ -35,7 +35,7 @@ if [[ "$OS" == "darwin" ]]; then
         plow postgresql@17 powerlevel10k prettier prettierd pyright python-lsp-server python@3.13 \
         qemu ranger ripgrep ruff visidata sst/tap/opencode stylua supabase/tap/supabase tmux \
         tursodatabase/tap/turso typescript-language-server uvicorn vale watchman wrk yadm \
-        yaml-language-server yt-dlp zoxide zsh
+        yaml-language-server yt-dlp zsh
 fi
 
 # -------------------------------
@@ -243,7 +243,6 @@ if [[ "$OS" == "linux" ]]; then
     }
 
     # User binaries
-    install_bin "https://github.com/jesseduffield/lazygit/releases/download/v0.42.2/lazygit_0.42.2_Linux_x86_64.tar.gz" "lazygit"
     install_bin "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.3.0/stylua-linux-x86_64.zip" "stylua"
     install_bin "https://github.com/supabase/cli/releases/download/v2.51.0/supabase_linux_amd64.tar.gz" "supabase"
     install_bin "https://github.com/errata-ai/vale/releases/download/v3.12.0/vale_3.12.0_Linux_64-bit.tar.gz" "vale"
@@ -252,6 +251,23 @@ if [[ "$OS" == "linux" ]]; then
     install_bin "https://github.com/mattn/efm-langserver/releases/download/v0.0.54/efm-langserver_v0.0.54_linux_amd64.tar.gz" "efm-langserver"
     install_bin "https://github.com/superfly/flyctl/releases/download/v0.3.195/flyctl_0.3.195_Linux_x86_64.tar.gz" "flyctl"
     install_bin "https://github.com/artempyanykh/marksman/releases/download/2024-12-18/marksman-linux-x64" "marksman"
+    install_bin "https://github.com/jgm/pandoc/releases/download/3.8.2/pandoc-3.8.2-linux-amd64.tar.gz" "pandoc"
+    install_bin "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_x86_64.tar.gz" "gum"
+    install_bin "https://github.com/tsenart/vegeta/releases/download/v12.12.0/vegeta_linux_amd64.tar.gz" "vegeta"
+
+    # Install lazygit with dynamic version detection
+    if ! command -v "lazygit" &>/dev/null; then
+        echo "Installing lazygit..."
+        LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": *"v\K[^"]*')
+        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+        tar xf lazygit.tar.gz lazygit
+        sudo install lazygit -D -t /usr/local/bin
+        rm -f lazygit.tar.gz lazygit
+        echo "✅ Installed lazygit"
+    else
+        echo "✅ lazygit already installed"
+    fi
+
     # Install mongosh using official MongoDB repository
     if ! command -v "mongosh" &>/dev/null; then
         echo "Installing mongosh..."
@@ -263,21 +279,6 @@ if [[ "$OS" == "linux" ]]; then
         sudo apt-get update
         sudo apt-get install -y mongodb-mongosh
         echo "✅ Installed mongosh"
-    fi
-    install_bin "https://github.com/jgm/pandoc/releases/download/3.8.2/pandoc-3.8.2-linux-amd64.tar.gz" "pandoc"
-    install_bin "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_x86_64.tar.gz" "gum"
-    install_bin "https://github.com/tsenart/vegeta/releases/download/v12.12.0/vegeta_linux_amd64.tar.gz" "vegeta"
-    # wrk needs to be built from source since it doesn't have releases
-    if ! command -v "wrk" &>/dev/null; then
-        echo "Installing wrk..."
-        wrk_dir="$HOME_DIR/.local/src/wrk"
-        mkdir -p "$wrk_dir"
-        git clone https://github.com/wg/wrk.git "$wrk_dir"
-        cd "$wrk_dir"
-        make
-        ln -sf "$wrk_dir/wrk" "$HOME_DIR/.local/bin/wrk"
-        cd - > /dev/null
-        echo "✅ Installed wrk"
     fi
     
     # Install turso using official installer
@@ -311,15 +312,43 @@ fi
 if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
     echo "Installing Oh My Zsh..."
     RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    echo "✅ Installed Oh My Zsh"
 fi
 
+
 # -------------------------------
-# Powerlevel10k for both OS
+# Oh My Posh OS dependant
 # -------------------------------
-if [ ! -d "$HOME_DIR/.powerlevel10k" ]; then
-    echo "Installing powerlevel10k..."
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME_DIR/.powerlevel10k"
+if [[ "$OS" == "darwin" ]]; then
+    echo "Intalling Oh My Posh..."
+    brew install jandedobbeleer/oh-my-posh/oh-my-posh
+    echo "✅ Installed Oh My Posh"
 fi
+if [[ "$OS" == "linux" ]]; then
+    echo "Intalling Oh My Posh..."
+    curl -s https://ohmyposh.dev/install.sh | bash -s
+    echo "✅ Installed Oh My Posh"
+fi
+    echo "Adding oh my posh to .zshrc"
+    echo 'if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+        eval "$(oh-my-posh init zsh --config 'robbyrussell')"
+    fi' >> ~/.zshrc
+    exec zsh
+
+    echo "Installing JetBrainsMono font"
+    oh-my-posh font install jetbrainsmono
+
+
+
+# -------------------------------
+# zoxide for both OS
+# -------------------------------
+if ! command -V "zoxide" &>/dev/null; then
+    echo "Installing zoxide..."
+    curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+    echo "✅ Installed zoxide"
+fi
+
 
 # -------------------------------
 # Add local bin to PATH in shell rc
