@@ -29,13 +29,13 @@ if [[ "$OS" == "darwin" ]]; then
     echo "Installing Homebrew packages..."
     brew update
     brew install \
-        black cocoapods colima docker efm-langserver fd ffmpeg flyctl fzf ghostscript \
+        black cocoapods colima docker efm-langserver fd ffmpeg fzf ghostscript \
         git git-filter-repo gnupg go htop icu4c@76 imagemagick isort jsonlint lazygit \
         lua-language-server markdownlint-cli marksman mongosh neovim pandoc pinentry-mac pipx \
         plow postgresql@17 powerlevel10k prettier prettierd pyright python-lsp-server python@3.13 \
         qemu ranger ripgrep ruff visidata sst/tap/opencode stylua supabase/tap/supabase tmux \
         tursodatabase/tap/turso typescript-language-server uvicorn vale watchman wrk yadm \
-        yaml-language-server yt-dlp zsh
+        yaml-language-server yt-dlp zoxide zsh
 fi
 
 # -------------------------------
@@ -249,11 +249,9 @@ if [[ "$OS" == "linux" ]]; then
     install_bin "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp" "yt-dlp"
     install_bin "https://github.com/ajeetdsouza/zoxide/releases/download/v0.9.8/zoxide-0.9.8-x86_64-unknown-linux-musl.tar.gz" "zoxide"
     install_bin "https://github.com/mattn/efm-langserver/releases/download/v0.0.54/efm-langserver_v0.0.54_linux_amd64.tar.gz" "efm-langserver"
-    install_bin "https://github.com/superfly/flyctl/releases/download/v0.3.195/flyctl_0.3.195_Linux_x86_64.tar.gz" "flyctl"
     install_bin "https://github.com/artempyanykh/marksman/releases/download/2024-12-18/marksman-linux-x64" "marksman"
     install_bin "https://github.com/jgm/pandoc/releases/download/3.8.2/pandoc-3.8.2-linux-amd64.tar.gz" "pandoc"
     install_bin "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_x86_64.tar.gz" "gum"
-    install_bin "https://github.com/tsenart/vegeta/releases/download/v12.12.0/vegeta_linux_amd64.tar.gz" "vegeta"
 
     # Install lazygit with dynamic version detection
     if ! command -v "lazygit" &>/dev/null; then
@@ -337,17 +335,6 @@ fi
 
     echo "Installing JetBrainsMono font"
     oh-my-posh font install jetbrainsmono
-
-
-
-# -------------------------------
-# zoxide for both OS
-# -------------------------------
-if ! command -V "zoxide" &>/dev/null; then
-    echo "Installing zoxide..."
-    curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
-    echo "✅ Installed zoxide"
-fi
 
 
 # -------------------------------
