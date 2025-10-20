@@ -184,6 +184,8 @@ if [[ "$OS" == "linux" ]]; then
     if ! command -v opencode &>/dev/null; then
         echo "Installing OpenCode..."
         curl -fsSL https://opencode.ai/install | bash -
+    else
+        echo "✅ OpenCode already installed"
     fi
     
     # Install other tools with pnpm (only if pnpm is available)
@@ -283,18 +285,36 @@ if [[ "$OS" == "linux" ]]; then
     if ! command -v "turso" &>/dev/null; then
         echo "Installing turso..."
         curl --proto '=https' --tlsv1.2 -LsSf https://github.com/tursodatabase/turso/releases/latest/download/turso_cli-installer.sh | sh
-        echo "✅ Installed turso"
+        source $HOME/.turso/env
+        echo "✅ Installed turso and ran source $HOME/.turso/env"
     fi
 
     # Install Lua language server
     if ! command -v "lua-language-server" &>/dev/null; then
         echo "Installing Lua language server..."
         mkdir -p "$HOME_DIR/.local/lua-language-server"
-        cd "$HOME_DIR/.local/lua-language-server"
-        wget -q https://github.com/LuaLS/lua-language-server/releases/download/v3.9.3/lua-language-server-3.9.3-linux-x64.tar.gz
-        tar -xzf lua-language-server-3.9.3-linux-x64.tar.gz
-        ln -sf "$HOME_DIR/.local/lua-language-server/bin/lua-language-server" "$HOME_DIR/.local/bin/lua-language-server"
-        cd - > /dev/null
+        cd "$HOME_DIR/.local/lua-language-server" || { echo "Failed to change directory"; exit 1; }
+        
+        echo "Downloading Lua language server..."
+        wget -q https://github.com/LuaLS/lua-language-server/releases/download/3.15.0/lua-language-server-3.15.0-linux-x64.tar.gz || { echo "Failed to download"; exit 1; }
+        
+        echo "Extracting Lua language server..."
+        tar -xzf lua-language-server-3.15.0-linux-x64.tar.gz || { echo "Failed to extract"; exit 1; }
+        
+        # Check if the executable exists
+        if [ -f "bin/lua-language-server" ]; then
+            ln -sf "$HOME_DIR/.local/lua-language-server/bin/lua-language-server" "$HOME_DIR/.local/bin/lua-language-server"
+            chmod +x "$HOME_DIR/.local/bin/lua-language-server"
+            echo "✅ Installed lua-language-server"
+        else
+            echo "❌ lua-language-server executable not found"
+            ls -la
+            exit 1
+        fi
+        
+        cd - > /dev/null || exit 1
+    else
+        echo "✅ lua-language-server already installed"
     fi
 
     # Create symlinks for tools with different names
