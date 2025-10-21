@@ -49,7 +49,7 @@ config.switch_to_last_active_tab_when_closing_tab = true
 -- Font settings
 config.font_size = 18
 config.font = wezterm.font("JetBrains Mono")
-config.line_height = 1.2
+-- config.line_height = 1.2
 
 -- Colors
 config.colors = {
