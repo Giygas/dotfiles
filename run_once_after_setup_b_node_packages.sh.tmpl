@@ -32,16 +32,6 @@ else
 fi
 
 # -------------------------------
-# Install OpenCode (cross-platform)
-# -------------------------------
-if ! command -v opencode &>/dev/null; then
-    echo "Installing OpenCode..."
-    curl -fsSL https://opencode.ai/install | bash -
-else
-    echo "✅ OpenCode already installed"
-fi
-
-# -------------------------------
 # Install Node.js tools with pnpm
 # -------------------------------
 if command -v pnpm &>/dev/null; then

@@ -35,7 +35,7 @@ if [[ "$OS" == "darwin" ]]; then
         plow postgresql@17 powerlevel10k prettier prettierd pyright python-lsp-server python@3.13 \
         qemu ranger ripgrep ruff visidata sst/tap/opencode stylua supabase/tap/supabase tmux \
         tursodatabase/tap/turso typescript-language-server uvicorn vale watchman wrk yadm \
-        yaml-language-server yt-dlp zoxide zsh
+        yaml-language-server yt-dlp nvim zoxide zsh
 fi
 
 # -------------------------------
@@ -89,7 +89,7 @@ if [[ "$OS" == "linux" ]]; then
     echo "Installing system packages..."
     sudo apt update
     sudo apt install -y \
-        fd-find fzf htop neovim tmux zsh ranger ripgrep gnupg git \
+        fd-find fzf htop tmux zsh ranger ripgrep gnupg git \
         ffmpeg ghostscript imagemagick qemu-kvm libvirt-daemon-system \
         libvirt-clients bridge-utils virtinst virt-manager postgresql postgresql-contrib \
         yadm watchman
@@ -126,17 +126,6 @@ if [[ "$OS" == "linux" ]]; then
         echo "✅ OpenCode already installed"
     fi
     
-    # Install other tools with pnpm (only if pnpm is available)
-    if command -v pnpm &>/dev/null; then
-        echo "Installing Node.js tools with pnpm..."
-        pnpm add -g \
-            prettier @fsouza/prettierd typescript-language-server yaml-language-server \
-            @fsouza/prettierd markdownlint-cli @supabase/supabase-js
-    else
-        echo "⚠️ pnpm not available, skipping Node.js tools installation"
-    fi
-
-
     # Binary tools helper
     install_bin() {
         url="$1"
@@ -227,6 +216,19 @@ if [[ "$OS" == "linux" ]]; then
         echo "✅ Installed turso and ran source $HOME/.turso/env"
     fi
 
+
+    # Install latest neovim version
+    if ! command -v "nvim" &>/dev/null; then
+        echo "Installing neovim..."
+        curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+        sudo rm -rf /opt/nvim-linux-x86_64
+        sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+        rm -rf nvim-linux-x86_64.tar.gz
+        echo "✅ Neovim tarball installed successfully"
+    else
+        echo "👌Neovim already installed"
+    fi
+
     # Install Lua language server
     if ! command -v "lua-language-server" &>/dev/null; then
         echo "Installing Lua language server..."
@@ -269,7 +271,7 @@ fi
 # -------------------------------
 if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
     echo "Installing Oh My Zsh..."
-    RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
     echo "✅ Installed Oh My Zsh"
 fi
 
@@ -298,24 +300,6 @@ if [[ "$OS" == "linux" ]]; then
     curl -s https://ohmyposh.dev/install.sh | bash -s
     echo "✅ Installed Oh My Posh"
 fi
-
-
-# -------------------------------
-# Latest neovim version
-# -------------------------------
-# Try AppImage first (smaller download), fallback to extraction
-if curl -Lo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/v0.11.4/nvim-linux-x86_64.appimage && chmod +x ~/.local/bin/nvim && ~/.local/bin/nvim - -version >/dev/null 2>&1; then
-    echo "✅ Neovim AppImage installed successfully"
-else
-    echo "⚠️ AppImage failed, using tarball extraction..."
-    rm -f ~/.local/bin/nvim
-    curl -LO https://github.com/neovim/neovim/releases/download/v0.11.4/nvim-linux-x86_64.tar.gz
-    tar xzvf nvim-linux-x86_64.tar.gz
-    mv nvim-linux-x86_64/bin/nvim ~/.local/bin/nvim
-    rm -rf nvim-linux-x86_64 nvim-linux-x86_64.tar.gz
-    echo "✅ Neovim tarball installed successfully"
-fi
-
 
 echo "Installing JetBrainsMono font"
 oh-my-posh font install jetbrainsmono

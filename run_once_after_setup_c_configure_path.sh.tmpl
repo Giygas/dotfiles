@@ -38,12 +38,17 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
         fi
     fi
 
-        # Then check if active PATH exists and add if missing
+    # Then check if active PATH exists and add if missing
     if ! grep -q "^export PATH=.*\.local/bin" "$HOME_DIR/.zshrc"; then
         echo "export PATH=\$HOME/bin:\$HOME/.local/bin:/usr/local/bin:\$PATH" >> "$HOME_DIR/.zshrc"
         echo "✅ Added .local/bin to PATH"
     else
         echo "✅ .local/bin already configured in PATH"
+    fi
+
+    # Add the nvim bin to path
+    if ! grep -q "/opt/nvim-linux-x86_64/bin" "$HOME_DIR/.zshrc"; then
+        export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
     fi
 
     # Add pnpm
