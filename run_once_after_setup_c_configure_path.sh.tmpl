@@ -38,6 +38,19 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
         fi
     fi
 
+    ## Using the script in aliases right now
+    ## # Add .local/scripts
+    ## if ! grep -q ".local/scripts" "$HOME_DIR/.zshrc"; then
+    ##     echo 'export PATH="$HOME/.local/scripts:$PATH"' >> "$HOME_DIR/.zshrc"
+    ##     echo "✅ Added .local/scripts to PATH"
+    ## fi
+
+    # Make dev.sh executable
+    if [ -f "$HOME_DIR/.local/scripts/dev.sh" ]; then
+        chmod +x "$HOME_DIR/.local/scripts/dev.sh"
+        echo "✅ Made dev.sh executable"
+    fi
+
     # Then check if active PATH exists and add if missing
     if ! grep -q "^export PATH=.*\.local/bin" "$HOME_DIR/.zshrc"; then
         echo "export PATH=\$HOME/bin:\$HOME/.local/bin:/usr/local/bin:\$PATH" >> "$HOME_DIR/.zshrc"
@@ -48,7 +61,7 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
 
     # Add the nvim bin to path
     if ! grep -q "/opt/nvim-linux-x86_64/bin" "$HOME_DIR/.zshrc"; then
-        export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+        echo 'export PATH="$PATH:/opt/nvim-linux-x86_64/bin"' >> "$HOME_DIR/.zshrc"
     fi
 
     # Add pnpm
