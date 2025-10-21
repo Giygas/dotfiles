@@ -1,65 +1,82 @@
 #!/usr/bin/env bash
 {{ if or (eq .chezmoi.os "darwin") (eq .chezmoi.os "linux") }}
-
 set -e
 
-echo "📦 Setting up Node.js development environment..."
+# Interactive prompt function
+ask_install_dev_tools() {
+    echo "Do you want to install node tools? (y/n)"
+    read -r response
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        echo "Installing dev tools..."
+        return 0  # Continue with installation
+    else
+        echo "Skipping dev tools installation."
+        return 1  # Skip installation
+    fi
+}
 
-# Determine OS and home directory
-OS="{{ .chezmoi.os }}"
-HOME_DIR="{{ .chezmoi.homeDir }}"
+if ask_install_dev_tools; then
 
-echo "OS detected: $OS"
-echo "Home directory: $HOME_DIR"
+    echo "📦 Setting up Node.js development environment..."
 
-# -------------------------------
-# Install pnpm (cross-platform)
-# -------------------------------
-if ! command -v pnpm &>/dev/null; then
-    echo "Installing pnpm..."
-    curl -fsSL https://get.pnpm.io/install.sh | sh -
-    
-    # Set up pnpm environment for current script session
-    export PNPM_HOME="$HOME_DIR/.local/share/pnpm"
-    export PATH="$PNPM_HOME:$PATH"
-    
-    echo "✅ Installed pnpm"
+    # Determine OS and home directory
+    OS="{{ .chezmoi.os }}"
+    HOME_DIR="{{ .chezmoi.homeDir }}"
+
+    echo "OS detected: $OS"
+    echo "Home directory: $HOME_DIR"
+
+    # -------------------------------
+    # Install pnpm (cross-platform)
+    # -------------------------------
+    if ! command -v pnpm &>/dev/null; then
+        echo "Installing pnpm..."
+        curl -fsSL https://get.pnpm.io/install.sh | sh -
+        
+        # Set up pnpm environment for current script session
+        export PNPM_HOME="$HOME_DIR/.local/share/pnpm"
+        export PATH="$PNPM_HOME:$PATH"
+        
+        echo "✅ Installed pnpm"
+    else
+        echo "✅ pnpm already installed"
+        # Ensure pnpm environment is set for current session
+        export PNPM_HOME="$HOME_DIR/.local/share/pnpm"
+        export PATH="$PNPM_HOME:$PATH"
+    fi
+
+    # -------------------------------
+    # Install Node.js tools with pnpm
+    # -------------------------------
+    if command -v pnpm &>/dev/null; then
+        echo "Installing Node.js tools with pnpm..."
+        
+        # Combined package list from both dev tools and npm packages scripts
+        pnpm add -g \
+            @compodoc/live-server \
+            @olrtg/emmet-language-server \
+            @tailwindcss/language-server \
+            corepack@0.34.0 \
+            eas-cli@16.19.1 \
+            prettier \
+            @fsouza/prettierd \
+            typescript-language-server \
+            yaml-language-server \
+            markdownlint-cli \
+            svelte-language-server \
+            @supabase/supabase-js
+        
+        echo "✅ Installed Node.js tools with pnpm"
+    else
+        echo "❌ pnpm not available, cannot install Node.js tools"
+        exit 1
+    fi
+
+
+    echo "🎉 Node.js development environment setup complete!"
 else
-    echo "✅ pnpm already installed"
-    # Ensure pnpm environment is set for current session
-    export PNPM_HOME="$HOME_DIR/.local/share/pnpm"
-    export PATH="$PNPM_HOME:$PATH"
+    echo "⏭️Skipping node tools installation"
 fi
-
-# -------------------------------
-# Install Node.js tools with pnpm
-# -------------------------------
-if command -v pnpm &>/dev/null; then
-    echo "Installing Node.js tools with pnpm..."
-    
-    # Combined package list from both dev tools and npm packages scripts
-    pnpm add -g \
-        @compodoc/live-server \
-        @olrtg/emmet-language-server \
-        @tailwindcss/language-server \
-        corepack@0.34.0 \
-        eas-cli@16.19.1 \
-        prettier \
-        @fsouza/prettierd \
-        typescript-language-server \
-        yaml-language-server \
-        markdownlint-cli \
-        svelte-language-server \
-        @supabase/supabase-js
-    
-    echo "✅ Installed Node.js tools with pnpm"
-else
-    echo "❌ pnpm not available, cannot install Node.js tools"
-    exit 1
-fi
-
-
-echo "🎉 Node.js development environment setup complete!"
 
 {{ else }}
 

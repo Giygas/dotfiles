@@ -1,7 +1,19 @@
 #!/usr/bin/env bash
 set -e
 
-echo "🔧 Starting dev environment setup..."
+# Interactive prompt function
+ask_install_dev_tools() {
+    echo "Do you want to install development tools? (y/n)"
+    read -r response
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        echo "Installing dev tools..."
+        return 0  # Continue with installation
+    else
+        echo "Skipping dev tools installation."
+        return 1  # Skip installation
+    fi
+}
+
 
 # -------------------------------
 # Determine OS and home directory
@@ -17,254 +29,278 @@ echo "Home directory: $HOME_DIR"
 # -------------------------------
 # macOS setup
 # -------------------------------
-if [[ "$OS" == "darwin" ]]; then
-    echo "📦 Setting up macOS dev environment..."
+if ask_install_dev_tools; then
+    echo "🔧 Starting dev environment setup..."
 
-    # Ensure Homebrew is installed
-    if ! command -v brew &>/dev/null; then
-        echo "Installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    fi
+    # -------------------------------
+    # MacOS install
+    # -------------------------------
+    if [[ "$OS" == "darwin" ]]; then
+        echo "📦 Setting up macOS dev environment..."
 
-    echo "Installing Homebrew packages..."
-    brew update
-    brew install \
-        black cocoapods colima docker efm-langserver fd ffmpeg fzf ghostscript \
-        git git-filter-repo gnupg go htop icu4c@76 imagemagick isort jsonlint lazygit \
-        lua-language-server markdownlint-cli marksman mongosh neovim pandoc pinentry-mac pipx \
-        plow postgresql@17 powerlevel10k prettier prettierd pyright python-lsp-server python@3.13 \
-        qemu ranger ripgrep ruff visidata sst/tap/opencode stylua supabase/tap/supabase tmux \
-        tursodatabase/tap/turso typescript-language-server uvicorn vale watchman wrk yadm \
-        yaml-language-server yt-dlp nvim zoxide zsh
-fi
-
-# -------------------------------
-# Linux (Ubuntu) setup
-# -------------------------------
-if [[ "$OS" == "linux" ]]; then
-    echo "📦 Setting up Linux dev environment (user: $USER_NAME)..."
-
-    # Check for essential system packages
-    REQUIRED=("git" "python3" "pip3" "curl")
-    MISSING=()
-    for pkg in "${REQUIRED[@]}"; do
-        if ! command -v "$pkg" &>/dev/null; then
-            MISSING+=("$pkg")
+        # Ensure Homebrew is installed
+        if ! command -v brew &>/dev/null; then
+            echo "Installing Homebrew..."
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         fi
-    done
 
-    if [ ${#MISSING[@]} -ne 0 ]; then
-        echo "⚠️  The following system packages are missing: ${MISSING[*]}"
-        echo "Please install them first. Example for Ubuntu/Debian:"
-        echo "sudo apt update && sudo apt install -y ${MISSING[*]}"
-        exit 1
+        echo "Installing Homebrew packages..."
+        brew update
+        brew install \
+            black cocoapods colima docker efm-langserver fd ffmpeg fzf ghostscript \
+            git git-filter-repo gnupg go htop icu4c@76 imagemagick isort jsonlint lazygit \
+            lua-language-server markdownlint-cli marksman mongosh neovim pandoc pinentry-mac pipx \
+            plow postgresql@17 powerlevel10k prettier prettierd pyright python-lsp-server python@3.13 \
+            qemu ranger ripgrep ruff visidata sst/tap/opencode stylua supabase/tap/supabase tmux \
+            tursodatabase/tap/turso typescript-language-server uvicorn vale watchman wrk yadm \
+            yaml-language-server yt-dlp nvim zoxide zsh
     fi
 
-    # Install Node.js 20+ if needed
-    if ! command -v node &>/dev/null || [[ $(node -v | cut -d'v' -f2 | cut -d'.' -f1) -lt 18 ]]; then
-        echo "Installing Node.js 20..."
-        
-        # Remove existing Node.js installation to avoid conflicts
-        echo "Removing existing Node.js installation..."
-        sudo apt-get remove -y nodejs npm libnode-dev || true
-        sudo apt-get autoremove -y || true
-        
-        # Add NodeSource repository
-        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-        
-        # Install Node.js 20
-        sudo apt-get install -y nodejs
-        
-        # Clean up any remaining conflicts
-        sudo apt-get autoremove -y || true
-    fi
+    # -------------------------------
+    # Linux (Ubuntu) setup
+    # -------------------------------
+    if [[ "$OS" == "linux" ]]; then
+        echo "📦 Setting up Linux dev environment (user: $USER_NAME)..."
 
-
-
-    # Local bin setup
-    mkdir -p "$HOME_DIR/.local/bin"
-    export PATH="$HOME_DIR/.local/bin:$PATH"
-
-    # Install system packages via apt
-    echo "Installing system packages..."
-    sudo apt update
-    sudo apt install -y \
-        fd-find fzf htop tmux zsh ranger ripgrep gnupg git \
-        ffmpeg ghostscript imagemagick qemu-kvm libvirt-daemon-system \
-        libvirt-clients bridge-utils virtinst virt-manager postgresql postgresql-contrib \
-        yadm watchman
-
-    # Install Go
-    if ! command -v go &>/dev/null; then
-        echo "Installing Go..."
-        GO_VERSION="1.23.2"
-        wget -q https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz
-        sudo rm -rf /usr/local/go
-        sudo tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz
-        export PATH=$PATH:/usr/local/go/bin
-        echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME_DIR/.zshrc"
-        source "$HOME_DIR/.zshrc" || true
-    fi
-
-    # Python tools
-    echo "Installing Python packages..."
-    pip3 install --user \
-        black isort fastapi uvicorn python-lsp-server ruff visidata \
-        pyright pipx jsonlint
-
-    # Install additional Python tools via pipx
-    if command -v pipx &>/dev/null; then
-        echo "Installing Python tools via pipx..."
-        pipx install git-filter-repo
-    fi
-    
-    # Install opencode using recommended method
-    if ! command --version opencode &>/dev/null; then
-        echo "Installing OpenCode..."
-        curl -fsSL https://opencode.ai/install | bash -
-    else
-        echo "✅ OpenCode already installed"
-    fi
-    
-    # Binary tools helper
-    install_bin() {
-        url="$1"
-        name="$2"
-        dest="$HOME_DIR/.local/bin/$name"
-        if ! command -v "$name" &>/dev/null; then
-            tmp=$(mktemp)
-            tmpdir=$(mktemp -d)
-            
-            echo "Downloading $name..."
-            curl -sSL "$url" -o "$tmp"
-            
-            # Check if it's a tar.gz archive
-            if [[ "$url" == *.tar.gz ]]; then
-                echo "Extracting $name..."
-                tar -xzf "$tmp" -C "$tmpdir"
-                
-                # Find the executable in the extracted directory
-                executable=$(find "$tmpdir" -type f -name "$name" -executable | head -1)
-                if [[ -z "$executable" ]]; then
-                    # Try to find any executable with similar name
-                    executable=$(find "$tmpdir" -type f -executable | head -1)
-                fi
-                
-                if [[ -n "$executable" ]]; then
-                    mv "$executable" "$dest"
-                    echo "✅ Installed $name"
-                else
-                    echo "❌ Could not find executable for $name"
-                    rm -rf "$tmpdir" "$tmp"
-                    return 1
-                fi
-            else
-                # Direct binary download
-                mv "$tmp" "$dest"
-                chmod +x "$dest"
-                echo "✅ Installed $name"
+        # Check for essential system packages
+        REQUIRED=("git" "python3" "pip3" "curl")
+        MISSING=()
+        for pkg in "${REQUIRED[@]}"; do
+            if ! command -v "$pkg" &>/dev/null; then
+                MISSING+=("$pkg")
             fi
-            
-            rm -rf "$tmpdir" "$tmp"
-        else
-            echo "✅ $name already installed"
-        fi
-    }
+        done
 
-    # User binaries
-    install_bin "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.3.0/stylua-linux-x86_64.zip" "stylua"
-    install_bin "https://github.com/supabase/cli/releases/download/v2.51.0/supabase_linux_amd64.tar.gz" "supabase"
-    install_bin "https://github.com/errata-ai/vale/releases/download/v3.12.0/vale_3.12.0_Linux_64-bit.tar.gz" "vale"
-    install_bin "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp" "yt-dlp"
-    install_bin "https://github.com/ajeetdsouza/zoxide/releases/download/v0.9.8/zoxide-0.9.8-x86_64-unknown-linux-musl.tar.gz" "zoxide"
-    install_bin "https://github.com/mattn/efm-langserver/releases/download/v0.0.54/efm-langserver_v0.0.54_linux_amd64.tar.gz" "efm-langserver"
-    install_bin "https://github.com/artempyanykh/marksman/releases/download/2024-12-18/marksman-linux-x64" "marksman"
-    install_bin "https://github.com/jgm/pandoc/releases/download/3.8.2/pandoc-3.8.2-linux-amd64.tar.gz" "pandoc"
-    install_bin "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_x86_64.tar.gz" "gum"
-
-    # Install lazygit with dynamic version detection
-    if ! command -v "lazygit" &>/dev/null; then
-        echo "Installing lazygit..."
-        LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": *"v\K[^"]*')
-        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
-        tar xf lazygit.tar.gz lazygit
-        sudo install lazygit -D -t /usr/local/bin
-        rm -f lazygit.tar.gz lazygit
-        echo "✅ Installed lazygit"
-    else
-        echo "✅ lazygit already installed"
-    fi
-
-
-    # Install wezterm
-    if ! command --version "wezterm" &>/dev/null; then
-        echo "Installing wezterm..."
-        curl -LO https://github.com/wezterm/wezterm/releases/download/20240203-110809-5046fc22/wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
-        tar -xf wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
-        cp -r wezterm/usr/bin/* $HOME_DIR/.local/bin
-        cp -r wezterm/usr/share/* $HOME_DIR/.local/share
-        rm -rf wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
-        rm -rf wezterm
-        echo "✅ Wezterm tarball installed successfully"
-    fi
-    
-    # Install turso using official installer
-    if ! command -v "turso" &>/dev/null; then
-        echo "Installing turso..."
-        curl --proto '=https' --tlsv1.2 -LsSf https://github.com/tursodatabase/turso/releases/latest/download/turso_cli-installer.sh | sh
-        source $HOME/.turso/env
-        echo "✅ Installed turso and ran source $HOME/.turso/env"
-    fi
-
-
-    # Install latest neovim version
-    if ! command -v "nvim" &>/dev/null; then
-        echo "Installing neovim..."
-        curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
-        sudo rm -rf /opt/nvim-linux-x86_64
-        sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
-        rm -rf nvim-linux-x86_64.tar.gz
-        echo "✅ Neovim tarball installed successfully"
-    else
-        echo "👌Neovim already installed"
-    fi
-
-    # Install Lua language server
-    if ! command -v "lua-language-server" &>/dev/null; then
-        echo "Installing Lua language server..."
-        mkdir -p "$HOME_DIR/.local/lua-language-server"
-        cd "$HOME_DIR/.local/lua-language-server" || { echo "Failed to change directory"; exit 1; }
-        
-        echo "Downloading Lua language server..."
-        wget -q https://github.com/LuaLS/lua-language-server/releases/download/3.15.0/lua-language-server-3.15.0-linux-x64.tar.gz || { echo "Failed to download"; exit 1; }
-        
-        echo "Extracting Lua language server..."
-        tar -xzf lua-language-server-3.15.0-linux-x64.tar.gz || { echo "Failed to extract"; exit 1; }
-        
-        # Check if the executable exists
-        if [ -f "bin/lua-language-server" ]; then
-            ln -sf "$HOME_DIR/.local/lua-language-server/bin/lua-language-server" "$HOME_DIR/.local/bin/lua-language-server"
-            chmod +x "$HOME_DIR/.local/bin/lua-language-server"
-            echo "✅ Installed lua-language-server"
-        else
-            echo "❌ lua-language-server executable not found"
-            ls -la
+        if [ ${#MISSING[@]} -ne 0 ]; then
+            echo "⚠️  The following system packages are missing: ${MISSING[*]}"
+            echo "Please install them first. Example for Ubuntu/Debian:"
+            echo "sudo apt update && sudo apt install -y ${MISSING[*]}"
             exit 1
         fi
+
+        # Install Node.js 20+ if needed
+        if ! command -v node &>/dev/null || [[ $(node -v | cut -d'v' -f2 | cut -d'.' -f1) -lt 18 ]]; then
+            echo "Installing Node.js 20..."
+            
+            # Remove existing Node.js installation to avoid conflicts
+            echo "Removing existing Node.js installation..."
+            sudo apt-get remove -y nodejs npm libnode-dev || true
+            sudo apt-get autoremove -y || true
+            
+            # Add NodeSource repository
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            
+            # Install Node.js 20
+            sudo apt-get install -y nodejs
+            
+            # Clean up any remaining conflicts
+            sudo apt-get autoremove -y || true
+        fi
+
+        # Local bin setup
+        mkdir -p "$HOME_DIR/.local/bin"
+        export PATH="$HOME_DIR/.local/bin:$PATH"
+
+        # Install system packages via apt
+        echo "Installing system packages..."
+        sudo apt update
+        sudo apt install -y \
+            fd-find fzf htop tmux zsh ranger ripgrep gnupg git \
+            ffmpeg ghostscript imagemagick qemu-kvm libvirt-daemon-system \
+            libvirt-clients bridge-utils virtinst virt-manager postgresql postgresql-contrib \
+            yadm watchman
+
+        # Install Go
+        if ! command -v go &>/dev/null; then
+            echo "Installing Go..."
+            GO_VERSION="1.23.2"
+            wget -q https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz
+            sudo rm -rf /usr/local/go
+            sudo tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz
+            export PATH=$PATH:/usr/local/go/bin
+            echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME_DIR/.zshrc"
+            source "$HOME_DIR/.zshrc" || true
+        fi
+
+        # Python tools
+        echo "Installing Python packages..."
+        pip3 install --user \
+            black isort fastapi uvicorn python-lsp-server ruff visidata \
+            pyright pipx jsonlint
+
+        # Install additional Python tools via pipx
+        if command -v pipx &>/dev/null; then
+            echo "Installing Python tools via pipx..."
+            pipx install git-filter-repo
+        fi
         
-        cd - > /dev/null || exit 1
-    else
-        echo "✅ lua-language-server already installed"
-    fi
+        # Install opencode 
+        if ! command -v opencode &>/dev/null; then
+            echo "Installing OpenCode..."
+            curl -fsSL https://opencode.ai/install | bash -
+        else
+            echo "✅ OpenCode already installed"
+        fi
+        
+        # Binary tools helper
+        install_bin() {
+            url="$1"
+            name="$2"
+            dest="$HOME_DIR/.local/bin/$name"
+            if ! command -v "$name" &>/dev/null; then
+                tmp=$(mktemp)
+                tmpdir=$(mktemp -d)
+                
+                echo "Downloading $name..."
+                curl -sSL "$url" -o "$tmp"
+                
+                # Check if it's a tar.gz archive
+                if [[ "$url" == *.tar.gz ]]; then
+                    echo "Extracting $name..."
+                    tar -xzf "$tmp" -C "$tmpdir"
+                    
+                    # Find the executable in the extracted directory
+                    executable=$(find "$tmpdir" -type f -name "$name" -executable | head -1)
+                    if [[ -z "$executable" ]]; then
+                        # Try to find any executable with similar name
+                        executable=$(find "$tmpdir" -type f -executable | head -1)
+                    fi
+                    
+                    if [[ -n "$executable" ]]; then
+                        mv "$executable" "$dest"
+                        echo "✅ Installed $name"
+                    else
+                        echo "❌ Could not find executable for $name"
+                        rm -rf "$tmpdir" "$tmp"
+                        return 1
+                    fi
+                else
+                    # Direct binary download
+                    mv "$tmp" "$dest"
+                    chmod +x "$dest"
+                    echo "✅ Installed $name"
+                fi
+                
+                rm -rf "$tmpdir" "$tmp"
+            else
+                echo "✅ $name already installed"
+            fi
+        }
 
-    # Create symlinks for tools with different names
-    if command -v fdfind &>/dev/null && ! command -v fd &>/dev/null; then
-        ln -sf "$(which fdfind)" "$HOME_DIR/.local/bin/fd"
-    fi
+        # User binaries
+        install_bin "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.3.0/stylua-linux-x86_64.zip" "stylua"
+        install_bin "https://github.com/supabase/cli/releases/download/v2.51.0/supabase_linux_amd64.tar.gz" "supabase"
+        install_bin "https://github.com/errata-ai/vale/releases/download/v3.12.0/vale_3.12.0_Linux_64-bit.tar.gz" "vale"
+        install_bin "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp" "yt-dlp"
+        install_bin "https://github.com/ajeetdsouza/zoxide/releases/download/v0.9.8/zoxide-0.9.8-x86_64-unknown-linux-musl.tar.gz" "zoxide"
+        install_bin "https://github.com/mattn/efm-langserver/releases/download/v0.0.54/efm-langserver_v0.0.54_linux_amd64.tar.gz" "efm-langserver"
+        install_bin "https://github.com/artempyanykh/marksman/releases/download/2024-12-18/marksman-linux-x64" "marksman"
+        install_bin "https://github.com/jgm/pandoc/releases/download/3.8.2/pandoc-3.8.2-linux-amd64.tar.gz" "pandoc"
+        install_bin "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_x86_64.tar.gz" "gum"
 
+        # Install lazygit with dynamic version detection
+        if ! command -v "lazygit" &>/dev/null; then
+            echo "Installing lazygit..."
+            LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": *"v\K[^"]*')
+            curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+            tar xf lazygit.tar.gz lazygit
+            sudo install lazygit -D -t /usr/local/bin
+            rm -f lazygit.tar.gz lazygit
+            echo "✅ Installed lazygit"
+        else
+            echo "✅ lazygit already installed"
+        fi
+
+
+        # Install wezterm
+        if ! command --version "wezterm" &>/dev/null; then
+            echo "Installing wezterm..."
+            curl -LO https://github.com/wezterm/wezterm/releases/download/20240203-110809-5046fc22/wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
+            tar -xf wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
+            cp -r wezterm/usr/bin/* $HOME_DIR/.local/bin
+            cp -r wezterm/usr/share/* $HOME_DIR/.local/share
+            rm -rf wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
+            rm -rf wezterm
+            echo "✅ Wezterm tarball installed successfully"
+        fi
+        
+        # Install turso using official installer
+        if ! command -v "turso" &>/dev/null; then
+            echo "Installing turso..."
+            curl --proto '=https' --tlsv1.2 -LsSf https://github.com/tursodatabase/turso/releases/latest/download/turso_cli-installer.sh | sh
+            source $HOME/.turso/env
+            echo "✅ Installed turso and ran source $HOME/.turso/env"
+        fi
+
+        # Install Lua language server
+        if ! command -v "lua-language-server" &>/dev/null; then
+            echo "Installing Lua language server..."
+            mkdir -p "$HOME_DIR/.local/lua-language-server"
+            cd "$HOME_DIR/.local/lua-language-server" || { echo "Failed to change directory"; exit 1; }
+            
+            echo "Downloading Lua language server..."
+            wget -q https://github.com/LuaLS/lua-language-server/releases/download/3.15.0/lua-language-server-3.15.0-linux-x64.tar.gz || { echo "Failed to download"; exit 1; }
+            
+            echo "Extracting Lua language server..."
+            tar -xzf lua-language-server-3.15.0-linux-x64.tar.gz || { echo "Failed to extract"; exit 1; }
+            
+            # Check if the executable exists
+            if [ -f "bin/lua-language-server" ]; then
+                ln -sf "$HOME_DIR/.local/lua-language-server/bin/lua-language-server" "$HOME_DIR/.local/bin/lua-language-server"
+                chmod +x "$HOME_DIR/.local/bin/lua-language-server"
+                echo "✅ Installed lua-language-server"
+            else
+                echo "❌ lua-language-server executable not found"
+                ls -la
+                exit 1
+            fi
+            
+            cd - > /dev/null || exit 1
+        else
+            echo "✅ lua-language-server already installed"
+        fi
+
+        # Create symlinks for tools with different names
+        if command -v fdfind &>/dev/null && ! command -v fd &>/dev/null; then
+            ln -sf "$(which fdfind)" "$HOME_DIR/.local/bin/fd"
+        fi
+
+    fi
+else
+    echo "⏭️Skipping dev tools installation"
 fi
 
+# -------------------------------
+# Latest nvim version for linux
+# -------------------------------
+install_neovim() {
+    echo "Installing neovim..."
+    curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+    sudo rm -rf /opt/nvim-linux-x86_64
+    sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+    rm -rf nvim-linux-x86_64.tar.gz
 
+    if ! grep -q "/opt/nvim-linux-x86_64/bin" "$HOME_DIR/.zshrc"; then
+        echo 'export PATH="$PATH:/opt/nvim-linux-x86_64/bin"' >> "$HOME_DIR/.zshrc"
+    fi
+    echo "✅ Neovim tarball installed successfully"
+}
+
+if [[ "$OS" == "linux" ]]; then
+    if command -v "nvim" &>/dev/null; then
+        current_version=$(nvim --version | head -n1 | grep -oP 'v\K[0-9]+\.[0-9]+')
+        min_version="0.11"
+
+        if printf '%s\n' "$min_version" "$current_version" | sort -V | head -n1 | grep -q "$min_version"; then
+            echo "👌 Neovim $current_version already installed (>= 0.11)"
+        else
+            echo "🔄 Neovim $current_version < 0.11, upgrading..."
+            install_neovim
+        fi
+    else
+        install_neovim
+    fi
+fi
 
 # -------------------------------
 # Oh My Zsh for both OS
