@@ -45,6 +45,19 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
     ##     echo "✅ Added .local/scripts to PATH"
     ## fi
 
+    # Add opencode to PATH
+    if ! grep -q ".opencode/bin" "$HOME_DIR/.zshrc"; then
+        echo 'export PATH=/home/dev/.opencode/bin:$PATH' >> "$HOME_DIR/.zshrc"
+    fi
+
+    # Add nvm to PATH
+    if ! grep -q "NVM_DIR" "$HOME_DIR/.zshrc"; then
+        echo 'export NVM_DIR="$HOME/.nvm"' >> "$HOME_DIR/.zshrc"
+        echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> "$HOME_DIR/.zshrc"
+        echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> "$HOME_DIR/.zshrc"
+        echo "✅ Added NVM to .zshrc"
+    fi
+ 
     # Make dev.sh executable
     if [ -f "$HOME_DIR/.local/scripts/dev.sh" ]; then
         chmod +x "$HOME_DIR/.local/scripts/dev.sh"
@@ -81,7 +94,9 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
     if [[ "$SHELL" != *"zsh"* ]]; then
         echo "Setting zsh as default shell..."
         chsh -s $(which zsh) || echo "⚠️ Could not change shell (may require sudo or different permissions)"
+        exec zsh
     fi
+
 else
     echo "❌ .zshrc not found - cannot configure PATH"
 fi
