@@ -43,10 +43,48 @@ USER_NAME=$(whoami)
 
 echo "OS detected: $OS"
 echo "User: $USER_NAME"
+
 echo "Home directory: $HOME_DIR"
 
+
 # -------------------------------
-# macOS setup
+# Oh My Zsh for both OS
+# -------------------------------
+if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
+    echo "Installing Oh My Zsh..."
+    RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    echo "✅ Installed Oh My Zsh"
+fi
+
+# Clone the plugins first
+echo "Installing zsh-autosuggestions..."
+if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+fi
+
+echo "Installing zsh-syntax-highlighting..."
+if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]; then
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+fi
+
+
+# -------------------------------
+# Oh My Posh OS dependant
+# -------------------------------
+if [[ "$OS" == "darwin" ]]; then
+    echo "Intalling Oh My Posh..."
+    brew install jandedobbeleer/oh-my-posh/oh-my-posh
+    echo "✅ Installed Oh My Posh"
+fi
+if [[ "$OS" == "linux" ]]; then
+    echo "Intalling Oh My Posh..."
+    curl -s https://ohmyposh.dev/install.sh | bash -s
+    echo "✅ Installed Oh My Posh"
+fi
+
+
+# -------------------------------
+# Per OS setup
 # -------------------------------
 if ask_install_dev_tools; then
     echo "🔧 Starting dev environment setup..."
@@ -307,41 +345,6 @@ if [[ "$OS" == "linux" ]]; then
     else
         install_neovim
     fi
-fi
-
-# -------------------------------
-# Oh My Zsh for both OS
-# -------------------------------
-if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
-    echo "Installing Oh My Zsh..."
-    RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    echo "✅ Installed Oh My Zsh"
-fi
-
-# Clone the plugins first
-echo "Installing zsh-autosuggestions..."
-if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-fi
-
-echo "Installing zsh-syntax-highlighting..."
-if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]; then
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-fi
-
-
-# -------------------------------
-# Oh My Posh OS dependant
-# -------------------------------
-if [[ "$OS" == "darwin" ]]; then
-    echo "Intalling Oh My Posh..."
-    brew install jandedobbeleer/oh-my-posh/oh-my-posh
-    echo "✅ Installed Oh My Posh"
-fi
-if [[ "$OS" == "linux" ]]; then
-    echo "Intalling Oh My Posh..."
-    curl -s https://ohmyposh.dev/install.sh | bash -s
-    echo "✅ Installed Oh My Posh"
 fi
 
 echo "Installing JetBrainsMono font"

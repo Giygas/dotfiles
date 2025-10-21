@@ -80,7 +80,7 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
     # Set zsh as default shell
     if [[ "$SHELL" != *"zsh"* ]]; then
         echo "Setting zsh as default shell..."
-        sudo chsh -s $(which zsh) || echo "⚠️ Could not change shell (may require sudo or different permissions)"
+        chsh -s $(which zsh) || echo "⚠️ Could not change shell (may require sudo or different permissions)"
     fi
 else
     echo "❌ .zshrc not found - cannot configure PATH"
