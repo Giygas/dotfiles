@@ -331,17 +331,29 @@ if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
     echo "Installing Oh My Zsh..."
     RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     echo "✅ Installed Oh My Zsh"
-    echo "Installing zsh-autosuggestions"
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-    if ! grep -q "zsh-autosuggestions" ~/.zshrc; then
-        sed -i '/^plugins=/ s/)/ zsh-autosuggestions)/' ~/.zshrc
+fi
+
+# Clone the plugins first
+echo "Installing zsh-autosuggestions..."
+if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+fi
+
+echo "Installing zsh-syntax-highlighting..."
+if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]; then
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+fi
+
+if [ -f "$HOME_DIR/.zshrc" ]; then
+    # Add both plugins at once to avoid duplication
+    if ! grep -q "zsh-autosuggestions\|zsh-syntax-highlighting" "$HOME_DIR/.zshrc"; then
+        sed -i '/^plugins=/ s/plugins=(/plugins=(git zsh-autosuggestions zsh-syntax-highlighting /' "$HOME_DIR/.zshrc"
+        echo "✅ Added zsh plugins to .zshrc"
+    else
+        echo "✅ zsh plugins already present in .zshrc"
     fi
-    echo "Installing zsh-syntax-highlighting"
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-    if ! grep -q "zsh-syntax-highlighting" ~/.zshrc; then
-        sed -i '/^plugins=/ s/)/ zsh-syntax-highlighting)/' ~/.zshrc
-    fi
-    echo "✅ All good"
+else
+    echo "❌ .zshrc not found after Oh My Zsh installation"
 fi
 
 
@@ -366,6 +378,22 @@ echo "source $HOME/.zsh_aliases" >> ~/.zshrc
 echo "source $HOME/.zsh_theme" >> ~/.zshrc
 
 exec zsh
+
+# -------------------------------
+# Latest neovim version
+# -------------------------------
+# Try AppImage first (smaller download), fallback to extraction
+if curl -Lo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/v0.11.4/nvim-linux-x86_64.appimage && chmod +x ~/.local/bin/nvim && ~/.local/bin/nvim - -version >/dev/null 2>&1; then
+    echo "✅ Neovim AppImage installed successfully"
+else
+    echo "⚠️ AppImage failed, using tarball extraction..."
+    rm -f ~/.local/bin/nvim
+    curl -LO https://github.com/neovim/neovim/releases/download/v0.11.4/nvim-linux-x86_64.tar.gz
+    tar xzvf nvim-linux-x86_64.tar.gz
+    mv nvim-linux-x86_64/bin/nvim ~/.local/bin/nvim
+    rm -rf nvim-linux-x86_64 nvim-linux-x86_64.tar.gz
+    echo "✅ Neovim tarball installed successfully"
+fi
 
 # -------------------------------
 # Add local bin to PATH in shell rc
