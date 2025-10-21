@@ -14,6 +14,25 @@ ask_install_dev_tools() {
     fi
 }
 
+install_nodejs_nvm() {
+    echo "Installing Node.js 22.21 via NVM..."
+
+    # Download and install nvm
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+
+    # Source nvm in current session
+    \. "$HOME/.nvm/nvm.sh"
+
+    # Download and install Node.js 22
+    nvm install 22
+
+    # Verify the Node.js version
+    node_version=$(node -v)
+    echo "✅ Node.js $node_version installed"
+
+    # Note: pnpm will be installed by run_once_after_setup_b_node_packages.sh.tmpl
+}
+
 
 # -------------------------------
 # Determine OS and home directory
@@ -50,7 +69,7 @@ if ask_install_dev_tools; then
             black cocoapods colima docker efm-langserver fd ffmpeg fzf ghostscript \
             git git-filter-repo gnupg go htop icu4c@76 imagemagick isort jsonlint lazygit \
             lua-language-server markdownlint-cli marksman mongosh neovim pandoc pinentry-mac pipx \
-            plow postgresql@17 powerlevel10k prettier prettierd pyright python-lsp-server python@3.13 \
+            plow postgresql@17 node@22 powerlevel10k prettier prettierd pyright python-lsp-server python@3.13 \
             qemu ranger ripgrep ruff visidata sst/tap/opencode stylua supabase/tap/supabase tmux \
             tursodatabase/tap/turso typescript-language-server uvicorn vale watchman wrk yadm \
             yaml-language-server yt-dlp nvim zoxide zsh
@@ -78,23 +97,11 @@ if ask_install_dev_tools; then
             exit 1
         fi
 
-        # Install Node.js 20+ if needed
-        if ! command -v node &>/dev/null || [[ $(node -v | cut -d'v' -f2 | cut -d'.' -f1) -lt 18 ]]; then
-            echo "Installing Node.js 20..."
-            
-            # Remove existing Node.js installation to avoid conflicts
-            echo "Removing existing Node.js installation..."
-            sudo apt-get remove -y nodejs npm libnode-dev || true
-            sudo apt-get autoremove -y || true
-            
-            # Add NodeSource repository
-            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-            
-            # Install Node.js 20
-            sudo apt-get install -y nodejs
-            
-            # Clean up any remaining conflicts
-            sudo apt-get autoremove -y || true
+        # Check if Node.js 22.21 is installed
+        if ! command -v node &>/dev/null || ! command -v nvm &>/dev/null || [[ $(node -v) != "v22.21."* ]]; then
+            install_nodejs_nvm
+        else
+            echo "✅ Node.js $(node -v) already installed"
         fi
 
         # Local bin setup
