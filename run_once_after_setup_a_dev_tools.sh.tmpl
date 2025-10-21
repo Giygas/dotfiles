@@ -119,7 +119,7 @@ if [[ "$OS" == "linux" ]]; then
     fi
     
     # Install opencode using recommended method
-    if ! command -v opencode &>/dev/null; then
+    if ! command --version opencode &>/dev/null; then
         echo "Installing OpenCode..."
         curl -fsSL https://opencode.ai/install | bash -
     else
@@ -195,17 +195,17 @@ if [[ "$OS" == "linux" ]]; then
         echo "✅ lazygit already installed"
     fi
 
-    # Install mongosh using official MongoDB repository
-    if ! command -v "mongosh" &>/dev/null; then
-        echo "Installing mongosh..."
-        # Import MongoDB public key
-        wget -qO- https://www.mongodb.org/static/pgp/server-8.0.asc | sudo tee /etc/apt/trusted.gpg.d/server-8.0.asc > /dev/null
-        # Add MongoDB repository
-        echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list > /dev/null
-        # Update package list and install mongosh
-        sudo apt-get update
-        sudo apt-get install -y mongodb-mongosh
-        echo "✅ Installed mongosh"
+
+    # Install wezterm
+    if ! command --version "wezterm" &>/dev/null; then
+        echo "Installing wezterm..."
+        curl -LO https://github.com/wezterm/wezterm/releases/download/20240203-110809-5046fc22/wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
+        tar -xf wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
+        cp -r wezterm/usr/bin/* $HOME_DIR/.local/bin
+        cp -r wezterm/usr/share/* $HOME_DIR/.local/share
+        rm -rf wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
+        rm -rf wezterm
+        echo "✅ Wezterm tarball installed successfully"
     fi
     
     # Install turso using official installer
