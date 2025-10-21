@@ -1,0 +1,6 @@
+if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+  # eval "$(oh-my-posh init zsh --config 'illusi0n')"
+  # eval "$(oh-my-posh init zsh --config 'agnoster')"
+  eval "$(oh-my-posh init zsh --config 'powerline')"
+  # eval "$(oh-my-posh init zsh --config $HOME/.config/.oh-my-posh_theme.omp.json)"
+fi

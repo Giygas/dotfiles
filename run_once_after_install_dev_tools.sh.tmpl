@@ -331,6 +331,17 @@ if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
     echo "Installing Oh My Zsh..."
     RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     echo "✅ Installed Oh My Zsh"
+    echo "Installing zsh-autosuggestions"
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    if ! grep -q "zsh-autosuggestions" ~/.zshrc; then
+        sed -i '/^plugins=/ s/)/ zsh-autosuggestions)/' ~/.zshrc
+    fi
+    echo "Installing zsh-syntax-highlighting"
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    if ! grep -q "zsh-syntax-highlighting" ~/.zshrc; then
+        sed -i '/^plugins=/ s/)/ zsh-syntax-highlighting)/' ~/.zshrc
+    fi
+    echo "✅ All good"
 fi
 
 
@@ -347,15 +358,14 @@ if [[ "$OS" == "linux" ]]; then
     curl -s https://ohmyposh.dev/install.sh | bash -s
     echo "✅ Installed Oh My Posh"
 fi
-    echo "Adding oh my posh to .zshrc"
-    echo 'if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
-        eval "$(oh-my-posh init zsh --config 'robbyrussell')"
-    fi' >> ~/.zshrc
-    exec zsh
 
-    echo "Installing JetBrainsMono font"
-    oh-my-posh font install jetbrainsmono
+# -------------------------------
+# Zsh aliases and theme
+# -------------------------------
+echo "source $HOME/.zsh_aliases" >> ~/.zshrc
+echo "source $HOME/.zsh_theme" >> ~/.zshrc
 
+exec zsh
 
 # -------------------------------
 # Add local bin to PATH in shell rc
@@ -372,5 +382,8 @@ for shell_rc in "$HOME_DIR/.bashrc" "$HOME_DIR/.zshrc"; do
         echo 'export PATH="$PNPM_HOME:$PATH"' >> "$shell_rc"
     fi
 done
+
+echo "Installing JetBrainsMono font"
+oh-my-posh font install jetbrainsmono
 
 echo "🎉 Dev environment setup complete for $USER_NAME on $OS!"

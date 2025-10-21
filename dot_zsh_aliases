@@ -1,0 +1,7 @@
+# Custom aliases
+alias projects="cd ~/Projects/"
+alias v="nvim"
+alias lla="ls -a"
+alias gla="git log --all --decorate --oneline --graph"
+alias python="python3"
+alias pip="pip3"
