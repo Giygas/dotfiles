@@ -79,42 +79,7 @@ if [[ "$OS" == "linux" ]]; then
         sudo apt-get autoremove -y || true
     fi
 
-    # Install pnpm
-    if ! command -v pnpm &>/dev/null; then
-        echo "Installing pnpm..."
-        
-        # Install pnpm using npm in user directory (avoids --force issue)
-        npm install -g pnpm --prefix="$HOME_DIR/.local"
-        
-        # Set up pnpm environment for current script session
-        export PNPM_HOME="$HOME_DIR/.local/share/pnpm"
-        export PATH="$HOME_DIR/.local/bin:$PNPM_HOME:$PATH"
-        
-        # Create symlink if pnpm was installed via npm to local bin
-        if [ -f "$HOME_DIR/.local/node_modules/.bin/pnpm" ]; then
-            ln -sf "$HOME_DIR/.local/node_modules/.bin/pnpm" "$HOME_DIR/.local/bin/pnpm"
-        fi
-        
-        # Make sure pnpm is executable
-        if [ -f "$HOME_DIR/.local/bin/pnpm" ]; then
-            chmod +x "$HOME_DIR/.local/bin/pnpm"
-        fi
-        
-        # Add to shell rc files
-        echo 'export PNPM_HOME="$HOME/.local/share/pnpm"' >> "$HOME_DIR/.bashrc"
-        echo 'export PATH="$PNPM_HOME:$PATH"' >> "$HOME_DIR/.bashrc"
-        echo 'export PNPM_HOME="$HOME/.local/share/pnpm"' >> "$HOME_DIR/.zshrc"
-        echo 'export PATH="$PNPM_HOME:$PATH"' >> "$HOME_DIR/.zshrc"
-        
-        # Source the pnpm environment
-        if [ -f "$HOME_DIR/.local/share/pnpm/pnpm" ]; then
-            source "$HOME_DIR/.local/share/pnpm/pnpm" || true
-        fi
-    else
-        # Ensure pnpm environment is set even if already installed
-        export PNPM_HOME="$HOME_DIR/.local/share/pnpm"
-        export PATH="$PNPM_HOME:$PATH"
-    fi
+
 
     # Local bin setup
     mkdir -p "$HOME_DIR/.local/bin"
@@ -137,9 +102,8 @@ if [[ "$OS" == "linux" ]]; then
         sudo rm -rf /usr/local/go
         sudo tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz
         export PATH=$PATH:/usr/local/go/bin
-        echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME_DIR/.bashrc"
         echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME_DIR/.zshrc"
-        source "$HOME_DIR/.bashrc" || source "$HOME_DIR/.zshrc" || true
+        source "$HOME_DIR/.zshrc" || true
     fi
 
     # Python tools
@@ -152,32 +116,6 @@ if [[ "$OS" == "linux" ]]; then
     if command -v pipx &>/dev/null; then
         echo "Installing Python tools via pipx..."
         pipx install git-filter-repo
-    fi
-
-    # Node / pnpm tools
-    echo "Installing Node tools with pnpm..."
-    
-    # Ensure pnpm environment is available
-    export PNPM_HOME="$HOME_DIR/.local/share/pnpm"
-    export PATH="$PNPM_HOME:$PATH"
-    
-    # Make sure pnpm is accessible in this session
-    if ! command -v pnpm &>/dev/null; then
-        echo "Setting up pnpm environment..."
-        # Try to find and source the pnpm binary
-        if [ -f "$HOME_DIR/.local/share/pnpm/pnpm" ]; then
-            chmod +x "$HOME_DIR/.local/share/pnpm/pnpm"
-            export PATH="$HOME_DIR/.local/share/pnpm:$PATH"
-        elif [ -d "$HOME_DIR/.local/share/pnpm/.tools" ]; then
-            # Find the latest pnpm version
-            PNPMDIR=$(find "$HOME_DIR/.local/share/pnpm/.tools" -name "pnpm-exe" -type d | head -1)
-            if [ -n "$PNPMDIR" ] && [ -f "$PNPMDIR"/*/pnpm ]; then
-                chmod +x "$PNPMDIR"/*/pnpm
-                export PATH="$PNPMDIR:$PATH"
-                # Create symlink for easier access
-                ln -sf "$PNPMDIR"/*/pnpm "$HOME_DIR/.local/bin/pnpm"
-            fi
-        fi
     fi
     
     # Install opencode using recommended method
@@ -324,6 +262,8 @@ if [[ "$OS" == "linux" ]]; then
 
 fi
 
+
+
 # -------------------------------
 # Oh My Zsh for both OS
 # -------------------------------
@@ -344,18 +284,6 @@ if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlig
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 fi
 
-if [ -f "$HOME_DIR/.zshrc" ]; then
-    # Add both plugins at once to avoid duplication
-    if ! grep -q "zsh-autosuggestions\|zsh-syntax-highlighting" "$HOME_DIR/.zshrc"; then
-        sed -i '/^plugins=/ s/plugins=(/plugins=(git zsh-autosuggestions zsh-syntax-highlighting /' "$HOME_DIR/.zshrc"
-        echo "✅ Added zsh plugins to .zshrc"
-    else
-        echo "✅ zsh plugins already present in .zshrc"
-    fi
-else
-    echo "❌ .zshrc not found after Oh My Zsh installation"
-fi
-
 
 # -------------------------------
 # Oh My Posh OS dependant
@@ -371,11 +299,6 @@ if [[ "$OS" == "linux" ]]; then
     echo "✅ Installed Oh My Posh"
 fi
 
-# -------------------------------
-# Zsh aliases and theme
-# -------------------------------
-echo "source $HOME/.zsh_aliases" >> ~/.zshrc
-echo "source $HOME/.zsh_theme" >> ~/.zshrc
 
 # -------------------------------
 # Latest neovim version
@@ -393,21 +316,6 @@ else
     echo "✅ Neovim tarball installed successfully"
 fi
 
-# -------------------------------
-# Add local bin to PATH in shell rc
-# -------------------------------
-for shell_rc in "$HOME_DIR/.bashrc" "$HOME_DIR/.zshrc"; do
-    if [ -f "$shell_rc" ] && ! grep -q ".local/bin" "$shell_rc"; then
-        echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$shell_rc"
-    fi
-    if [ -f "$shell_rc" ] && ! grep -q ".npm-global/bin" "$shell_rc"; then
-        echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> "$shell_rc"
-    fi
-    if [ -f "$shell_rc" ] && ! grep -q "pnpm" "$shell_rc"; then
-        echo 'export PNPM_HOME="$HOME/.local/share/pnpm"' >> "$shell_rc"
-        echo 'export PATH="$PNPM_HOME:$PATH"' >> "$shell_rc"
-    fi
-done
 
 echo "Installing JetBrainsMono font"
 oh-my-posh font install jetbrainsmono

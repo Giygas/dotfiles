@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -e
+HOME_DIR="{{ .chezmoi.homeDir }}"
+
+if [ -f "$HOME_DIR/.zshrc" ]; then
+    echo "Configuring PATH in .zshrc..."
+
+    # -------------------------------
+    # Zsh aliases and theme
+    # -------------------------------
+    if ! grep -q ".zsh_aliases" "$HOME_DIR/.zshrc"; then
+        echo '. $HOME/.zsh_aliases' >> "$HOME_DIR/.zshrc"
+        echo "✅ Added zsh_aliases to PATH"
+    fi
+
+    if ! grep -q ".zsh_theme" "$HOME_DIR/.zshrc"; then
+        echo '. $HOME/.zsh_theme' >> "$HOME_DIR/.zshrc"
+        echo "✅ Added zsh_theme to PATH"
+    fi
+
+    # Add zsh-autosuggestions and zsh-syntax-highlighting
+    if ! grep -q "zsh-autosuggestions\|zsh-syntax-highlighting" "$HOME_DIR/.zshrc"; then
+        # Add plugins to existing list (preserves current plugins)
+        sed -i '/^plugins=/ s/)/ zsh-autosuggestions zsh-syntax-highlighting)/' "$HOME_DIR/.zshrc"
+        echo "✅ Added zsh plugins to .zshrc"
+    else
+        echo "✅ zsh plugins already present in .zshrc"
+    fi
+
+    # Add .local/bin
+    # First, uncomment any existing commented PATH lines
+    if grep -q "^# export PATH=.*\.local/bin" "$HOME_DIR/.zshrc"; then
+        # Get the line number and uncomment it
+        LINE_NUM=$(grep -n "^# export PATH=.*\.local/bin" "$HOME_DIR/.zshrc" | cut -d: -f1 | head -1)
+        if [ -n "$LINE_NUM" ]; then
+            sed -i "${LINE_NUM}s/^# //" "$HOME_DIR/.zshrc"
+            echo "✅ Uncommented existing PATH line (line $LINE_NUM)"
+        fi
+    fi
+
+        # Then check if active PATH exists and add if missing
+    if ! grep -q "^export PATH=.*\.local/bin" "$HOME_DIR/.zshrc"; then
+        echo "export PATH=\$HOME/bin:\$HOME/.local/bin:/usr/local/bin:\$PATH" >> "$HOME_DIR/.zshrc"
+        echo "✅ Added .local/bin to PATH"
+    else
+        echo "✅ .local/bin already configured in PATH"
+    fi
+
+    # Add pnpm
+    if ! grep -q "pnpm" "$HOME_DIR/.zshrc"; then
+        echo 'export PNPM_HOME="$HOME/.local/share/pnpm"' >> "$HOME_DIR/.zshrc"
+        echo 'export PATH="$PNPM_HOME:$PATH"' >> "$HOME_DIR/.zshrc"
+        echo "✅ Added pnpm to PATH"
+    fi
+
+    # Add npm-global (if still needed)
+    if ! grep -q ".npm-global/bin" "$HOME_DIR/.zshrc"; then
+        echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> "$HOME_DIR/.zshrc"
+        echo "✅ Added npm-global to PATH"
+    fi
+
+    # Set zsh as default shell
+    if [[ "$SHELL" != *"zsh"* ]]; then
+        echo "Setting zsh as default shell..."
+        chsh -s $(which zsh) || echo "⚠️ Could not change shell (may require sudo or different permissions)"
+    fi
+else
+    echo "❌ .zshrc not found - cannot configure PATH"
+fi
