@@ -43,20 +43,20 @@ config.unix_domains = {
 
 config.ssh_domains = {
 	{
-		-- This name identifies the domain
 		name = "dev-container",
-		-- The hostname or address to connect to. Will be used to match settings
-		-- from your ssh config file
 		remote_address = "192.168.1.10:2222",
-		-- The username to use on the remote host
 		username = "dev",
-		-- Optional: specify SSH key if needed
+		multiplexing = "WezTerm",
+		assume_shell = "Posix",
 		ssh_option = {
 			identitiesonly = "yes",
 			identityfile = "/Users/giygas/.ssh/id_ed25519",
+			forwardagent = "yes",
 		},
 	},
 }
+
+config.mux_enable_ssh_agent = true
 
 -- Tab bar
 config.tab_bar_at_bottom = true
