@@ -41,6 +41,23 @@ config.unix_domains = {
 	},
 }
 
+config.ssh_domains = {
+	{
+		-- This name identifies the domain
+		name = "dev-container",
+		-- The hostname or address to connect to. Will be used to match settings
+		-- from your ssh config file
+		remote_address = "192.168.1.10:2222",
+		-- The username to use on the remote host
+		username = "dev",
+		-- Optional: specify SSH key if needed
+		ssh_option = {
+			identitiesonly = "yes",
+			identityfile = "/Users/giygas/.ssh/id_ed25519",
+		},
+	},
+}
+
 -- Tab bar
 config.tab_bar_at_bottom = true
 config.tab_max_width = 20

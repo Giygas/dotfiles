@@ -44,18 +44,18 @@ EOF
 
     scp "$temp_gitconfig" "$CONTAINER_HOST":/home/dev/.gitconfig
     rm -f "$temp_gitconfig"
+    echo "✓ .gitconfig pushed"
 
-    echo "✓ Container git config done"
     # Copy wakatime config file
     scp "$HOME/.wakatime.cfg" "$CONTAINER_HOST":/home/dev/.wakatime.cfg
-    echo "✓ Container wakatime config done"
+    echo "✓ .wakatime.cfg pushed"
 }
 
 enter_container() {
     echo "Entering dev container..."
     trap "cleanup_container" EXIT
     setup_container_gitconfig
-    ssh "$CONTAINER_HOST"
+    wezterm connect "$CONTAINER_HOST"
 }
 
 cleanup_container() {

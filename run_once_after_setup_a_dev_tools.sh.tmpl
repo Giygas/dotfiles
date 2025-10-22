@@ -115,15 +115,21 @@ if ask_install_dev_tools; then
         echo "Installing system packages..."
         sudo apt update
         sudo apt install -y \
-            fd-find fzf htop tmux zsh ranger ripgrep gnupg git \
+            software-properties-common \
+            fd-find fzf htop tmux zsh ranger ripgrep gnupg git  \
             ffmpeg ghostscript imagemagick qemu-kvm libvirt-daemon-system \
             libvirt-clients bridge-utils virtinst virt-manager postgresql postgresql-contrib \
             yadm watchman xclip
 
+        # Python 3.13
+        sudo add-apt-repository ppa:deadsnakes/ppa -y
+        sudo apt update
+        sudo apt install -y python3.13 python3.13-venv python3.13-dev
+
         # Install Go
         if ! command -v go &>/dev/null; then
             echo "Installing Go..."
-            GO_VERSION="1.23.2"
+            GO_VERSION="1.24.2"
             wget -q https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz
             sudo rm -rf /usr/local/go
             sudo tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz
@@ -136,7 +142,7 @@ if ask_install_dev_tools; then
         echo "Installing Python packages..."
         pip3 install --user \
             black isort fastapi uvicorn python-lsp-server ruff visidata \
-            pyright pipx jsonlint
+            pyright pipx jsonlint neovim
 
         # Install additional Python tools via pipx
         if command -v pipx &>/dev/null; then
@@ -247,6 +253,25 @@ if ask_install_dev_tools; then
             curl --proto '=https' --tlsv1.2 -LsSf https://github.com/tursodatabase/turso/releases/latest/download/turso_cli-installer.sh | sh
             source $HOME/.turso/env
             echo "✅ Installed turso and ran source $HOME/.turso/env"
+        fi
+
+        # Install luarocks
+        if ! command -v luarocks &>/dev/null; then
+            wget -q https://luarocks.org/releases/luarocks-3.11.1.tar.gz
+            tar -xzf luarocks-3.11.1.tar.gz
+            cd luarocks-3.11.1
+            ./configure && make && sudo make install
+            cd .. && rm -rf luarocks-3.11.1
+        fi
+
+        # Install gopls
+        if command -v go &>/dev/null; then
+            go install golang.org/x/tools/gopls@latest
+        fi
+
+        # Install tree-sitter-cli
+        if ! command -v tree-sitter &>/dev/null; then
+            npm install -g tree-sitter-cli
         fi
 
         # Install Lua language server
