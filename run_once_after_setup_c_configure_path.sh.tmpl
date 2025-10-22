@@ -30,6 +30,7 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
     # Add go to PATH
     if ! grep -q "go/bin" "$HOME_DIR/.zshrc"; then
         echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME_DIR/.zshrc"
+        echo 'export PATH=$PATH:$HOME/go/bin' >> "$HOME_DIR/.zshrc"
     fi
 
     # Add .local/bin

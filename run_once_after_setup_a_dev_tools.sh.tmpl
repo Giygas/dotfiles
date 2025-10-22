@@ -173,17 +173,20 @@ if ask_install_dev_tools; then
         fi
 
         # Install Go
-        if ! command -v go &>/dev/null || ! go version &>/dev/null; then
+        if ! command -v go &>/dev/null; then
             echo "Installing Go..."
             GO_VERSION="1.25.3"
             wget -q https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz
             sudo rm -rf /usr/local/go
             sudo tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz
             rm -rf go${GO_VERSION}.linux-amd64.tar.gz
+            sudo rm -rf go
             export PATH=$PATH:/usr/local/go/bin
             echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME_DIR/.zshrc"
             source "$HOME_DIR/.zshrc" || true
-            sudo rm -rf go
+            echo "✅ GO version ${GO_VERSION} installed successfully"
+        else
+            echo "✅ GO version ${GO_VERSION} already installed"
         fi
 
         # Install gopls
