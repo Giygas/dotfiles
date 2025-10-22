@@ -2,15 +2,15 @@
 {{ if or (eq .chezmoi.os "darwin") (eq .chezmoi.os "linux") }}
 set -e
 
-# Interactive prompt function
 ask_install_dev_tools() {
-    echo "Do you want to install node tools? (y/n)"
-    read -r response
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-        echo "Installing dev tools..."
+    printf "Do you want to install node tools? (y/n)"
+    read -n 1 -r response
+    echo  # Add newline after input for clean formatting
+    if [[ "$response" =~ ^([yY])$ ]]; then
+        echo "Installing node tools..."
         return 0  # Continue with installation
     else
-        echo "Skipping dev tools installation."
+        echo "Skipping node tools installation."
         return 1  # Skip installation
     fi
 }

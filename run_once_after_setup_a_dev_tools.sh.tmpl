@@ -76,7 +76,7 @@ if ask_install_dev_tools; then
             plow postgresql@17 node@22 powerlevel10k prettier prettierd pyright python-lsp-server python@3.13 \
             qemu ranger ripgrep ruff visidata sst/tap/opencode stylua supabase/tap/supabase tmux \
             tursodatabase/tap/turso typescript-language-server uvicorn vale watchman wrk yadm \
-            yaml-language-server yt-dlp nvim zoxide zsh
+            yaml-language-server yt-dlp nvim zoxide zsh luajit
     fi
 
     # -------------------------------
@@ -120,7 +120,7 @@ if ask_install_dev_tools; then
             fd-find fzf htop tmux zsh ranger ripgrep gnupg git  \
             ffmpeg ghostscript imagemagick qemu-kvm libvirt-daemon-system \
             libvirt-clients bridge-utils virtinst virt-manager postgresql postgresql-contrib \
-            yadm watchman xclip
+            yadm watchman xclip liblua5.1-0-dev luarocks 
 
         # Python 3.13
         sudo add-apt-repository ppa:deadsnakes/ppa -y
@@ -269,15 +269,6 @@ if ask_install_dev_tools; then
             curl --proto '=https' --tlsv1.2 -LsSf https://github.com/tursodatabase/turso/releases/latest/download/turso_cli-installer.sh | sh
             source $HOME/.turso/env
             echo "✅ Installed turso and ran source $HOME/.turso/env"
-        fi
-
-        # Install luarocks
-        if ! command -v luarocks &>/dev/null; then
-            wget -q https://luarocks.org/releases/luarocks-3.11.1.tar.gz
-            tar -xzf luarocks-3.11.1.tar.gz
-            cd luarocks-3.11.1
-            ./configure && make && sudo make install
-            cd .. && rm -rf luarocks-3.11.1
         fi
 
         # Install tree-sitter-cli
