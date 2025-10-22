@@ -7,6 +7,9 @@ return {
 	-- Provides syntax highlighting for generic log files in VIM.
 	{ "MTDL9/vim-log-highlighting" },
 
+	-- Copy-pasting over SSH.
+	{ "ibhagwan/smartyank.nvim" },
+
 	{
 		"windwp/nvim-ts-autotag",
 		lazy = false,

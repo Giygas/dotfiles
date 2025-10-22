@@ -37,7 +37,6 @@ keymap.set("n", "<leader>Y", [["+Y]])
 
 keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 
--- This is going to get me cancelled
 keymap.set("i", "<C-c>", "<Esc>")
 
 -- keymap.set("n", "Q", "<nop>")
