@@ -118,7 +118,7 @@ if ask_install_dev_tools; then
             fd-find fzf htop tmux zsh ranger ripgrep gnupg git \
             ffmpeg ghostscript imagemagick qemu-kvm libvirt-daemon-system \
             libvirt-clients bridge-utils virtinst virt-manager postgresql postgresql-contrib \
-            yadm watchman
+            yadm watchman xclip
 
         # Install Go
         if ! command -v go &>/dev/null; then
@@ -222,16 +222,23 @@ if ask_install_dev_tools; then
         fi
 
 
+        ## # Install wezterm raw
+        ## if ! command --version "wezterm" &>/dev/null; then
+        ##     echo "Installing wezterm..."
+        ##     curl -LO https://github.com/wezterm/wezterm/releases/download/20240203-110809-5046fc22/wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
+        ##     tar -xf wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
+        ##     cp -r wezterm/usr/bin/* $HOME_DIR/.local/bin
+        ##     cp -r wezterm/usr/share/* $HOME_DIR/.local/share
+        ##     rm -rf wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
+        ##     rm -rf wezterm
+        ##     echo "✅ Wezterm tarball installed successfully"
+        ## fi
+
         # Install wezterm
         if ! command --version "wezterm" &>/dev/null; then
-            echo "Installing wezterm..."
-            curl -LO https://github.com/wezterm/wezterm/releases/download/20240203-110809-5046fc22/wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
-            tar -xf wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
-            cp -r wezterm/usr/bin/* $HOME_DIR/.local/bin
-            cp -r wezterm/usr/share/* $HOME_DIR/.local/share
-            rm -rf wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
-            rm -rf wezterm
-            echo "✅ Wezterm tarball installed successfully"
+            curl -LO https://github.com/wezterm/wezterm/releases/download/20240203-110809-5046fc22/wezterm-20240203-110809-5046fc22.Ubuntu22.04.deb
+            sudo apt install -y ./wezterm-20240203-110809-5046fc22.Ubuntu22.04.deb
+            rm -rf ./wezterm-20240203-110809-5046fc22.Ubuntu22.04.deb
         fi
         
         # Install turso using official installer

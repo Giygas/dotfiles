@@ -27,6 +27,11 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
         echo "✅ zsh plugins already present in .zshrc"
     fi
 
+    # Add go to PATH
+    if ! grep -q "go/bin" "$HOME_DIR/.zshrc"; then
+        echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME_DIR/.zshrc"
+    fi
+
     # Add .local/bin
     # First, uncomment any existing commented PATH lines
     if grep -q "^# export PATH=.*\.local/bin" "$HOME_DIR/.zshrc"; then
