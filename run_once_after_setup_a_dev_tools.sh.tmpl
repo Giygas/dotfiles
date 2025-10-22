@@ -122,20 +122,55 @@ if ask_install_dev_tools; then
             libvirt-clients bridge-utils virtinst virt-manager postgresql postgresql-contrib \
             yadm watchman xclip liblua5.1-0-dev luarocks 
 
-        # Python 3.13
-        sudo add-apt-repository ppa:deadsnakes/ppa -y
-        sudo apt update
-        sudo apt install -y python3.13 python3.13-venv python3.13-dev
+        ################################################
+        # Python 3.14 - Direct installation from source
+        ################################################
+        if ! command -v python3.14 &>/dev/null; then
+            echo "Installing Python 3.14 from source..."
 
-        # Bootstrap pip using ensurepip
-        python3.13 -m ensurepip --upgrade
+            # Install build dependencies
+            sudo apt update
+            sudo apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget
 
-        # Set python3.13 as default
-        sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.13 1
-        sudo update-alternatives --set python3 /usr/bin/python3.13
+            # Download Python 3.14 source
+            PYTHON_VERSION="3.14.0"
+            wget -q https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz
 
-        # Install neovim package
-        python3.13 -m pip install --user neovim --version
+            # Extract and build
+            tar -xzf Python-${PYTHON_VERSION}.tgz
+            cd Python-${PYTHON_VERSION}
+
+            # Configure with custom prefix to avoid system conflicts
+            ./configure --prefix=/usr/local/python3.14 --enable-optimizations --with-lto
+
+            # Build and install
+            make -j$(nproc)
+            sudo make altinstall
+
+            # Clean up
+            cd ..
+            sudo rm -rf Python-${PYTHON_VERSION} Python-${PYTHON_VERSION}.tgz
+
+            # Bootstrap pip
+            /usr/local/python3.14/bin/python3.14 -m ensurepip --upgrade
+
+            # Create symlinks for easier access
+            sudo ln -sf /usr/local/python3.14/bin/python3.14 /usr/local/bin/python3.14
+            sudo ln -sf /usr/local/python3.14/bin/pip3.14 /usr/local/bin/pip3.14
+
+            # Update alternatives
+            sudo update-alternatives --install /usr/bin/python3 python3 /usr/local/python3.14/bin/python3.14 1
+            sudo update-alternatives --set python3 /usr/local/python3.14/bin/python3.14
+            sudo update-alternatives --install /usr/bin/pip3 pip3 /usr/local/python3.14/bin/pip3.14 1
+            sudo update-alternatives --set pip3 /usr/local/python3.14/bin/pip3.14
+
+            # Install neovim package
+            /usr/local/python3.14/bin/python3.14 -m pip install --user neovim
+
+            echo "✅ Python 3.14 installed successfully"
+        else
+            echo "✅ Python 3.14 already installed"
+        fi
 
         # Install Go
         if ! command -v go &>/dev/null; then
@@ -148,6 +183,7 @@ if ask_install_dev_tools; then
             export PATH=$PATH:/usr/local/go/bin
             echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME_DIR/.zshrc"
             source "$HOME_DIR/.zshrc" || true
+            sudo rm -rf go
         fi
 
         # Install gopls
