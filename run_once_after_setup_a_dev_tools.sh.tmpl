@@ -3,9 +3,10 @@ set -e
 
 # Interactive prompt function
 ask_install_dev_tools() {
-    echo "Do you want to install development tools? (y/n)"
-    read -r response
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    printf "Do you want to install development tools? (y/n) "
+    read -n 1 -r response
+    echo  # Add newline after input for clean formatting
+    if [[ "$response" =~ ^([yY])$ ]]; then
         echo "Installing dev tools..."
         return 0  # Continue with installation
     else
@@ -85,7 +86,7 @@ if ask_install_dev_tools; then
         echo "📦 Setting up Linux dev environment (user: $USER_NAME)..."
 
         # Check for essential system packages
-        REQUIRED=("git" "python3" "pip3" "curl")
+        REQUIRED=("git" "curl")
         MISSING=()
         for pkg in "${REQUIRED[@]}"; do
             if ! command -v "$pkg" &>/dev/null; then
@@ -125,6 +126,16 @@ if ask_install_dev_tools; then
         sudo add-apt-repository ppa:deadsnakes/ppa -y
         sudo apt update
         sudo apt install -y python3.13 python3.13-venv python3.13-dev
+
+        # Bootstrap pip using ensurepip
+        python3.13 -m ensurepip --upgrade
+
+        # Set python3.13 as default
+        sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.13 1
+        sudo update-alternatives --set python3 /usr/bin/python3.13
+
+        # Install neovim package
+        python3.13 -m pip install --user neovim --version
 
         # Install Go
         if ! command -v go &>/dev/null; then
