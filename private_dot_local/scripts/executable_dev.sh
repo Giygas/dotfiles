@@ -10,20 +10,29 @@ get_ssh_public_key() {
     ssh-keygen -y -f "$HOME/.ssh/id_ed25519"
 }
 
+get_git_config_value() {
+    local key="$1"
+    git config --global --get "$key" 2>/dev/null || echo ""
+}
+
 setup_container_gitconfig() {
     echo "Setting up git config for container environment..."
-    
+
     local ssh_key=$(get_ssh_public_key)
+    local git_name=$(get_git_config_value "user.name")
+    local git_email=$(get_git_config_value "user.email")
+    local github_user=$(get_git_config_value "github.user")
+
     local temp_gitconfig=$(mktemp)
-    
+
     cat > "$temp_gitconfig" << EOF
 [user]
-  name = Giygas
-  email = gustavorossich@gmail.com
+  name = ${git_name:-"Giygas"}
+  email = ${git_email:-"user@example.com"}
   useConfigOnly = true
   signingkey = $ssh_key
 [github]
-  user = Giygas
+  user = ${github_user:-"Giygas"}
 [commit]
   gpgsign = true
 [gpg]
@@ -35,7 +44,11 @@ EOF
 
     scp "$temp_gitconfig" "$CONTAINER_HOST":/home/dev/.gitconfig
     rm -f "$temp_gitconfig"
-    echo "✓ Container git config configured"
+
+    echo "✓ Container git config done"
+    # Copy wakatime config file
+    scp "$HOME/.wakatime.cfg" "$CONTAINER_HOST":/home/dev/.wakatime.cfg
+    echo "✓ Container wakatime config done"
 }
 
 enter_container() {
@@ -48,6 +61,7 @@ enter_container() {
 cleanup_container() {
     echo "Cleaning up container git config..."
     ssh "$CONTAINER_HOST" "rm -f /home/dev/.gitconfig"
+    ssh "$CONTAINER_HOST" "rm -f /home/dev/.wakatime.cfg"
     echo "✓ Cleanup completed"
 }
 
