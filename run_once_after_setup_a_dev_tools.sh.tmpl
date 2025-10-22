@@ -144,6 +144,7 @@ if ask_install_dev_tools; then
             wget -q https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz
             sudo rm -rf /usr/local/go
             sudo tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz
+            rm -rf go${GO_VERSION}.linux-amd64.tar.gz
             export PATH=$PATH:/usr/local/go/bin
             echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME_DIR/.zshrc"
             source "$HOME_DIR/.zshrc" || true
@@ -243,24 +244,11 @@ if ask_install_dev_tools; then
             echo "✅ lazygit already installed"
         fi
 
-
-        ## # Install wezterm raw
-        ## if ! command --version "wezterm" &>/dev/null; then
-        ##     echo "Installing wezterm..."
-        ##     curl -LO https://github.com/wezterm/wezterm/releases/download/20240203-110809-5046fc22/wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
-        ##     tar -xf wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
-        ##     cp -r wezterm/usr/bin/* $HOME_DIR/.local/bin
-        ##     cp -r wezterm/usr/share/* $HOME_DIR/.local/share
-        ##     rm -rf wezterm-20240203-110809-5046fc22.Ubuntu22.04.tar.xz
-        ##     rm -rf wezterm
-        ##     echo "✅ Wezterm tarball installed successfully"
-        ## fi
-
-        # Install wezterm
+        # Install wezterm nightly
         if ! command --version "wezterm" &>/dev/null; then
-            curl -LO https://github.com/wezterm/wezterm/releases/download/20240203-110809-5046fc22/wezterm-20240203-110809-5046fc22.Ubuntu22.04.deb
-            sudo apt install -y ./wezterm-20240203-110809-5046fc22.Ubuntu22.04.deb
-            rm -rf ./wezterm-20240203-110809-5046fc22.Ubuntu22.04.deb
+            curl -LO https://github.com/wezterm/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu24.04.deb
+            sudo apt install -y ./wezterm-nightly.Ubuntu24.04.deb
+            rm -rf wezterm-nightly.Ubuntu24.04.deb
         fi
         
         # Install turso using official installer
