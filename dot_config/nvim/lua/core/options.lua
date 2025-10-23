@@ -82,8 +82,8 @@ opt.background = "dark"
 opt.backspace = "indent,eol,start"
 
 -- clipboard
+vim.g.clipboard = "osc52"
 opt.clipboard:append("unnamedplus")
--- vim.g.clipboard = "osc52"
 
 -- split windows
 opt.splitright = true
