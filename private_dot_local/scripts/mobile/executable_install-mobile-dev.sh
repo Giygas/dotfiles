@@ -185,7 +185,7 @@ setup_linux() {
         libxdamage1 \
         libxfixes3 \
         libxcomposite1 \
-        libasound2 \
+        libasound2t64 \
         libpangocairo-1.0-0 \
         libatk1.0-0 \
         libcairo-gobject2 \
