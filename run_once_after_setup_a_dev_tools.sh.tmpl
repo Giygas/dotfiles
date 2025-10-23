@@ -117,7 +117,7 @@ if ask_install_dev_tools; then
         sudo apt update
         sudo apt install -y \
             software-properties-common \
-            fd-find fzf htop tmux zsh ranger ripgrep gnupg git  \
+            fd-find fzf htop tmux zsh ripgrep gnupg git  \
             ffmpeg ghostscript imagemagick qemu-kvm libvirt-daemon-system \
             libvirt-clients bridge-utils virtinst virt-manager postgresql postgresql-contrib \
             yadm watchman xclip liblua5.1-0-dev luarocks 
@@ -198,7 +198,7 @@ if ask_install_dev_tools; then
         echo "Installing Python packages..."
         pip3 install --user \
             black isort fastapi uvicorn python-lsp-server ruff visidata \
-            pyright pipx jsonlint neovim
+            pyright pipx jsonlint neovim ranger-fm
 
         # Install additional Python tools via pipx
         if command -v pipx &>/dev/null; then
@@ -392,16 +392,22 @@ fi
 # -------------------------------
 # Oh My Posh OS dependant
 # -------------------------------
-if [[ "$OS" == "darwin" ]]; then
-    echo "Intalling Oh My Posh..."
-    brew install jandedobbeleer/oh-my-posh/oh-my-posh
-    echo "✅ Installed Oh My Posh"
+
+if command -v "oh-my-posh" &>/dev/null; then
+    if [[ "$OS" == "darwin" ]]; then
+        echo "Intalling Oh My Posh..."
+        brew install jandedobbeleer/oh-my-posh/oh-my-posh
+        echo "✅ Installed Oh My Posh"
+    fi
+    if [[ "$OS" == "linux" ]]; then
+        echo "Intalling Oh My Posh..."
+        curl -s https://ohmyposh.dev/install.sh | bash -s
+        echo "✅ Installed Oh My Posh"
+    fi
+else
+    echo "✅ Oh My Posh alreay installed"
 fi
-if [[ "$OS" == "linux" ]]; then
-    echo "Intalling Oh My Posh..."
-    curl -s https://ohmyposh.dev/install.sh | bash -s
-    echo "✅ Installed Oh My Posh"
-fi
+
 
 echo "Installing JetBrainsMono font"
 oh-my-posh font install jetbrainsmono
