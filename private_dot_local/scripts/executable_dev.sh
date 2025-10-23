@@ -71,7 +71,11 @@ EOF
     # Copy wakatime config file
     if [ -f "$HOME/.wakatime.cfg" ]; then
         scp -q "$HOME/.wakatime.cfg" "$CONTAINER_HOST":/home/dev/.wakatime.cfg 
+        # Verify the copy worked and set proper permissions
+        ssh "$CONTAINER_HOST" "chmod 644 /home/dev/.wakatime.cfg"
         echo "✓ .wakatime.cfg pushed"
+        echo "Debug: Verifying content in container..."
+        ssh "$CONTAINER_HOST" "head -3 /home/dev/.wakatime.cfg"
     else
         echo "⚠ .wakatime.cfg not found, skipping"
     fi
@@ -83,6 +87,13 @@ enter_container() {
     
     ensure_ssh_key_loaded
     setup_container_gitconfig
+    
+    # Re-copy wakatime config after a delay to prevent overwriting
+    if [ -f "$HOME/.wakatime.cfg" ]; then
+        echo "Ensuring wakatime config persists..."
+        (sleep 3 && scp -q "$HOME/.wakatime.cfg" "$CONTAINER_HOST":/home/dev/.wakatime.cfg && ssh "$CONTAINER_HOST" "chmod 644 /home/dev/.wakatime.cfg") &
+        disown
+    fi
     
     echo "Launching WezTerm with cleanup monitor..."
     
