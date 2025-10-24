@@ -26,6 +26,9 @@ if ask_install_dev_tools; then
     echo "OS detected: $OS"
     echo "Home directory: $HOME_DIR"
 
+    # Install nvim-tree-sitter with npm (otherwise it does not work)
+    npm install -g tree-sitter-cli
+
     # -------------------------------
     # Install pnpm (cross-platform)
     # -------------------------------
@@ -65,7 +68,6 @@ if ask_install_dev_tools; then
             yaml-language-server \
             markdownlint-cli \
             tree-sitter \
-            tree-sitter-cli \
             svelte-language-server \
             neovim \
             @supabase/supabase-js
