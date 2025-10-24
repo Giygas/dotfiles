@@ -392,7 +392,7 @@ fi
 # Oh My Posh OS dependant
 # -------------------------------
 
-if command -v "oh-my-posh" &>/dev/null; then
+if ! command -v "oh-my-posh" &>/dev/null; then
     if [[ "$OS" == "darwin" ]]; then
         echo "Intalling Oh My Posh..."
         brew install jandedobbeleer/oh-my-posh/oh-my-posh
