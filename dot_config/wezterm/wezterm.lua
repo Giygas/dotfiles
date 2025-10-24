@@ -52,6 +52,8 @@ config.ssh_domains = {
 			identitiesonly = "yes",
 			identityfile = "/Users/giygas/.ssh/id_ed25519",
 			forwardagent = "yes",
+			["-X"] = "", -- Enable X11 forwarding
+			["-o"] = "UserKnownHostsFile=/dev/null,ForwardX11=yes",
 		},
 	},
 }
