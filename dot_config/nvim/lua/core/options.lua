@@ -11,6 +11,10 @@ opt.conceallevel = 0 -- so that `` is visible in markdown files
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+-- Markdown Preview
+vim.g.mkdp_browser = "open"
+vim.g.mkdp_port = "8965"
+
 -- undotree settings
 vim.g.undotree_WindowLayout = 2
 
@@ -82,8 +86,8 @@ opt.background = "dark"
 opt.backspace = "indent,eol,start"
 
 -- clipboard
-vim.g.clipboard = "osc52"
 opt.clipboard:append("unnamedplus")
+vim.g.clipboard = "osc52"
 
 -- split windows
 opt.splitright = true

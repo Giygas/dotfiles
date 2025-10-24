@@ -18,3 +18,6 @@ e6f1dbc5068d1e80fe9be279bb0ae4508905a935 e6f1dbc5068d1e80fe9be279bb0ae4508905a93
 e6f1dbc5068d1e80fe9be279bb0ae4508905a935 e6f1dbc5068d1e80fe9be279bb0ae4508905a935 Giygas <gustavorossich@gmail.com> 1743614665 +0200	reset: moving to HEAD
 e6f1dbc5068d1e80fe9be279bb0ae4508905a935 ae189e2a892b4bd86f230a5e8823bd1368015580 Giygas <gustavorossich@gmail.com> 1743614690 +0200	commit (amend): Removed old sessionizer
 ae189e2a892b4bd86f230a5e8823bd1368015580 f2a88a8c71a4d57427f2e24a047eae897429f3bf Giygas <gustavorossich@gmail.com> 1743614717 +0200	commit (amend): Removed old sessionizer
+f2a88a8c71a4d57427f2e24a047eae897429f3bf 1003f371f76bb0f0821ceb9669b0e650c9b6b3d7 Giygas <gustavorossich@gmail.com> 1761339918 +0200	commit: latest container working
+1003f371f76bb0f0821ceb9669b0e650c9b6b3d7 1003f371f76bb0f0821ceb9669b0e650c9b6b3d7 Giygas <gustavorossich@gmail.com> 1761341456 +0200	reset: moving to HEAD
+1003f371f76bb0f0821ceb9669b0e650c9b6b3d7 ed6a01d829cde86d7d00315625015b487805530e Giygas <gustavorossich@gmail.com> 1761342397 +0200	commit: updated some of the forwarding variables

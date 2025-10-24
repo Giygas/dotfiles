@@ -263,13 +263,13 @@ setup_android_sdk() {
 create_avd() {
     print_status "Creating Android Virtual Device..."
     
-    AVD_NAME="pixel_4_api_34"
+    AVD_NAME="pixel_6_api_36"
     
     if ! "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" list avd | grep -q "$AVD_NAME"; then
         echo "no" | "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" create avd \
             -n "$AVD_NAME" \
             -k "system-images;android-34;google_apis;x86_64" \
-            -d "pixel_4" \
+            -d "pixel_6" \
             --force
         print_success "Created AVD: $AVD_NAME"
     else

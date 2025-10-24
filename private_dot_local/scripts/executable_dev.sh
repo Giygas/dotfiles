@@ -103,7 +103,7 @@ setup_port_forwarding() {
     # Check if SSH tunnel is already running
     if pgrep -f "ssh -f -N dev-container" > /dev/null; then
         echo "✓ Port forwarding tunnels already running"
-        echo "  Access at: http:localhost:8984, http:localhost:8002, http:localhost:8001"
+        echo "  Access at: http:localhost:8984, http:localhost:8985, http:localhost:8002, http:localhost:8001"
         return
     fi
 
@@ -114,6 +114,7 @@ setup_port_forwarding() {
         echo "✓ Port forwarding tunnels established"
         echo "  Access your apps at:"
         echo "    - http:localhost:8984"
+        echo "    - http:localhost:8985"
         echo "    - http:localhost:8002"
         echo "    - http:localhost:8001"
     else
