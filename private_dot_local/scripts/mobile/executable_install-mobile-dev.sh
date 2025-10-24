@@ -277,14 +277,72 @@ create_avd() {
     fi
 }
 
+# Verify SSH X11 configuration
+verify_ssh_x11() {
+    if [ "$OS" = "linux" ]; then
+        print_status "Verifying SSH X11 configuration..."
+        
+        # Check SSH config
+        local x11_forwarding=$(grep "^X11Forwarding" /etc/ssh/sshd_config 2>/dev/null || echo "not found")
+        local x11_offset=$(grep "^X11DisplayOffset" /etc/ssh/sshd_config 2>/dev/null || echo "not found")
+        local x11_localhost=$(grep "^X11UseLocalhost" /etc/ssh/sshd_config 2>/dev/null || echo "not found")
+        
+        print_status "SSH X11 settings:"
+        echo "  X11Forwarding: $x11_forwarding"
+        echo "  X11DisplayOffset: $x11_offset"
+        echo "  X11UseLocalhost: $x11_localhost"
+        
+        if [[ "$x11_forwarding" == *"yes"* ]]; then
+            print_success "SSH X11 forwarding is enabled"
+        else
+            print_warning "SSH X11 forwarding may not be properly configured"
+        fi
+    fi
+}
+
 # Configure X11 for Linux
 configure_x11() {
     if [ "$OS" = "linux" ]; then
         print_status "Configuring X11 environment..."
+        
+        # Set up user environment variables
         echo 'export DISPLAY=$DISPLAY' >> ~/.bashrc
         echo 'export XAUTHORITY=$XAUTHORITY' >> ~/.bashrc
         echo 'export DISPLAY=$DISPLAY' >> ~/.zshrc
         echo 'export XAUTHORITY=$XAUTHORITY' >> ~/.zshrc
+        
+        # Configure SSH daemon for X11 forwarding
+        print_status "Configuring SSH daemon for X11 forwarding..."
+        
+        # Enable X11 forwarding in SSH config
+        sudo sed -i 's/#X11Forwarding no/X11Forwarding yes/' /etc/ssh/sshd_config || true
+        sudo sed -i 's/#X11Forwarding yes/X11Forwarding yes/' /etc/ssh/sshd_config || true
+        sudo sed -i 's/X11Forwarding no/X11Forwarding yes/' /etc/ssh/sshd_config || true
+        
+        sudo sed -i 's/#X11DisplayOffset 10/X11DisplayOffset 10/' /etc/ssh/sshd_config || true
+        sudo sed -i 's/X11DisplayOffset 10/X11DisplayOffset 10/' /etc/ssh/sshd_config || true
+        
+        sudo sed -i 's/#X11UseLocalhost yes/X11UseLocalhost yes/' /etc/ssh/sshd_config || true
+        sudo sed -i 's/X11UseLocalhost no/X11UseLocalhost yes/' /etc/ssh/sshd_config || true
+        
+        # Restart SSH service to apply changes
+        print_status "Restarting SSH service..."
+        if command -v systemctl >/dev/null 2>&1 && [ -d /run/systemd/system ]; then
+            sudo systemctl restart sshd
+        elif command -v service >/dev/null 2>&1; then
+            sudo service ssh restart
+        elif command -v /etc/init.d/ssh >/dev/null 2>&1; then
+            sudo /etc/init.d/ssh restart
+        else
+            print_warning "Could not restart SSH service automatically"
+            print_warning "You may need to restart it manually"
+            print_warning "Try: sudo service ssh restart or sudo /etc/init.d/ssh restart"
+        fi
+        
+        print_success "SSH X11 forwarding configured"
+        
+        # Verify configuration
+        verify_ssh_x11
     fi
 }
 
@@ -310,19 +368,20 @@ main() {
     echo ""
     echo "🎯 Next steps:"
     if [ "$OS" = "linux" ]; then
-        echo "  1. On Mac, install XQuartz: brew install --cask xquartz"
+        echo "  1. On Mac, run X11 setup: ~/.local/scripts/mobile/setup_X11_mac.sh"
         echo "  2. Connect with X11: ssh -X user@host"
-        echo "  3. Test X11: ~/.local/scripts/mobile/test-x11.sh"
-        echo "  4. Launch emulator: ~/.local/scripts/mobile/launch-android-emulator.sh"
+        echo "  3. Test X11 forwarding: ssh -X user@host 'echo \$DISPLAY'"
+        echo "  4. Test with X11 app: ssh -X user@host 'xclock'"
+        echo "  5. Launch emulator: ~/.local/scripts/mobile/launch-android-emulator.sh"
     else
         echo "  1. Launch Android Studio from Applications"
         echo "  2. Or launch emulator: ~/.local/scripts/mobile/launch-android-emulator.sh"
     fi
     
     if command -v pnpm &> /dev/null; then
-        echo "  5. Create project: pnpm create expo my-app"
+        echo "  6. Create project: pnpm create expo my-app"
     else
-        echo "  5. Create project: npx create-expo-app my-app"
+        echo "  6. Create project: npx create-expo-app my-app"
     fi
 }
 
