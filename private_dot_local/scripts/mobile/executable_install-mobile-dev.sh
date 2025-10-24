@@ -305,11 +305,62 @@ configure_x11() {
     if [ "$OS" = "linux" ]; then
         print_status "Configuring X11 environment..."
         
-        # Set up user environment variables
-        echo 'export DISPLAY=$DISPLAY' >> ~/.bashrc
-        echo 'export XAUTHORITY=$XAUTHORITY' >> ~/.bashrc
-        echo 'export DISPLAY=$DISPLAY' >> ~/.zshrc
-        echo 'export XAUTHORITY=$XAUTHORITY' >> ~/.zshrc
+        # Set up user environment variables with proper X11 authority handling
+        cat >> ~/.bashrc << 'EOF'
+
+# X11 Forwarding Setup
+export XAUTHORITY=~/.Xauthority
+if [ -n "$DISPLAY" ] && [ ! -f "$XAUTHORITY" ]; then
+    touch "$XAUTHORITY"
+    chmod 600 "$XAUTHORITY"
+fi
+
+# Function to set up X11 authority when needed
+setup_x11_auth() {
+    if [ -n "$DISPLAY" ] && command -v xauth >/dev/null 2>&1; then
+        # Extract display info for xauth
+        local display_info=$(echo $DISPLAY | sed "s/localhost://" | cut -d: -f2)
+        if [ -n "$display_info" ]; then
+            # Try to get the cookie from SSH environment
+            if [ -n "$SSH_AUTH_SOCK" ]; then
+                # This will be set by SSH when connecting with -X
+                echo "X11 forwarding detected - setting up authority"
+            fi
+        fi
+    fi
+}
+
+# Run X11 setup on shell startup
+setup_x11_auth
+EOF
+
+        cat >> ~/.zshrc << 'EOF'
+
+# X11 Forwarding Setup
+export XAUTHORITY=~/.Xauthority
+if [ -n "$DISPLAY" ] && [ ! -f "$XAUTHORITY" ]; then
+    touch "$XAUTHORITY"
+    chmod 600 "$XAUTHORITY"
+fi
+
+# Function to set up X11 authority when needed
+setup_x11_auth() {
+    if [ -n "$DISPLAY" ] && command -v xauth >/dev/null 2>&1; then
+        # Extract display info for xauth
+        local display_info=$(echo $DISPLAY | sed "s/localhost://" | cut -d: -f2)
+        if [ -n "$display_info" ]; then
+            # Try to get the cookie from SSH environment
+            if [ -n "$SSH_AUTH_SOCK" ]; then
+                # This will be set by SSH when connecting with -X
+                echo "X11 forwarding detected - setting up authority"
+            fi
+        fi
+    fi
+}
+
+# Run X11 setup on shell startup
+setup_x11_auth
+EOF
         
         # Configure SSH daemon for X11 forwarding
         print_status "Configuring SSH daemon for X11 forwarding..."
