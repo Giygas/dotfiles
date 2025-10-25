@@ -97,64 +97,28 @@ EOF
     fi
 }
 
-check_port_available() {
-    local port=$1
-    if lsof -i ":$port" >/dev/null 2>&1; then
-        return 1  # Port is in use
-    else
-        return 0  # Port is available
-    fi
-}
+
 
 setup_port_forwarding() {
     echo "Setting up port forwarding tunnels..."
-
-    # Check if SSH tunnel is already running
-    if pgrep -f "ssh -f -N dev-container" > /dev/null; then
-        echo "✓ Port forwarding tunnels already running"
-        echo "  Access at: http:localhost:8984, http:localhost:8985, http:localhost:8002, http:localhost:8001"
-        return
-    fi
-
-    # Check if required ports are available
-    local ports=(8984 8985 8002 8001)
-    local occupied_ports=()
     
-    for port in "${ports[@]}"; do
-        if ! check_port_available "$port"; then
-            occupied_ports+=("$port")
-        fi
-    done
-    
-    if [ ${#occupied_ports[@]} -gt 0 ]; then
-        echo "⚠️  The following ports are already in use: ${occupied_ports[*]}"
-        echo "   Port forwarding may not work for these ports"
-        echo "   You can check with: lsof -i :<port>"
-    fi
-
-    # Start SSH with forwarding from config (background, no command)
-    ssh -f -N "$CONTAINER_HOST"
-
-    if [ $? -eq 0 ]; then
-        echo "✓ Port forwarding tunnels established"
-        echo "  Access your apps at:"
-        echo "    - http:localhost:8984"
-        echo "    - http:localhost:8985"
-        echo "    - http:localhost:8002"
-        echo "    - http:localhost:8001"
-    else
-        echo "❌ Failed to establish port forwarding tunnels"
-    fi
+    # Since SSH config already handles LocalForward, we just need to verify
+    # the connection will work. The ports will be forwarded when we connect.
+    echo "✓ Port forwarding will be established via SSH config"
+    echo "  Access your apps at:"
+    echo "    - http:localhost:8984"
+    echo "    - http:localhost:8985"
+    echo "    - http:localhost:8002"
+    echo "    - http:localhost:8001"
 }
 
 cleanup_port_forwarding() {
-    echo "Cleaning up port forwarding tunnels..."
-    pkill -f "ssh -f -N dev-container"
-    echo "✓ Port forwarding tunnels stopped"
+    echo "Port forwarding cleanup not needed (handled by SSH config)"
 }
 
 
 enter_container() {
+    export DISPLAY=:0
     echo "Entering dev container..."
     
     ensure_ssh_key_loaded
@@ -169,8 +133,8 @@ enter_container() {
         wezterm connect "$CONTAINER_HOST" > /dev/null 2>&1
         
         # When WezTerm exits, cleanup runs
-        cleanup_port_forwarding
-        cleanup_container
+        cleanup_port_forwarding > /dev/null 2>&1
+        cleanup_container > /dev/null 2>&1
     ) &
     
     disown

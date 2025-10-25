@@ -4,6 +4,7 @@
 
 CONTAINER_HOST="dev-container"
 SSH_KEY="$HOME/.ssh/id_ed25519"
+TEMP_SSH_CONFIG=""
 
 ensure_ssh_key_loaded() {
     # Check if ssh-agent is running
@@ -46,6 +47,39 @@ get_git_config_value() {
     git config --global --get "$key" 2>/dev/null || echo ""
 }
 
+check_ports_occupied() {
+    local ports=(8984 8985 8002 8001)
+    for port in "${ports[@]}"; do
+        if lsof -i ":$port" >/dev/null 2>&1; then
+            return 0  # At least one port is occupied
+        fi
+    done
+    return 1  # All ports are free
+}
+
+create_temp_ssh_config() {
+    TEMP_SSH_CONFIG=$(mktemp)
+    # Create temp config without LocalForward lines
+    grep -v "LocalForward" ~/.ssh/config > "$TEMP_SSH_CONFIG"
+    echo "✓ Created temporary SSH config without port forwarding"
+}
+
+cleanup_temp_ssh_config() {
+    # Only cleanup if this is the last devx instance running
+    # Count only bash processes running devx.sh, excluding the current process
+    local devx_count=$(pgrep -f "bash.*devx.sh" | grep -v "^$$" | wc -l)
+    
+    if [ "$devx_count" -eq 0 ]; then
+        if [ -n "$TEMP_SSH_CONFIG" ] && [ -f "$TEMP_SSH_CONFIG" ]; then
+            rm -f "$TEMP_SSH_CONFIG"
+            TEMP_SSH_CONFIG=""
+            echo "✓ Cleaned up temporary SSH config (last instance)"
+        fi
+    else
+        echo "ℹ️  Keeping temporary SSH config (other devx instances still running: $devx_count)"
+    fi
+}
+
 setup_container_config() {
     echo "Setting up git config for container environment..."
     
@@ -72,14 +106,20 @@ setup_container_config() {
   defaultBranch = main
 EOF
     
+    # Determine which SSH config to use
+    local ssh_config_option=""
+    if [ -n "$TEMP_SSH_CONFIG" ]; then
+        ssh_config_option="-F $TEMP_SSH_CONFIG"
+    fi
+    
     # Push gitconfig file
-    scp -q "$temp_gitconfig" "$CONTAINER_HOST":/home/dev/.gitconfig
+    scp -q $ssh_config_option "$temp_gitconfig" "$CONTAINER_HOST":/home/dev/.gitconfig
     rm -f "$temp_gitconfig"
     echo "✓ .gitconfig pushed"
 
     # Copy wakatime config file
     if [ -f "$HOME/.wakatime.cfg" ]; then
-        scp -q "$HOME/.wakatime.cfg" "$CONTAINER_HOST":/home/dev/.wakatime.cfg 
+        scp -q $ssh_config_option "$HOME/.wakatime.cfg" "$CONTAINER_HOST":/home/dev/.wakatime.cfg 
         echo "✓ .wakatime.cfg pushed"
     else
         echo "⚠ .wakatime.cfg not found, skipping"
@@ -89,120 +129,90 @@ EOF
     local opencode_auth=$(get_opencode_auth)   
     if [ -n "$opencode_auth" ]; then
         # Create directory and file in container
-        ssh "$CONTAINER_HOST" "mkdir -p /home/dev/.local/share/opencode"
-        echo "$opencode_auth" | ssh "$CONTAINER_HOST" "cat > /home/dev/.local/share/opencode/auth.json"
+        ssh $ssh_config_option "$CONTAINER_HOST" "mkdir -p /home/dev/.local/share/opencode"
+        echo "$opencode_auth" | ssh $ssh_config_option "$CONTAINER_HOST" "cat > /home/dev/.local/share/opencode/auth.json"
         echo "✓ opencode auth.json pushed"
     else
         echo "⚠ opencode auth.json not found, skipping"
     fi
 }
 
-check_port_available() {
-    local port=$1
-    if lsof -i ":$port" >/dev/null 2>&1; then
-        return 1  # Port is in use
-    else
-        return 0  # Port is available
-    fi
-}
+
 
 setup_port_forwarding() {
     echo "Setting up port forwarding tunnels..."
-
-    # Check if SSH tunnel is already running
-    if pgrep -f "ssh -f -N dev-container" > /dev/null; then
-        echo "✓ Ports already established, access at:"
-        echo "  - http:localhost:8984"
-        echo "  - http:localhost:8985"
-        echo "  - http:localhost:8002"
-        echo "  - http:localhost:8001"
-        return
-    fi
-
-    # Check if required ports are available
-    local ports=(8984 8985 8002 8001)
-    local occupied_ports=()
     
-    for port in "${ports[@]}"; do
-        if ! check_port_available "$port"; then
-            occupied_ports+=("$port")
-        fi
-    done
-    
-    if [ ${#occupied_ports[@]} -gt 0 ]; then
-        echo "✓ Ports already established, access at:"
-        echo "  - http:localhost:8984"
-        echo "  - http:localhost:8985"
-        echo "  - http:localhost:8002"
-        echo "  - http:localhost:8001"
-        return
-    fi
-
-    # Start SSH with forwarding from config (background, no command)
-    ssh -f -N "$CONTAINER_HOST"
-
-    if [ $? -eq 0 ]; then
-        echo "✓ Port forwarding tunnels established"
-        echo "  Access your apps at:"
-        echo "    - http:localhost:8984"
-        echo "    - http:localhost:8985"
-        echo "    - http:localhost:8002"
-        echo "    - http:localhost:8001"
+    if [ -n "$TEMP_SSH_CONFIG" ]; then
+        echo "✓ Port forwarding will be handled by existing processes"
     else
-        echo "❌ Failed to establish port forwarding tunnels"
+        echo "✓ Port forwarding will be established via SSH config"
     fi
+    
+    echo "  Access your apps at:"
+    echo "    - http:localhost:8984"
+    echo "    - http:localhost:8985"
+    echo "    - http:localhost:8002"
+    echo "    - http:localhost:8001"
 }
 
-cleanup_port_forwarding() {
-    echo "Cleaning up port forwarding tunnels..."
-    pkill -f "ssh -f -N dev-container"
-    echo "✓ Port forwarding tunnels stopped"
-}
+
 
 
 enter_container() {
     echo "Entering dev container..."
     
     ensure_ssh_key_loaded
-    setup_container_config
     
-    # Check if tunnels already exist before setting up
-    local tunnels_existed=false
-    if pgrep -f "ssh -f -N dev-container" > /dev/null; then
-        tunnels_existed=true
+    # Check ports FIRST before any SSH connections
+    if check_ports_occupied; then
+        echo "⚠️  Ports are already in use, creating temporary SSH config without forwarding"
+        create_temp_ssh_config
     fi
     
+    setup_container_config
     setup_port_forwarding
     
     echo "Connecting to dev container..."
     
     # Set up cleanup trap
-    trap 'cleanup_port_forwarding; cleanup_container' EXIT
+    trap 'cleanup_temp_ssh_config; cleanup_container' EXIT
     
-    # Connect directly in current pane
-    if pgrep -f "ssh -f -N dev-container" > /dev/null; then
-        # Use regular SSH with X11 forwarding when tunnels exist
-        if [ "$tunnels_existed" = true ]; then
-            echo "Using existing tunnels..."
-        else
-            echo "Using newly established tunnels..."
-        fi
-        # Set DISPLAY variable for X11 forwarding
-        DISPLAY=:0 ssh -Y -A -i ~/.ssh/id_ed25519 dev@192.168.1.10 -p 2222
+    # Determine which SSH config to use
+    local ssh_config_option=""
+    if [ -n "$TEMP_SSH_CONFIG" ]; then
+        ssh_config_option="-F $TEMP_SSH_CONFIG"
+        echo "Establishing connection without port forwarding (ports already in use)..."
     else
-        # Use normal SSH config when no tunnels exist
-        echo "Establishing new connection..."
-        # Set DISPLAY variable for X11 forwarding
-        DISPLAY=:0 ssh -Y "$CONTAINER_HOST"
+        echo "Establishing connection with port forwarding..."
     fi
+    
+    # Set DISPLAY variable for X11 forwarding
+    DISPLAY=:0 ssh -Y $ssh_config_option "$CONTAINER_HOST"
     
     # Cleanup will run automatically when SSH exits due to trap
 }
 
 cleanup_container() {
-    echo "Cleaning up container git config..."
-    ssh "$CONTAINER_HOST" "rm -f /home/dev/.gitconfig /home/dev/.wakatime.cfg /home/dev/.local/share/opencode/auth.json"
-    echo "✓ Cleanup completed"
+    # Only cleanup container config if this is the last devx instance
+    # Count only bash processes running devx.sh, excluding the current process
+    local devx_count=$(pgrep -f "bash.*devx.sh" | grep -v "^$$" | wc -l)
+    
+    if [ "$devx_count" -eq 0 ]; then
+        echo "Cleaning up container git config (last instance)..."
+        
+        # For cleanup, always try to normal SSH config first since that's what
+        # likely created the port forwards. Fall back to temp config if needed.
+        if ssh "$CONTAINER_HOST" "rm -f /home/dev/.gitconfig /home/dev/.wakatime.cfg /home/dev/.local/share/opencode/auth.json" 2>/dev/null; then
+            echo "✓ Cleanup completed"
+        elif [ -n "$TEMP_SSH_CONFIG" ] && ssh -F "$TEMP_SSH_CONFIG" "$CONTAINER_HOST" "rm -f /home/dev/.gitconfig /home/dev/.wakatime.cfg /home/dev/.local/share/opencode/auth.json" 2>/dev/null; then
+            echo "✓ Cleanup completed (using temp config)"
+        else
+            echo "⚠️  Could not connect for cleanup (ports may still be in use)"
+            echo "   Config files will be cleaned up on next run"
+        fi
+    else
+        echo "ℹ️  Keeping container config (other devx instances still running: $devx_count)"
+    fi
 }
 
 # Main execution
