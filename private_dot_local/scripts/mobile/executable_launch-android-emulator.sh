@@ -89,7 +89,7 @@ list_avds() {
 
 # Launch emulator
 launch_emulator() {
-    local avd_name=${1:-"pixel_4_api_34"}
+    local avd_name=${1:-"Pixel_6_api_36"}
     
     # Check if AVD exists
     if ! "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" list avd | grep -q "$avd_name"; then

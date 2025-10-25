@@ -1,6 +1,6 @@
 #!/bin/bash
-# Container SSH script with proper git signing setup
-# Usage: ./dev.sh
+# Container SSH script with proper git signing setup using wezterm ssh
+# Usage: ./devx.sh
 
 CONTAINER_HOST="dev-container"
 SSH_KEY="$HOME/.ssh/id_ed25519"
@@ -111,8 +111,11 @@ setup_port_forwarding() {
 
     # Check if SSH tunnel is already running
     if pgrep -f "ssh -f -N dev-container" > /dev/null; then
-        echo "✓ Port forwarding tunnels already running"
-        echo "  Access at: http:localhost:8984, http:localhost:8985, http:localhost:8002, http:localhost:8001"
+        echo "✓ Ports already established, access at:"
+        echo "  - http:localhost:8984"
+        echo "  - http:localhost:8985"
+        echo "  - http:localhost:8002"
+        echo "  - http:localhost:8001"
         return
     fi
 
@@ -127,9 +130,12 @@ setup_port_forwarding() {
     done
     
     if [ ${#occupied_ports[@]} -gt 0 ]; then
-        echo "⚠️  The following ports are already in use: ${occupied_ports[*]}"
-        echo "   Port forwarding may not work for these ports"
-        echo "   You can check with: lsof -i :<port>"
+        echo "✓ Ports already established, access at:"
+        echo "  - http:localhost:8984"
+        echo "  - http:localhost:8985"
+        echo "  - http:localhost:8002"
+        echo "  - http:localhost:8001"
+        return
     fi
 
     # Start SSH with forwarding from config (background, no command)
@@ -159,24 +165,38 @@ enter_container() {
     
     ensure_ssh_key_loaded
     setup_container_config
+    
+    # Check if tunnels already exist before setting up
+    local tunnels_existed=false
+    if pgrep -f "ssh -f -N dev-container" > /dev/null; then
+        tunnels_existed=true
+    fi
+    
     setup_port_forwarding
     
-    echo "Launching WezTerm with cleanup monitor..."
+    echo "Connecting to dev container..."
     
-    # Launch monitor script in background
-    (
-        # Launch WezTerm
-        wezterm connect "$CONTAINER_HOST" > /dev/null 2>&1
-        
-        # When WezTerm exits, cleanup runs
-        cleanup_port_forwarding
-        cleanup_container
-    ) &
+    # Set up cleanup trap
+    trap 'cleanup_port_forwarding; cleanup_container' EXIT
     
-    disown
+    # Connect directly in current pane
+    if pgrep -f "ssh -f -N dev-container" > /dev/null; then
+        # Use regular SSH with X11 forwarding when tunnels exist
+        if [ "$tunnels_existed" = true ]; then
+            echo "Using existing tunnels..."
+        else
+            echo "Using newly established tunnels..."
+        fi
+        # Set DISPLAY variable for X11 forwarding
+        DISPLAY=:0 ssh -Y -A -i ~/.ssh/id_ed25519 dev@192.168.1.10 -p 2222
+    else
+        # Use normal SSH config when no tunnels exist
+        echo "Establishing new connection..."
+        # Set DISPLAY variable for X11 forwarding
+        DISPLAY=:0 ssh -Y "$CONTAINER_HOST"
+    fi
     
-    echo "✓ WezTerm launched and detached"
-    echo "Cleanup will run automatically when WezTerm closes"
+    # Cleanup will run automatically when SSH exits due to trap
 }
 
 cleanup_container() {
