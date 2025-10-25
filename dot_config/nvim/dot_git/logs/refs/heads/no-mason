@@ -1,7 +1,0 @@
-0000000000000000000000000000000000000000 a8006accc4d0c6b2448467694964dd26451f0de8 Giygas <gustavorossich@gmail.com> 1757345443 +0200	branch: Created from refs/heads/nukeconfig
-a8006accc4d0c6b2448467694964dd26451f0de8 7b214e1daa7766f2184223dc7dcf99e593231218 Giygas <gustavorossich@gmail.com> 1758366079 +0200	commit: working minimal config
-7b214e1daa7766f2184223dc7dcf99e593231218 7081b5efb221ef7c9f5462c80a6d3eecdd5bd99b Giygas <gustavorossich@gmail.com> 1758369785 +0200	commit: installed diffview
-7081b5efb221ef7c9f5462c80a6d3eecdd5bd99b 29d2d1e5cb16a3bc19040f78fc1cd2a339b81e6e Giygas <gustavorossich@gmail.com> 1758551716 +0200	commit: added some more colorschemes
-29d2d1e5cb16a3bc19040f78fc1cd2a339b81e6e 42354f02378bcf8dff4e736b28eea3dc3c47ad5f Giygas <gustavorossich@gmail.com> 1758551723 +0200	commit (amend): added some more colorschemes
-42354f02378bcf8dff4e736b28eea3dc3c47ad5f 13c64f8e6346bf2c18eb0602902b9d5a218b690d Giygas <gustavorossich@gmail.com> 1758804944 +0200	commit: added some stuff
-13c64f8e6346bf2c18eb0602902b9d5a218b690d 5f4ef31609ddf67c5f8cd94205abd34c1cc1f2d6 Giygas <gustavorossich@gmail.com> 1760295568 +0200	commit: latest working config

@@ -1,6 +1,0 @@
-0000000000000000000000000000000000000000 6299ad70a237041f14efff687f54297fe5383ce7 Giygas <gustavorossich@gmail.com> 1720984762 +0200	commit (initial): Initial commit
-6299ad70a237041f14efff687f54297fe5383ce7 1d324eb95ad821dc03c6c792df37ebf838869688 Giygas <gustavorossich@gmail.com> 1743334493 +0200	merge Refactor: Fast-forward
-1d324eb95ad821dc03c6c792df37ebf838869688 08d8bc7c842ba6f010f513596dd7612f0c3a9de9 Giygas <gustavorossich@gmail.com> 1743544558 +0200	commit: telescope and colorschemes now in plugins folder
-08d8bc7c842ba6f010f513596dd7612f0c3a9de9 3f0c3269ae489a777d23b11ab0df64c43177addf Giygas <gustavorossich@gmail.com> 1756228713 +0200	commit: working shit
-3f0c3269ae489a777d23b11ab0df64c43177addf 3f0824a875540b52cf5dd871b0d86691c53fc4b9 Giygas <gustavorossich@gmail.com> 1756398411 +0200	commit: reenabled old lsp confi%
-3f0824a875540b52cf5dd871b0d86691c53fc4b9 5f4ef31609ddf67c5f8cd94205abd34c1cc1f2d6 Giygas <gustavorossich@gmail.com> 1760295581 +0200	merge no-mason: Fast-forward

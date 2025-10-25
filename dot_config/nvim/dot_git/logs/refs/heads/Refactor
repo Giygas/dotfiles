@@ -1,6 +1,0 @@
-0000000000000000000000000000000000000000 6299ad70a237041f14efff687f54297fe5383ce7 Giygas <gustavorossich@gmail.com> 1720984775 +0200	branch: Created from refs/heads/main
-6299ad70a237041f14efff687f54297fe5383ce7 2104ecc7c4c8e4e0b7cdeefe0eb2ec52100c4c94 Giygas <gustavorossich@gmail.com> 1736808088 +0100	commit: bug: tmux navigation in wezterm not working
-2104ecc7c4c8e4e0b7cdeefe0eb2ec52100c4c94 d04df42d0df559be1ddde1f8e0920af65c3870c8 Giygas <gustavorossich@gmail.com> 1736809021 +0100	commit: removed some unused keymaps
-d04df42d0df559be1ddde1f8e0920af65c3870c8 5d790fc80c0649b715be1a147b67fc5645910687 Giygas <gustavorossich@gmail.com> 1737275536 +0100	commit: Removed some old stuff
-5d790fc80c0649b715be1a147b67fc5645910687 5678c1bcd292b6eede1662ab74f001e9e4f4faaa Giygas <gustavorossich@gmail.com> 1737276571 +0100	commit: changed the bad installation for some plugins
-5678c1bcd292b6eede1662ab74f001e9e4f4faaa 1d324eb95ad821dc03c6c792df37ebf838869688 Giygas <gustavorossich@gmail.com> 1743334448 +0200	commit: Removed unused plugins
