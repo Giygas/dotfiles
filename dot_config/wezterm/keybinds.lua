@@ -1,46 +1,53 @@
 local w = require("wezterm")
-local sessionizer = require("scripts.sessionizer")
 
 return {
-	-- Wezterm sessionizer
+	{
+		key = "c",
+		mods = "CTRL|SHIFT",
+		action = w.action.QuickSelectArgs,
+	},
+	{
+		key = "x",
+		mods = "CTRL|SHIFT",
+		action = w.action.ActivateCopyMode,
+	},
+
 	-- {
 	-- 	key = "f",
 	-- 	mods = "CTRL",
-	-- 	action = w.action_callback(sessionizer.open),
+	-- 	action = w.action.SpawnCommandInNewWindow({
+	-- 		args = { "./tmux-sessionizer" },
+	-- 		cwd = "/Users/giygas/.local/scripts",
+	-- 		domain = "DefaultDomain",
+	-- 		position = {
+	-- 			x = 10,
+	-- 			y = 300,
+	-- 		},
+	-- 	}),
 	-- },
-	-- SESSION MANAGEMENT
-	-- Attach to muxer
-	-- {
-	-- 	key = "a",
-	-- 	mods = "LEADER",
-	-- 	action = w.action.AttachDomain("unix"),
-	-- },
-	-- Detach from muxer
-	-- {
-	-- 	key = "d",
-	-- 	mods = "LEADER",
-	-- 	action = w.action.DetachDomain({ DomainName = "unix" }),
-	-- },
-	-- Rename current session; analagous to command in tmux
-	{
-		key = "$",
-		mods = "LEADER|SHIFT",
-		action = w.action.PromptInputLine({
-			description = "Enter new name for session",
-			action = w.action_callback(function(window, pane, line)
-				if line then
-					w.mux.rename_workspace(window:mux_window():get_workspace(), line)
-				end
-			end),
-		}),
-	},
-	-- Show list of workspaces
-	{
-		key = "s",
-		mods = "LEADER|CTRL",
-		action = w.action.ShowLauncherArgs({ flags = "WORKSPACES" }),
-	},
 
+	-- { key = "c", mods = "SHIFT|CTRL", action = w.action.QuickSelect },
+
+	-- -- Rename current session; analagous to command in tmux
+	-- {
+	-- 	key = "$",
+	-- 	mods = "LEADER|SHIFT",
+	-- 	action = w.action.PromptInputLine({
+	-- 		description = "Enter new name for session",
+	-- 		action = w.action_callback(function(window, pane, line)
+	-- 			if line then
+	-- 				w.mux.rename_workspace(window:mux_window():get_workspace(), line)
+	-- 			end
+	-- 		end),
+	-- 	}),
+	-- },
+	-- -- Show list of workspaces
+	-- {
+	-- 	key = "s",
+	-- 	mods = "LEADER|CTRL",
+	-- 	action = w.action.ShowLauncherArgs({ flags = "WORKSPACES" }),
+	-- },
+	--
 	-- Kill Wezterm
 	{
 		key = "q",
@@ -55,18 +62,18 @@ return {
 		action = w.action.ShowDebugOverlay,
 	},
 
-	-- Split the current pane horizontally
-	{
-		key = "\\",
-		mods = "LEADER",
-		action = w.action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
-	},
-	-- Split the current pane vertically
-	{
-		key = "-",
-		mods = "LEADER",
-		action = w.action.SplitVertical({ domain = "CurrentPaneDomain" }),
-	},
+	-- -- Split the current pane horizontally
+	-- {
+	-- 	key = "\\",
+	-- 	mods = "LEADER",
+	-- 	action = w.action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
+	-- },
+	-- -- Split the current pane vertically
+	-- {
+	-- 	key = "-",
+	-- 	mods = "LEADER",
+	-- 	action = w.action.SplitVertical({ domain = "CurrentPaneDomain" }),
+	-- },
 	-- Close the current pane
 	{
 		key = "x",
@@ -110,12 +117,12 @@ return {
 		mods = "SUPER",
 		action = w.action.SpawnTab("CurrentPaneDomain"),
 	},
-	-- Toggle full screen
-	{
-		key = "m",
-		mods = "LEADER",
-		action = w.action.ToggleFullScreen,
-	},
+	-- -- Toggle full screen
+	-- {
+	-- 	key = "m",
+	-- 	mods = "LEADER",
+	-- 	action = w.action.ToggleFullScreen,
+	-- },
 	-- Activate Command Palette
 	{
 		key = "P",
@@ -148,11 +155,11 @@ return {
 		}),
 	},
 	-- Tab navigator
-	{
-		key = "w",
-		mods = "LEADER",
-		action = w.action.ShowTabNavigator,
-	},
+	-- {
+	-- 	key = "w",
+	-- 	mods = "LEADER",
+	-- 	action = w.action.ShowTabNavigator,
+	-- },
 	-- Next and previous tab
 	{
 		key = "l",

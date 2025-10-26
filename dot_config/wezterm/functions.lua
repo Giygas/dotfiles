@@ -62,7 +62,7 @@ local function right_status(window, _)
 	window:set_right_status(wezterm.format({
 		{ Attribute = { Intensity = "Bold" } },
 		-- { Background = { Color = "#588E6E" } },
-		{ Foreground = { Color = "#79D9D9" } },
+		{ Foreground = { Color = "#A6C833" } },
 		{ Text = " > " .. window:active_workspace() .. " | " .. wezterm.hostname() },
 	}))
 end

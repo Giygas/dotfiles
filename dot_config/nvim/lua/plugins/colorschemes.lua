@@ -27,15 +27,13 @@ return {
 	},
 
 	{
-		"folke/tokyonight.nvim",
-		-- lazy = false,
-		-- priority = 1000,
-		opts = {
-			transparent = true,
-			styles = {
-				floats = "transparent",
-			},
-		},
+		"bluz71/vim-nightfly-colors",
+		name = "nightfly",
+		lazy = false,
+		priority = 1000,
+		config = function()
+			vim.g.nightflyTransparent = true
+		end,
 	},
 
 	{
@@ -145,14 +143,14 @@ return {
 			editor = {
 				transparent_background = true,
 				sign = { color = "none" },
-				float = {
-					color = "mantle",
-					solid_border = false,
-				},
-				completion = {
-					solid_border = false,
-					color = "surface0",
-				},
+				-- float = {
+				-- 	color = "mantle",
+				-- 	solid_border = false,
+				-- },
+				-- completion = {
+				-- 	solid_border = false,
+				-- 	color = "surface0",
+				--19 },
 			},
 			style = {
 				tabline = { "reverse" },
@@ -165,7 +163,21 @@ return {
 		},
 	},
 
-	{ "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+	{
+		"catppuccin/nvim",
+		lazy = true,
+		priority = 1000,
+		config = function()
+			require("catppuccin").setup({
+				term_colors = true,
+				flavour = "mocha",
+				transparent_background = true,
+			})
+
+			vim.cmd([[colorscheme catppuccin]])
+		end,
+	},
+
 	{
 		"gmr458/cold.nvim",
 		name = "cold",

@@ -4,7 +4,7 @@ local commands = require("commands")
 local functions = require("functions")
 
 -- Leader key
-config.leader = { key = "a", mods = "CTRL" }
+config.leader = { key = "b", mods = "CTRL" }
 
 -- Keybinds configuration
 local keys = require("keybinds")
@@ -17,19 +17,20 @@ config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
 
 -- PLUGINS
 -- Smart splits plugin
-local smart_splits = wezterm.plugin.require("https://github.com/mrjones2014/smart-splits.nvim")
-smart_splits.apply_to_config(config)
+-- local smart_splits = wezterm.plugin.require("https://github.com/mrjones2014/smart-splits.nvim")
+-- smart_splits.apply_to_config(config)
 
-local wpr = wezterm.plugin.require("https://github.com/vieitesss/workspacesionizer.wezterm")
-wpr.apply_to_config(config, {
-	paths = { "~/Projects/", "~/.config" },
-	git_repos = true,
-	show = "full",
-	binding = {
-		key = "f",
-		mods = "CTRL",
-	},
-})
+-- local wpr = wezterm.plugin.require("https://github.com/vieitesss/workspacesionizer.wezterm")
+--
+-- wpr.apply_to_config(config, {
+-- 	paths = { "~/Projects/", "~/.config" },
+-- 	git_repos = true,
+-- 	show = "full",
+-- 	binding = {
+-- 		key = "f",
+-- 		mods = "CTRL",
+-- 	},
+-- })
 
 -- local wezterm_resurrect = require("config.wezterm_resurrect")
 -- wezterm_resurrect.apply_keybinds(config)
@@ -52,6 +53,8 @@ config.ssh_domains = {
 			identitiesonly = "yes",
 			identityfile = "/Users/giygas/.ssh/id_ed25519",
 			forwardagent = "yes",
+			forwardx11trusted = "yes",
+			forwardx11 = "yes",
 			["-X"] = "", -- Enable X11 forwarding
 			["-Y"] = "", -- Enable trusted X11 forwarding
 			["-o"] = "UserKnownHostsFile=/dev/null,ForwardX11=yes,ForwardX11Trusted=yes",
@@ -64,43 +67,63 @@ config.mux_enable_ssh_agent = true
 -- Tab bar
 config.tab_bar_at_bottom = true
 config.tab_max_width = 20
+config.hide_tab_bar_if_only_one_tab = true
 config.switch_to_last_active_tab_when_closing_tab = true
+-- config.enable_tab_bar = false
 
 -- Font settings
-config.font_size = 18
-config.font = wezterm.font("JetBrains Mono")
+config.font_size = 16
+-- config.font = wezterm.font("JetBrains Mono")
+-- config.font = wezterm.font("Hack Nerd Font Mono")
+-- config.font = wezterm.font("Consolas")
+config.font = wezterm.font("Roboto Mono")
+-- config.font = wezterm.font("Fira Code")
+-- config.font = wezterm.font("Inconsolata")
+-- config.font = wezterm.font("IBM Plex Mono")
 -- config.line_height = 1.2
 
 -- Colors
-config.colors = {
-	cursor_bg = "yellow",
-	cursor_border = "yellow",
-	-- background = "#0e0e0e",
-	-- background = "#1e2326",
-	background = "#1F2528",
-
-	ansi = {
-		"#588E6E",
-		"#9D4221",
-		"#00D5F4",
-		"#8F832E",
-		"#87A188",
-		"#7F4E2F",
-		"#588E6E",
-		"#D7D0CA",
-	},
-
-	brights = {
-		"#A19F89",
-		"#E0502A",
-		"#739393",
-		"#D7AA4B",
-		"#79D9D9",
-		"#CD7C54",
-		"#739393",
-		"#FFFFFF",
-	},
-}
+-- config.color_scheme = "Catppuccin Macchiato"
+-- config.color_scheme = "rose-pine"
+-- config.color_scheme = "Vesper"
+-- config.color_scheme = "Vag (Gogh)"
+-- config.color_scheme = "Catppuccin Mocha (Gogh)"
+-- config.color_scheme = "nord"
+-- config.color_scheme = "Moonfly (Gogh)"
+-- config.color_scheme = "Mellifluous"
+config.color_scheme = "Nightfly (Gogh)"
+-- config.color_scheme = "Everforest Dark Hard (Gogh)"
+-- config.colors = {
+-- 	cursor_bg = "yellow",
+-- 	cursor_border = "yellow",
+-- 	-- background = "#0e0e0e",
+-- 	background = "#1E1E2E", -- Catppuccin
+-- 	-- background = "#232A2E", -- Evergarden
+-- 	-- background = "#101010", -- Vesper
+-- 	-- background = "#1F2528",
+--
+-- 	ansi = {
+-- 		"#588E6E",
+-- 		"#9D4221",
+-- 		"#00D5F4",
+-- 		"#8F832E",
+-- 		"#87A188",
+-- 		"#7F4E2F",
+-- 		"#588E6E",
+-- 		"#D7D0CA",
+-- 	},
+--
+-- 	brights = {
+-- 		"#A19F89",
+-- 		"#E0502A",
+-- 		"#739393",
+-- 		"#D7AA4B",
+-- 		"#79D9D9",
+-- 		"#CD7C54",
+-- 		"#739393",
+-- 		"#FFFFFF",
+-- 	},
+-- }
 
 -- Appearance
 config.cursor_blink_rate = 0
