@@ -6,13 +6,9 @@
 **/.gitattributes
 **/.gitmodules
 
-# Common build/cache directories
-**/node_modules
-**/.cache
-**/__pycache__
-**/target
-**/dist
-**/build
+# tmux plugins
+*/tmux/plugins/*
+!*/tmux/plugins/tmux-sessionx
 
 # OS-specific files
 **/.DS_Store
