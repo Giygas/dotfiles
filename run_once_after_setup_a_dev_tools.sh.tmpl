@@ -368,6 +368,11 @@ if [[ "$OS" == "linux" ]]; then
 fi
 
 # -------------------------------
+# TMUX for both OS
+# -------------------------------
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# -------------------------------
 # Oh My Zsh for both OS
 # -------------------------------
 if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
