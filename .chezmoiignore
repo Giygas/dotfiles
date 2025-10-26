@@ -1,5 +1,26 @@
 .config/nvim/lazy-lock.json
 
-/.git
-/.gitignore
+# Git directories and files (recursive)
+**/.git
+**/.gitignore
+**/.gitattributes
+**/.gitmodules
 
+# Common build/cache directories
+**/node_modules
+**/.cache
+**/__pycache__
+**/target
+**/dist
+**/build
+
+# OS-specific files
+**/.DS_Store
+**/Thumbs.db
+
+# Editor files
+**/.vscode
+**/.idea
+**/*.swp
+**/*.swo
+**/*~
