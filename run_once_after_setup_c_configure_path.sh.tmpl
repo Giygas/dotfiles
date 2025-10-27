@@ -96,6 +96,18 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
         echo "✅ Added npm-global to PATH"
     fi
 
+    # Add zoxide
+    if ! grep -q "zoxide init zsh" "$HOME_DIR/.zshrc"; then
+        echo "eval "$(zoxide init zsh)" >> "$HOME_DIR/.zshrc"
+        echo "✅ Added npm-global to PATH"
+    fi
+
+    # Add fzf
+    if ! grep -q "(fzf --zsh)" "$HOME_DIR/.zshrc"; then
+        echo "source <(fzf --zsh)" >> "$HOME_DIR/.zshrc"
+        echo "✅ Added npm-global to PATH"
+    fi
+
     # Set zsh as default shell
     if [[ "$SHELL" != *"zsh"* ]]; then
         echo "Setting zsh as default shell..."
