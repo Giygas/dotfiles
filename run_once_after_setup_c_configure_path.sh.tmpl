@@ -8,6 +8,12 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
     # -------------------------------
     # Zsh aliases and theme
     # -------------------------------
+
+    if ! grep -q "EDITOR=nvim" "$HOME_DIR/.zshrc"; then
+        echo 'EDITOR=nvim' >> "$HOME_DIR/.zshrc"
+        echo "✅ Added EDITOR to PATH"
+    fi
+
     if ! grep -q ".zsh_aliases" "$HOME_DIR/.zshrc"; then
         echo '. $HOME/.zsh_aliases' >> "$HOME_DIR/.zshrc"
         echo "✅ Added zsh_aliases to PATH"
