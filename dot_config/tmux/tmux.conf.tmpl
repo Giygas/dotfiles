@@ -1,4 +1,4 @@
-HOME_DIR="{{ .chezmoi.homeDir }}"
+HOME_DIR="{{- .chezmoi.homeDir }}"
 
 # bootstrap tpm
 if "test ! -d ~/.tmux/plugins/tpm" \
@@ -61,9 +61,9 @@ set -g @sessionx-bind 'C-f'
 # set -g @sessionx-filtered-sessions 'nested-'
 # set -g @sessionx-bind-zo-new-window 'ctrl-y'
 # set -g @sessionx-auto-accept 'off'
-set -g @sessionx-custom-paths '$HOME_DIR/Projects'
+set -g @sessionx-custom-paths "$HOME_DIR/Projects"
 set -g @sessionx-fzf-builtin-tmux 'on'
-set -g @sessionx-x-path '$HOME_DIR/.config'
+set -g @sessionx-x-path "$HOME_DIR/.config"
 set -g @sessionx-window-height '75%'
 set -g @sessionx-window-width '65%'
 set -g @sessionx-zoxide-mode 'on'
