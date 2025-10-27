@@ -48,7 +48,7 @@ get_git_config_value() {
 }
 
 check_ports_occupied() {
-    local ports=(8984 8985 8002 8001)
+    local ports=(8984 8985 8002 8001 8000 5173)
     for port in "${ports[@]}"; do
         if lsof -i ":$port" >/dev/null 2>&1; then
             return 0  # At least one port is occupied
@@ -153,6 +153,8 @@ setup_port_forwarding() {
     echo "    - http:localhost:8985"
     echo "    - http:localhost:8002"
     echo "    - http:localhost:8001"
+    echo "    - http:localhost:8000"
+    echo "    - http:localhost:5173"
 }
 
 
