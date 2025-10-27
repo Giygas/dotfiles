@@ -5,3 +5,4 @@ alias lla="ls -a"
 alias gla="git log --all --decorate --oneline --graph"
 alias dev="$HOME/.local/scripts/dev.sh"
 alias devx="$HOME/.local/scripts/devx.sh"
+alias bat=batcat
