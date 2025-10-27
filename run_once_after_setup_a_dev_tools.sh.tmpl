@@ -370,7 +370,13 @@ fi
 # -------------------------------
 # TMUX for both OS
 # -------------------------------
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+if [ ! -d "$HOME_DIR/.tmux/plugins/tpm" ]; then
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    echo "✅ Installed tpm"
+else
+
+    echo "👌tpm already installed"
+fi
 
 # -------------------------------
 # Oh My Zsh for both OS
