@@ -18,6 +18,16 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
         echo "✅ Added zsh_theme to PATH"
     fi
 
+    # Fzf integration
+    if ! grep -q "plugins=.*fzf" "$HOME_DIR/.zshrc"; then
+        # Add fzf to existing plugins list
+        sed -i '/^plugins=/ s/)/ fzf)/' "$HOME_DIR/.zshrc"
+        echo "✅ Added fzf to plugins in .zshrc"
+    else
+        echo "✅ fzf already present in plugins"
+    fi
+
+
     # Add zsh-autosuggestions and zsh-syntax-highlighting
     if ! grep -q "zsh-autosuggestions\|zsh-syntax-highlighting" "$HOME_DIR/.zshrc"; then
         # Add plugins to existing list (preserves current plugins)
@@ -102,16 +112,10 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
         echo "✅ Added npm-global to PATH"
     fi
 
-    # Add fzf
-    if ! grep -q ".fzf.zsh" "$HOME_DIR/.zshrc"; then
-        echo "[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh" >> "$HOME_DIR/.zshrc"
-        echo "✅ Added fzf to PATH"
-    fi
-
     # Set zsh as default shell
     if [[ "$SHELL" != *"zsh"* ]]; then
         echo "Setting zsh as default shell..."
-        chsh -s $(which zsh) || echo "⚠️ Could not change shell (may require sudo or different permissions)"
+        chsh -s $(which zsh) || echo "󰀪 Could not change shell (may require sudo or different permissions)"
         exec zsh
     fi
 
