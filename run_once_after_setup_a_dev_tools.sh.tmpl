@@ -48,6 +48,46 @@ echo "User: $USER_NAME"
 echo "Home directory: $HOME_DIR"
 
 
+# -------------------------------
+# Oh My Zsh for both OS
+# -------------------------------
+if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
+    echo "Installing Oh My Zsh..."
+    RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    echo "✅ Installed Oh My Zsh"
+fi
+
+# Clone the plugins first
+echo "Installing zsh-autosuggestions..."
+if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+fi
+
+echo "Installing zsh-syntax-highlighting..."
+if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]; then
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+fi
+
+
+# -------------------------------
+# Oh My Posh OS dependant
+# -------------------------------
+
+if ! command -v "oh-my-posh" &>/dev/null; then
+    if [[ "$OS" == "darwin" ]]; then
+        echo "Intalling Oh My Posh..."
+        brew install jandedobbeleer/oh-my-posh/oh-my-posh
+        echo "✅ Installed Oh My Posh"
+    fi
+    if [[ "$OS" == "linux" ]]; then
+        echo "Intalling Oh My Posh..."
+        curl -s https://ohmyposh.dev/install.sh | bash -s
+        echo "✅ Installed Oh My Posh"
+    fi
+else
+    echo "✅ Oh My Posh alreay installed"
+fi
+
 
 # -------------------------------
 # Per OS setup
@@ -117,7 +157,7 @@ if ask_install_dev_tools; then
         sudo apt update
         sudo apt install -y \
             software-properties-common \
-            fd-find fzf tmux zsh ripgrep gnupg git  \
+            fd-find tmux zsh ripgrep gnupg git  \
             ffmpeg ghostscript imagemagick qemu-kvm libvirt-daemon-system \
             libvirt-clients bridge-utils virtinst virt-manager postgresql postgresql-contrib \
             yadm watchman xclip liblua5.1-0-dev luarocks 
@@ -297,6 +337,10 @@ if ask_install_dev_tools; then
             sudo apt install -y ./wezterm-nightly.Ubuntu24.04.deb
             rm -rf wezterm-nightly.Ubuntu24.04.deb
         fi
+
+        # FZF
+        git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+        ~/.fzf/install --all
         
         # Install turso using official installer
         if ! command -v "turso" &>/dev/null; then
@@ -374,10 +418,12 @@ if [[ "$OS" == "linux" ]]; then
     else
         install_neovim
     fi
+
+    
 fi
 
 # -------------------------------
-# TMUX for both OS
+# TMP for both OS
 # -------------------------------
 if [ ! -d "$HOME_DIR/.tmux/plugins/tpm" ]; then
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
@@ -385,46 +431,6 @@ if [ ! -d "$HOME_DIR/.tmux/plugins/tpm" ]; then
 else
 
     echo "👌tpm already installed"
-fi
-
-# -------------------------------
-# Oh My Zsh for both OS
-# -------------------------------
-if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
-    echo "Installing Oh My Zsh..."
-    RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    echo "✅ Installed Oh My Zsh"
-fi
-
-# Clone the plugins first
-echo "Installing zsh-autosuggestions..."
-if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-fi
-
-echo "Installing zsh-syntax-highlighting..."
-if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]; then
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-fi
-
-
-# -------------------------------
-# Oh My Posh OS dependant
-# -------------------------------
-
-if ! command -v "oh-my-posh" &>/dev/null; then
-    if [[ "$OS" == "darwin" ]]; then
-        echo "Intalling Oh My Posh..."
-        brew install jandedobbeleer/oh-my-posh/oh-my-posh
-        echo "✅ Installed Oh My Posh"
-    fi
-    if [[ "$OS" == "linux" ]]; then
-        echo "Intalling Oh My Posh..."
-        curl -s https://ohmyposh.dev/install.sh | bash -s
-        echo "✅ Installed Oh My Posh"
-    fi
-else
-    echo "✅ Oh My Posh alreay installed"
 fi
 
 echo "🎉 Dev environment setup complete for $USER_NAME on $OS!"

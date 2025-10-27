@@ -103,9 +103,9 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
     fi
 
     # Add fzf
-    if ! grep -q "(fzf --zsh)" "$HOME_DIR/.zshrc"; then
-        echo "source <(fzf --zsh)" >> "$HOME_DIR/.zshrc"
-        echo "✅ Added npm-global to PATH"
+    if ! grep -q ".fzf.zsh" "$HOME_DIR/.zshrc"; then
+        echo "[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh" >> "$HOME_DIR/.zshrc"
+        echo "✅ Added fzf to PATH"
     fi
 
     # Set zsh as default shell
