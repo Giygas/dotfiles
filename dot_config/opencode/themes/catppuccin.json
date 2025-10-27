@@ -1,0 +1,235 @@
+{
+  "$schema": "https://opencode.ai/theme.json",
+  "defs": {
+    "catppuccin_base": "#24273a",
+    "catppuccin_mantle": "#1e2030",
+    "catppuccin_crust": "#181926",
+    "catppuccin_surface0": "#363a4f",
+    "catppuccin_surface1": "#494d64",
+    "catppuccin_surface2": "#5b6078",
+    "catppuccin_overlay0": "#6e738d",
+    "catppuccin_overlay1": "#8087a2",
+    "catppuccin_overlay2": "#939ab7",
+    "catppuccin_text": "#cad3f5",
+    "catppuccin_subtext0": "#a5adcb",
+    "catppuccin_subtext1": "#b8c0e0",
+    "catppuccin_blue": "#8aadf4",
+    "catppuccin_lavender": "#b7bdf8",
+    "catppuccin_sapphire": "#7dc4e4",
+    "catppuccin_sky": "#91d7e3",
+    "catppuccin_teal": "#8bd5ca",
+    "catppuccin_green": "#a6da95",
+    "catppuccin_yellow": "#eed49f",
+    "catppuccin_peach": "#f5a97f",
+    "catppuccin_maroon": "#ee99a0",
+    "catppuccin_red": "#ed8796",
+    "catppuccin_mauve": "#c6a0f6",
+    "catppuccin_pink": "#f5bde6",
+    "catppuccin_flamingo": "#f0c6c6",
+    "catppuccin_rosewater": "#f4dbd6"
+  },
+
+  "theme": {
+    "primary": {
+      "dark": "catppuccin_blue",
+      "light": "catppuccin_blue"
+    },
+    "secondary": {
+      "dark": "catppuccin_sapphire",
+      "light": "catppuccin_sapphire"
+    },
+    "accent": {
+      "dark": "catppuccin_green",
+      "light": "catppuccin_green"
+    },
+    "error": {
+      "dark": "catppuccin_red",
+      "light": "catppuccin_red"
+    },
+    "warning": {
+      "dark": "catppuccin_peach",
+      "light": "catppuccin_peach"
+    },
+    "success": {
+      "dark": "catppuccin_green",
+      "light": "catppuccin_green"
+    },
+    "info": {
+      "dark": "catppuccin_blue",
+      "light": "catppuccin_blue"
+    },
+    "text": {
+      "dark": "catppuccin_text",
+      "light": "catppuccin_text"
+    },
+    "textMuted": {
+      "dark": "catppuccin_subtext1",
+      "light": "catppuccin_subtext1"
+    },
+    "background": {
+      "dark": "none",
+      "light": "none"
+    },
+    "backgroundPanel": {
+      "dark": "catppuccin_mantle",
+      "light": "catppuccin_mantle"
+    },
+    "backgroundElement": {
+      "dark": "catppuccin_surface0",
+      "light": "catppuccin_surface0"
+    },
+    "border": {
+      "dark": "catppuccin_surface1",
+      "light": "catppuccin_surface1"
+    },
+    "borderActive": {
+      "dark": "catppuccin_surface2",
+      "light": "catppuccin_surface2"
+    },
+    "borderSubtle": {
+      "dark": "catppuccin_surface1",
+      "light": "catppuccin_surface1"
+    },
+    "diffAdded": {
+      "dark": "catppuccin_green",
+      "light": "catppuccin_green"
+    },
+    "diffRemoved": {
+      "dark": "catppuccin_red",
+      "light": "catppuccin_red"
+    },
+    "diffContext": {
+      "dark": "catppuccin_overlay0",
+      "light": "catppuccin_overlay0"
+    },
+    "diffHunkHeader": {
+      "dark": "catppuccin_overlay1",
+      "light": "catppuccin_overlay1"
+    },
+    "diffHighlightAdded": {
+      "dark": "catppuccin_green",
+      "light": "catppuccin_green"
+    },
+    "diffHighlightRemoved": {
+      "dark": "catppuccin_red",
+      "light": "catppuccin_red"
+    },
+    "diffAddedBg": {
+      "dark": "catppuccin_mantle",
+      "light": "catppuccin_mantle"
+    },
+    "diffRemovedBg": {
+      "dark": "catppuccin_mantle",
+      "light": "catppuccin_mantle"
+    },
+    "diffContextBg": {
+      "dark": "catppuccin_base",
+      "light": "catppuccin_base"
+    },
+    "diffLineNumber": {
+      "dark": "catppuccin_surface1",
+      "light": "catppuccin_surface1"
+    },
+    "diffAddedLineNumberBg": {
+      "dark": "catppuccin_mantle",
+      "light": "catppuccin_mantle"
+    },
+    "diffRemovedLineNumberBg": {
+      "dark": "catppuccin_mantle",
+      "light": "catppuccin_mantle"
+    },
+    "markdownText": {
+      "dark": "catppuccin_text",
+      "light": "catppuccin_text"
+    },
+    "markdownHeading": {
+      "dark": "catppuccin_blue",
+      "light": "catppuccin_blue"
+    },
+    "markdownLink": {
+      "dark": "catppuccin_sapphire",
+      "light": "catppuccin_sapphire"
+    },
+    "markdownLinkText": {
+      "dark": "catppuccin_blue",
+      "light": "catppuccin_blue"
+    },
+    "markdownCode": {
+      "dark": "catppuccin_mauve",
+      "light": "catppuccin_mauve"
+    },
+    "markdownBlockQuote": {
+      "dark": "catppuccin_overlay0",
+      "light": "catppuccin_overlay0"
+    },
+    "markdownEmph": {
+      "dark": "catppuccin_rosewater",
+      "light": "catppuccin_rosewater"
+    },
+    "markdownStrong": {
+      "dark": "catppuccin_yellow",
+      "light": "catppuccin_yellow"
+    },
+    "markdownHorizontalRule": {
+      "dark": "catppuccin_surface0",
+      "light": "catppuccin_surface0"
+    },
+    "markdownListItem": {
+      "dark": "catppuccin_blue",
+      "light": "catppuccin_blue"
+    },
+    "markdownListEnumeration": {
+      "dark": "catppuccin_mauve",
+      "light": "catppuccin_mauve"
+    },
+    "markdownImage": {
+      "dark": "catppuccin_teal",
+      "light": "catppuccin_teal"
+    },
+    "markdownImageText": {
+      "dark": "catppuccin_blue",
+      "light": "catppuccin_blue"
+    },
+    "markdownCodeBlock": {
+      "dark": "catppuccin_text",
+      "light": "catppuccin_text"
+    },
+    "syntaxComment": {
+      "dark": "catppuccin_overlay0",
+      "light": "catppuccin_overlay0"
+    },
+    "syntaxKeyword": {
+      "dark": "catppuccin_mauve",
+      "light": "catppuccin_mauve"
+    },
+    "syntaxFunction": {
+      "dark": "catppuccin_blue",
+      "light": "catppuccin_blue"
+    },
+    "syntaxVariable": {
+      "dark": "catppuccin_peach",
+      "light": "catppuccin_peach"
+    },
+    "syntaxString": {
+      "dark": "catppuccin_green",
+      "light": "catppuccin_green"
+    },
+    "syntaxNumber": {
+      "dark": "catppuccin_peach",
+      "light": "catppuccin_peach"
+    },
+    "syntaxType": {
+      "dark": "catppuccin_yellow",
+      "light": "catppuccin_yellow"
+    },
+    "syntaxOperator": {
+      "dark": "catppuccin_sky",
+      "light": "catppuccin_sky"
+    },
+    "syntaxPunctuation": {
+      "dark": "catppuccin_text",
+      "light": "catppuccin_text"
+    }
+  }
+}
+
