@@ -1,0 +1,33 @@
+# vi:set filetype=tmux
+HOME_DIR="{{- .chezmoi.homeDir }}"
+
+set -g @plugin 'omerxx/tmux-sessionx' # Need to detach to 3a1911e for this to work
+
+# Prefix
+set -g @sessionx-prefix off
+set -g @sessionx-bind 'C-f'
+
+#Paths
+set -g @sessionx-custom-paths "$HOME_DIR/Projects"
+set -g @sessionx-x-path "$HOME_DIR/.config"
+set -g @sessionx-custom-paths-subdirectories 'true'
+set -g @sessionx-filtered-sessions 'scratch'
+
+#Window config
+set -g @sessionx-window-height '75%'
+set -g @sessionx-window-width '65%'
+# set -g @sessionx-preview-location 'right'
+# set -g @sessionx-preview-ratio '55%'
+
+
+# Other
+set -g @sessionx-fzf-builtin-tmux 'on'
+set -g @sessionx-zoxide-mode 'on'
+set -g @sessionx-additional-options "--color pointer:9,spinner:92,marker:46"
+
+
+
+# set -g @sessionx-filtered-sessions 'nested-'
+# set -g @sessionx-bind-zo-new-window 'ctrl-y'
+# set -g @sessionx-auto-accept 'off'
+# set -g @sessionx-filter-current 'false'
