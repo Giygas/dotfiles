@@ -433,4 +433,15 @@ else
     echo "👌tpm already installed"
 fi
 
+# -------------------------------
+# Deno for both OS
+# -------------------------------
+if command -v "nvim" &>/dev/null; then
+    curl -fsSL https://deno.land/install.sh | sh
+    echo "✅ Installed deno"
+else
+    echo "✅ Deno already installed"
+fi
+
+
 echo "🎉 Dev environment setup complete for $USER_NAME on $OS!"
