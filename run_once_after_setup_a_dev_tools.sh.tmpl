@@ -332,15 +332,20 @@ if ask_install_dev_tools; then
         fi
 
         # Install wezterm nightly
-        if ! command --version "wezterm" &>/dev/null; then
+        if ! command -v "wezterm" &>/dev/null; then
             curl -LO https://github.com/wezterm/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu24.04.deb
             sudo apt install -y ./wezterm-nightly.Ubuntu24.04.deb
             rm -rf wezterm-nightly.Ubuntu24.04.deb
         fi
 
         # FZF
-        git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-        ~/.fzf/install --all
+        if ! command -v "fzf" &>/dev/null; then
+            git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+            ~/.fzf/install --all
+            echo "✅ Installed fzf"
+        else
+            echo "✅ Fzf already installed"
+        fi
         
         # Install turso using official installer
         if ! command -v "turso" &>/dev/null; then
