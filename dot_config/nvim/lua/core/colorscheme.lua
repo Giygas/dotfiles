@@ -9,7 +9,8 @@ function ColorMyPencils(color)
 	-- vim.api.nvim_set_hl(0, "FloatBorder", { bg = "#000000" })
 
 	vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-	vim.api.nvim_set_hl(0, "FloatBorder", { bg = "none", fg="#FAB387" })
+	vim.api.nvim_set_hl(0, "FloatBorder", { bg = "none", fg = "#FAB387" })
+	vim.api.nvim_set_hl(0, "NormalBorder", { bg = "none", fg = "#FAB387" })
 	-- vim.cmd([[hi NvimTreeNormal guibg=NONE]])
 
 	-- vim.cmd([[
