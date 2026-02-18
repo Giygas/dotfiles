@@ -63,17 +63,17 @@ return {
 	},
 
 	-- -- Split the current pane horizontally
-	-- {
-	-- 	key = "\\",
-	-- 	mods = "LEADER",
-	-- 	action = w.action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
-	-- },
+	{
+		key = "|",
+		mods = "LEADER",
+		action = w.action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
+	},
 	-- -- Split the current pane vertically
-	-- {
-	-- 	key = "-",
-	-- 	mods = "LEADER",
-	-- 	action = w.action.SplitVertical({ domain = "CurrentPaneDomain" }),
-	-- },
+	{
+		key = "-",
+		mods = "LEADER",
+		action = w.action.SplitVertical({ domain = "CurrentPaneDomain" }),
+	},
 	-- Close the current pane
 	{
 		key = "x",

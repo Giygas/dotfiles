@@ -1,0 +1,22 @@
+# Moonfly Theme
+# NOTE: hex colors cannot contain capital letters
+# Variables will become @thm_* in tmux
+
+# Core colors
+bg="#080808"
+fg="#BDBDBD"
+
+# --> Moonfly
+thm_bg="#1e1e20"
+thm_fg="#e4e4e4"
+thm_cyan="#99d1db"
+thm_black="#292c3c"
+thm_gray="#414559"
+thm_magenta="#cf87e8"
+thm_pink="#ae81ff"
+thm_red="#e78284"
+thm_green="#8cc85f"
+thm_yellow="#e5c890"
+thm_blue="#74b2ff"
+thm_orange="#c2c292"
+thm_black4="#626880"

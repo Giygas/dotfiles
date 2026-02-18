@@ -2,6 +2,10 @@ local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 local commands = require("commands")
 local functions = require("functions")
+local colorscheme = require("colorscheme")
+
+-- Colorscheme
+config = colorscheme
 
 -- Leader key
 config.leader = { key = "b", mods = "CTRL" }
@@ -81,49 +85,6 @@ config.font = wezterm.font("Roboto Mono")
 -- config.font = wezterm.font("Inconsolata")
 -- config.font = wezterm.font("IBM Plex Mono")
 -- config.line_height = 1.2
-
--- Colors
--- config.color_scheme = "Catppuccin Macchiato"
--- config.color_scheme = "rose-pine"
--- config.color_scheme = "Vesper"
--- config.color_scheme = "Vag (Gogh)"
-config.color_scheme = "Catppuccin Mocha (Gogh)"
--- config.color_scheme = "nord"
--- config.color_scheme = "Moonfly (Gogh)"
--- config.color_scheme = "Mellifluous"
--- config.color_scheme = "Nightfly (Gogh)"
--- config.color_scheme = "Everforest Dark Hard (Gogh)"
--- config.colors = {
--- 	cursor_bg = "yellow",
--- 	cursor_border = "yellow",
--- 	-- background = "#0e0e0e",
--- 	background = "#1E1E2E", -- Catppuccin
--- 	-- background = "#232A2E", -- Evergarden
--- 	-- background = "#101010", -- Vesper
--- 	-- background = "#1F2528",
---
--- 	ansi = {
--- 		"#588E6E",
--- 		"#9D4221",
--- 		"#00D5F4",
--- 		"#8F832E",
--- 		"#87A188",
--- 		"#7F4E2F",
--- 		"#588E6E",
--- 		"#D7D0CA",
--- 	},
---
--- 	brights = {
--- 		"#A19F89",
--- 		"#E0502A",
--- 		"#739393",
--- 		"#D7AA4B",
--- 		"#79D9D9",
--- 		"#CD7C54",
--- 		"#739393",
--- 		"#FFFFFF",
--- 	},
--- }
 
 -- Appearance
 config.cursor_blink_rate = 0

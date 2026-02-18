@@ -1,0 +1,230 @@
+{
+  "$schema": "https://opencode.ai/theme.json",
+  "defs": {
+    "moonfly_bg": "#080808",
+    "moonfly_fg": "#BDBDBD",
+    "moonfly_black": "#323437",
+    "moonfly_red": "#FF5454",
+    "moonfly_green": "#8CC85F",
+    "moonfly_yellow": "#E3C78A",
+    "moonfly_blue": "#80A0FF",
+    "moonfly_magenta": "#CF87E8",
+    "moonfly_cyan": "#79DAC8",
+    "moonfly_white": "#C6C6C6",
+    "moonfly_bright_black": "#949494",
+    "moonfly_bright_red": "#FF5189",
+    "moonfly_bright_green": "#36C692",
+    "moonfly_bright_yellow": "#C2C292",
+    "moonfly_bright_blue": "#74B2FF",
+    "moonfly_bright_magenta": "#AE81FF",
+    "moonfly_bright_cyan": "#85DC85",
+    "moonfly_bright_white": "#E4E4E4",
+    "moonfly_muted_fg": "#949494",
+    "moonfly_subtle": "#323437",
+    "moonfly_surface": "#16161A",
+    "moonfly_surface_dim": "#0f0f12"
+  },
+
+  "theme": {
+    "primary": {
+      "dark": "moonfly_blue",
+      "light": "moonfly_blue"
+    },
+    "secondary": {
+      "dark": "moonfly_cyan",
+      "light": "moonfly_cyan"
+    },
+    "accent": {
+      "dark": "moonfly_green",
+      "light": "moonfly_green"
+    },
+    "error": {
+      "dark": "moonfly_red",
+      "light": "moonfly_red"
+    },
+    "warning": {
+      "dark": "moonfly_yellow",
+      "light": "moonfly_yellow"
+    },
+    "success": {
+      "dark": "moonfly_bright_green",
+      "light": "moonfly_bright_green"
+    },
+    "info": {
+      "dark": "moonfly_bright_blue",
+      "light": "moonfly_bright_blue"
+    },
+    "text": {
+      "dark": "moonfly_fg",
+      "light": "moonfly_fg"
+    },
+    "textMuted": {
+      "dark": "moonfly_muted_fg",
+      "light": "moonfly_muted_fg"
+    },
+    "background": {
+      "dark": "none",
+      "light": "none"
+    },
+    "backgroundPanel": {
+      "dark": "moonfly_surface",
+      "light": "moonfly_surface"
+    },
+    "backgroundElement": {
+      "dark": "moonfly_subtle",
+      "light": "moonfly_subtle"
+    },
+    "border": {
+      "dark": "moonfly_black",
+      "light": "moonfly_black"
+    },
+    "borderActive": {
+      "dark": "moonfly_blue",
+      "light": "moonfly_blue"
+    },
+    "borderSubtle": {
+      "dark": "moonfly_surface_dim",
+      "light": "moonfly_surface_dim"
+    },
+    "diffAdded": {
+      "dark": "moonfly_green",
+      "light": "moonfly_green"
+    },
+    "diffRemoved": {
+      "dark": "moonfly_red",
+      "light": "moonfly_red"
+    },
+    "diffContext": {
+      "dark": "moonfly_muted_fg",
+      "light": "moonfly_muted_fg"
+    },
+    "diffHunkHeader": {
+      "dark": "moonfly_bright_black",
+      "light": "moonfly_bright_black"
+    },
+    "diffHighlightAdded": {
+      "dark": "moonfly_bright_green",
+      "light": "moonfly_bright_green"
+    },
+    "diffHighlightRemoved": {
+      "dark": "moonfly_bright_red",
+      "light": "moonfly_bright_red"
+    },
+    "diffAddedBg": {
+      "dark": "moonfly_surface",
+      "light": "moonfly_surface"
+    },
+    "diffRemovedBg": {
+      "dark": "moonfly_surface",
+      "light": "moonfly_surface"
+    },
+    "diffContextBg": {
+      "dark": "moonfly_subtle",
+      "light": "moonfly_subtle"
+    },
+    "diffLineNumber": {
+      "dark": "moonfly_black",
+      "light": "moonfly_black"
+    },
+    "diffAddedLineNumberBg": {
+      "dark": "moonfly_surface",
+      "light": "moonfly_surface"
+    },
+    "diffRemovedLineNumberBg": {
+      "dark": "moonfly_surface",
+      "light": "moonfly_surface"
+    },
+    "markdownText": {
+      "dark": "moonfly_fg",
+      "light": "moonfly_fg"
+    },
+    "markdownHeading": {
+      "dark": "moonfly_blue",
+      "light": "moonfly_blue"
+    },
+    "markdownLink": {
+      "dark": "moonfly_cyan",
+      "light": "moonfly_cyan"
+    },
+    "markdownLinkText": {
+      "dark": "moonfly_bright_blue",
+      "light": "moonfly_bright_blue"
+    },
+    "markdownCode": {
+      "dark": "moonfly_magenta",
+      "light": "moonfly_magenta"
+    },
+    "markdownBlockQuote": {
+      "dark": "moonfly_muted_fg",
+      "light": "moonfly_muted_fg"
+    },
+    "markdownEmph": {
+      "dark": "moonfly_white",
+      "light": "moonfly_white"
+    },
+    "markdownStrong": {
+      "dark": "moonfly_yellow",
+      "light": "moonfly_yellow"
+    },
+    "markdownHorizontalRule": {
+      "dark": "moonfly_subtle",
+      "light": "moonfly_subtle"
+    },
+    "markdownListItem": {
+      "dark": "moonfly_blue",
+      "light": "moonfly_blue"
+    },
+    "markdownListEnumeration": {
+      "dark": "moonfly_magenta",
+      "light": "moonfly_magenta"
+    },
+    "markdownImage": {
+      "dark": "moonfly_bright_cyan",
+      "light": "moonfly_bright_cyan"
+    },
+    "markdownImageText": {
+      "dark": "moonfly_bright_blue",
+      "light": "moonfly_bright_blue"
+    },
+    "markdownCodeBlock": {
+      "dark": "moonfly_fg",
+      "light": "moonfly_fg"
+    },
+    "syntaxComment": {
+      "dark": "moonfly_muted_fg",
+      "light": "moonfly_muted_fg"
+    },
+    "syntaxKeyword": {
+      "dark": "moonfly_magenta",
+      "light": "moonfly_magenta"
+    },
+    "syntaxFunction": {
+      "dark": "moonfly_bright_blue",
+      "light": "moonfly_bright_blue"
+    },
+    "syntaxVariable": {
+      "dark": "moonfly_yellow",
+      "light": "moonfly_yellow"
+    },
+    "syntaxString": {
+      "dark": "moonfly_green",
+      "light": "moonfly_green"
+    },
+    "syntaxNumber": {
+      "dark": "moonfly_red",
+      "light": "moonfly_red"
+    },
+    "syntaxType": {
+      "dark": "moonfly_cyan",
+      "light": "moonfly_cyan"
+    },
+    "syntaxOperator": {
+      "dark": "moonfly_yellow",
+      "light": "moonfly_yellow"
+    },
+    "syntaxPunctuation": {
+      "dark": "moonfly_white",
+      "light": "moonfly_white"
+    }
+  }
+}

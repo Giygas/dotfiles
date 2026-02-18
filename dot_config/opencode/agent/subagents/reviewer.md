@@ -1,7 +1,7 @@
 ---
 description: "Code review, security, and quality assurance agent"
 mode: subagent
-model: "zai-coding-plan/glm-4.6"
+model: "zai-coding-plan/glm-4.7"
 temperature: 0.1
 tools:
   read: true

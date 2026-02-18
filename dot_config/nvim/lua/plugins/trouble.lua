@@ -42,12 +42,12 @@ return {
 			desc = "Buffer Diagnostics (Trouble)",
 		},
 		{
-			"<leader>cs",
+			"<leader>fs",
 			"<cmd>Trouble symbols toggle focus=true<cr>",
 			desc = "Symbols (Trouble)",
 		},
 		{
-			"<leader>cl",
+			"<leader>fd",
 			"<cmd>Trouble lsp toggle <cr>",
 			desc = "LSP Definitions / references / ... (Trouble)",
 		},

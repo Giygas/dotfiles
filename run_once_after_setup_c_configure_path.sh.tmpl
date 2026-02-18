@@ -119,11 +119,10 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
     fi
 
     # Set zsh as default shell
-    if [ "$SHELL" != *"zsh"* ]; then
+    if [[ "$SHELL" != *"zsh"* ]]; then
         echo "Setting zsh as default shell..."
         if command -v zsh >/dev/null 2>&1; then
-            chsh -s "$(command -v zsh)" || echo "󰀪 Could not change shell (may require sudo or
-    different permissions)"
+            chsh -s "$(command -v zsh)" || echo "󰀪 Could not change shell (may require sudo or different permissions)"
             echo "󰀯 Restart your shell or run 'exec zsh' to use zsh"
         else
             echo "󰀪 zsh is not installed"

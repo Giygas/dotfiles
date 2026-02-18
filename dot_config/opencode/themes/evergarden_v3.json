@@ -1,0 +1,237 @@
+{
+  "$schema": "https://opencode.ai/theme.json",
+  "defs": {
+    "evergarden_bg": "#232A2E",
+    "evergarden_fg": "#F8F9E8",
+    "evergarden_black": "#2B3337",
+    "evergarden_red": "#F57F82",
+    "evergarden_orange": "#F7A182",
+    "evergarden_green": "#CBE3B3",
+    "evergarden_lime": "#DBE6AF",
+    "evergarden_yellow": "#F5D098",
+    "evergarden_aqua": "#B3E3CA",
+    "evergarden_skye": "#B3E6DB",
+    "evergarden_snow": "#AFD9E6",
+    "evergarden_blue": "#B2CAED",
+    "evergarden_purple": "#A8C7A0",
+    "evergarden_magenta": "#9FC496",
+    "evergarden_pink": "#F3C0E5",
+    "evergarden_cherry": "#FAE6EF",
+    "evergarden_white": "#ADC9BC",
+    "evergarden_bright_black": "#58686D",
+    "evergarden_bright_red": "#F57F82",
+    "evergarden_bright_green": "#CBE3B3",
+    "evergarden_bright_yellow": "#F5D098",
+    "evergarden_bright_blue": "#B2CAED",
+    "evergarden_bright_magenta": "#BEDCB3",
+    "evergarden_bright_cyan": "#B3E6DB",
+    "evergarden_bright_white": "#F8F9E8",
+    "evergarden_muted_fg": "#96B4AA",
+    "evergarden_subtle": "#2B3337",
+    "evergarden_surface": "#1C2225",
+    "evergarden_surface_dim": "#171C1F"
+  },
+
+  "theme": {
+    "primary": {
+      "dark": "evergarden_blue",
+      "light": "evergarden_blue"
+    },
+    "secondary": {
+      "dark": "evergarden_lime",
+      "light": "evergarden_lime"
+    },
+    "accent": {
+      "dark": "evergarden_cherry",
+      "light": "evergarden_cherry"
+    },
+    "error": {
+      "dark": "evergarden_red",
+      "light": "evergarden_red"
+    },
+    "warning": {
+      "dark": "evergarden_orange",
+      "light": "evergarden_orange"
+    },
+    "success": {
+      "dark": "evergarden_lime",
+      "light": "evergarden_lime"
+    },
+    "info": {
+      "dark": "evergarden_snow",
+      "light": "evergarden_snow"
+    },
+    "text": {
+      "dark": "evergarden_fg",
+      "light": "evergarden_fg"
+    },
+    "textMuted": {
+      "dark": "evergarden_muted_fg",
+      "light": "evergarden_muted_fg"
+    },
+    "background": {
+      "dark": "none",
+      "light": "none"
+    },
+    "backgroundPanel": {
+      "dark": "evergarden_surface",
+      "light": "evergarden_surface"
+    },
+    "backgroundElement": {
+      "dark": "evergarden_subtle",
+      "light": "evergarden_subtle"
+    },
+    "border": {
+      "dark": "evergarden_black",
+      "light": "evergarden_black"
+    },
+    "borderActive": {
+      "dark": "evergarden_blue",
+      "light": "evergarden_blue"
+    },
+    "borderSubtle": {
+      "dark": "evergarden_surface_dim",
+      "light": "evergarden_surface_dim"
+    },
+    "diffAdded": {
+      "dark": "evergarden_lime",
+      "light": "evergarden_lime"
+    },
+    "diffRemoved": {
+      "dark": "evergarden_green",
+      "light": "evergarden_green"
+    },
+    "diffContext": {
+      "dark": "evergarden_muted_fg",
+      "light": "evergarden_muted_fg"
+    },
+    "diffHunkHeader": {
+      "dark": "evergarden_bright_black",
+      "light": "evergarden_bright_black"
+    },
+    "diffHighlightAdded": {
+      "dark": "evergarden_green",
+      "light": "evergarden_green"
+    },
+    "diffHighlightRemoved": {
+      "dark": "evergarden_red",
+      "light": "evergarden_red"
+    },
+    "diffAddedBg": {
+      "dark": "evergarden_surface",
+      "light": "evergarden_surface"
+    },
+    "diffRemovedBg": {
+      "dark": "evergarden_surface",
+      "light": "evergarden_surface"
+    },
+    "diffContextBg": {
+      "dark": "evergarden_subtle",
+      "light": "evergarden_subtle"
+    },
+    "diffLineNumber": {
+      "dark": "evergarden_black",
+      "light": "evergarden_black"
+    },
+    "diffAddedLineNumberBg": {
+      "dark": "evergarden_surface",
+      "light": "evergarden_surface"
+    },
+    "diffRemovedLineNumberBg": {
+      "dark": "evergarden_surface",
+      "light": "evergarden_surface"
+    },
+    "markdownText": {
+      "dark": "evergarden_fg",
+      "light": "evergarden_fg"
+    },
+    "markdownHeading": {
+      "dark": "evergarden_cherry",
+      "light": "evergarden_cherry"
+    },
+    "markdownLink": {
+      "dark": "evergarden_skye",
+      "light": "evergarden_skye"
+    },
+    "markdownLinkText": {
+      "dark": "evergarden_blue",
+      "light": "evergarden_blue"
+    },
+    "markdownCode": {
+      "dark": "evergarden_purple",
+      "light": "evergarden_purple"
+    },
+    "markdownBlockQuote": {
+      "dark": "evergarden_muted_fg",
+      "light": "evergarden_muted_fg"
+    },
+    "markdownEmph": {
+      "dark": "evergarden_white",
+      "light": "evergarden_white"
+    },
+    "markdownStrong": {
+      "dark": "evergarden_yellow",
+      "light": "evergarden_yellow"
+    },
+    "markdownHorizontalRule": {
+      "dark": "evergarden_subtle",
+      "light": "evergarden_subtle"
+    },
+    "markdownListItem": {
+      "dark": "evergarden_aqua",
+      "light": "evergarden_aqua"
+    },
+    "markdownListEnumeration": {
+      "dark": "evergarden_purple",
+      "light": "evergarden_purple"
+    },
+    "markdownImage": {
+      "dark": "evergarden_aqua",
+      "light": "evergarden_aqua"
+    },
+    "markdownImageText": {
+      "dark": "evergarden_skye",
+      "light": "evergarden_skye"
+    },
+    "markdownCodeBlock": {
+      "dark": "evergarden_fg",
+      "light": "evergarden_fg"
+    },
+    "syntaxComment": {
+      "dark": "evergarden_muted_fg",
+      "light": "evergarden_muted_fg"
+    },
+    "syntaxKeyword": {
+      "dark": "evergarden_purple",
+      "light": "evergarden_purple"
+    },
+    "syntaxFunction": {
+      "dark": "evergarden_skye",
+      "light": "evergarden_skye"
+    },
+    "syntaxVariable": {
+      "dark": "evergarden_cherry",
+      "light": "evergarden_cherry"
+    },
+    "syntaxString": {
+      "dark": "evergarden_green",
+      "light": "evergarden_green"
+    },
+    "syntaxNumber": {
+      "dark": "evergarden_orange",
+      "light": "evergarden_orange"
+    },
+    "syntaxType": {
+      "dark": "evergarden_lime",
+      "light": "evergarden_lime"
+    },
+    "syntaxOperator": {
+      "dark": "evergarden_yellow",
+      "light": "evergarden_yellow"
+    },
+    "syntaxPunctuation": {
+      "dark": "evergarden_white",
+      "light": "evergarden_white"
+    }
+  }
+}

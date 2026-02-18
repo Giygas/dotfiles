@@ -27,16 +27,6 @@ return {
 	},
 
 	{
-		"bluz71/vim-nightfly-colors",
-		name = "nightfly",
-		lazy = false,
-		priority = 1000,
-		config = function()
-			vim.g.nightflyTransparent = true
-		end,
-	},
-
-	{
 		"vague2k/vague.nvim",
 		-- lazy = false, -- make sure we load this during startup if it is your main colorscheme
 		-- priority = 1000, -- make sure to load this before all the other plugins
@@ -61,8 +51,8 @@ return {
 	{
 		"metalelf0/black-metal-theme-neovim",
 		name = "black-metal",
-		lazy = false,
-		priority = 1000,
+		-- lazy = false,
+		-- priority = 1000,
 		opts = {
 			-- Can be one of: bathory | burzum | dark-funeral | darkthrone | emperor | gorgoroth | immortal | impaled-nazarene | khold | marduk | mayhem | nile | taake | thyrfing | venom | windir
 			theme = "emperor",
@@ -107,8 +97,8 @@ return {
 
 	{
 		"datsfilipe/vesper.nvim",
-		lazy = false,
-		priority = 1000,
+		-- lazy = false,
+		-- priority = 1000,
 		opts = { transparent = true },
 	},
 

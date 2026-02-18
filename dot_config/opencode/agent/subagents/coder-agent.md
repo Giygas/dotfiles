@@ -1,7 +1,7 @@
 ---
 description: "Executes coding subtasks in sequence, ensuring completion as specified"
 mode: subagent
-model: "zai-coding-plan/glm-4.6"
+model: "zai-coding-plan/glm-4.7"
 temperature: 0
 tools:
   read: true

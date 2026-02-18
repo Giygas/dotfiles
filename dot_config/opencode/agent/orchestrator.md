@@ -1,7 +1,7 @@
 ---
 description: "Routes requests to specialized workflows with selective context loading"
 mode: primary
-model: "zai-coding-plan/glm-4.6"
+model: "zai-coding-plan/glm-4.7"
 temperature: 0.1
 tools:
   read: true

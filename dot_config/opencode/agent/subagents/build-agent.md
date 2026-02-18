@@ -1,7 +1,7 @@
 ---
 description: "Type check and build validation agent for TypeScript, Python, and Go"
 mode: subagent
-model: "zai-coding-plan/glm-4.6"
+model: "zai-coding-plan/glm-4.7"
 temperature: 0.1
 tools:
   bash: true
@@ -35,6 +35,7 @@ You are a build validation agent for TypeScript, Python, and Go projects. For ev
 ## Project Detection
 
 First, detect the project type by checking for these files:
+
 - TypeScript: `package.json`, `tsconfig.json`, `*.ts`, `*.tsx`
 - Python: `requirements.txt`, `pyproject.toml`, `setup.py`, `*.py`
 - Go: `go.mod`, `*.go`

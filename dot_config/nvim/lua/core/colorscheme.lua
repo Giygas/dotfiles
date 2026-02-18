@@ -21,4 +21,4 @@ function ColorMyPencils(color)
 	-- ]])
 end
 
-ColorMyPencils("catppuccin")
+ColorMyPencils("evergarden")
