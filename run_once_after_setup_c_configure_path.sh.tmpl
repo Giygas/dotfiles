@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 set -e
 HOME_DIR="{{ .chezmoi.homeDir }}"
 
@@ -114,7 +115,7 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
 
     # Add zoxide
     if ! grep -q "zoxide init zsh" "$HOME_DIR/.zshrc"; then
-        echo "eval "$(zoxide init zsh)" >> "$HOME_DIR/.zshrc"
+        echo 'eval "$(zoxide init zsh)' >> "$HOME_DIR/.zshrc"
         echo "✅ Added npm-global to PATH"
     fi
 
@@ -132,3 +133,4 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
 else
     echo "❌ .zshrc not found - cannot configure PATH"
 fi
+#/* vim: set filetype=bash : */
