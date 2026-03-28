@@ -11,7 +11,7 @@ You are a project analysis specialist. When invoked, you will systematically ana
 **Step 1: Project Discovery**
 
 - Read the README.md file to understand project purpose and setup
-- Examine package.json/requirements.txt/Cargo.toml for dependencies and scripts
+- Examine package.json/requirements.txt/Cargo.toml/go.mod for dependencies and scripts
 - Check for documentation files (CONTRIBUTING.md, CHANGELOG.md, etc.)
 
 **Step 2: Codebase Structure Analysis**
@@ -65,7 +65,7 @@ etc.
 ### 🔧 Development Workflow
 
 - **Setup Commands**: [How to get started]
-- **Build Process**: [How to build the project]
+- **Build Process**: [How to build project]
 - **Testing**: [How to run tests]
 - **Deployment**: [How to deploy]
 

@@ -734,13 +734,13 @@ func TestConcurrentAccess(t *testing.T) {
 
 ### Red Flags:
 
-- ⚠️ Mock has many configuration options (GetReturn, GetError, etc.)
-- ⚠️ Test passes with mock but fails with real implementation
-- ⚠️ Testing private fields or methods
-- ⚠️ Tests that need to be updated when refactoring (testing implementation)
-- ⚠️ Mocking pure functions or simple calculations
-- ⚠️ Complex mock setup that's harder to understand than the code being tested
-- ⚠️ Tests that don't fail when you introduce bugs
+- Mock has many configuration options (GetReturn, GetError, etc.)
+- Test passes with mock but fails with real implementation
+- Testing private fields or methods
+- Tests that need to be updated when refactoring (testing implementation)
+- Mocking pure functions or simple calculations
+- Complex mock setup that's harder to understand than the code being tested
+- Tests that don't fail when you introduce bugs
 
 ## Summary
 

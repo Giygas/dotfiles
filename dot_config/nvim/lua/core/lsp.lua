@@ -8,6 +8,8 @@ vim.lsp.enable({
 	"marksman",
 	"emmet_language_server",
 	"ts_ls",
+	"bashls",
+	"taplo",
 	"svelte",
 	"tailwindcss",
 })

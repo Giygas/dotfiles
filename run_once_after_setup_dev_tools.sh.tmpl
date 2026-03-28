@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# vi:set filetype=sh:
+
+# Interactive prompt function
+ask_install_dev_tools() {
+    printf "Do you want to install development tools? (y/n) "
+    read -n 1 -r response
+    echo # Add newline after input for clean formatting
+    if [[ "$response" =~ ^([yY])$ ]]; then
+        echo "Installing dev tools..."
+        return 0 # Continue with installation
+    else
+        echo "Skipping dev tools installation."
+        return 1 # Skip installation
+    fi
+}
+
+# -------------------------------
+# Determine OS and home directory
+# -------------------------------
+OS="{{ .chezmoi.os }}"
+HOME_DIR="{{ .chezmoi.homeDir }}"
+USER_NAME=$(whoami)
+
+echo "OS detected: $OS"
+echo "User: $USER_NAME"
+
+echo "Home directory: $HOME_DIR"
+
+# -------------------------------
+# Per OS setup
+# -------------------------------
+if ask_install_dev_tools; then
+    echo "🔧 Starting dev environment setup..."
+
+    # -------------------------------
+    # MacOS install
+    # -------------------------------
+    if [[ "$OS" == "darwin" ]]; then
+        echo "📦 Setting up macOS dev environment..."
+
+        # Ensure Homebrew is installed
+        if ! command -v brew &>/dev/null; then
+            echo "Installing Homebrew..."
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        fi
+
+        echo "Installing Homebrew packages..."
+        brew install \
+            cocoapods colima docker fd ffmpeg ghostscript \
+            git-filter-repo gnupg icu4c@76 imagemagick \
+            mongosh pinentry-mac plow powerlevel10k \
+            qemu watchman wrk yadm luarocks
+    fi
+
+    # -------------------------------
+    # Linux (Ubuntu) setup
+    # -------------------------------
+    if [[ "$OS" == "linux" ]]; then
+        echo "📦 Setting up Linux dev environment (user: $USER_NAME)..."
+
+        # Local bin setup
+        mkdir -p "$HOME_DIR/.local/bin"
+        export PATH="$HOME_DIR/.local/bin:$PATH"
+
+        # Install system packages via apt
+        echo "Installing system packages..."
+        sudo apt update
+        sudo apt install -y \
+            software-properties-common \
+            fd-find gnupg iputils-ping \
+            ffmpeg ghostscript imagemagick qemu-kvm libvirt-daemon-system \
+            libvirt-clients bridge-utils virtinst virt-manager postgresql-contrib \
+            yadm watchman xclip liblua5.1-0-dev luarocks
+    fi
+else
+    echo "⏭️Skipping dev tools installation"
+fi
+
+# -------------------------------
+# Deno for both OS
+# -------------------------------
+if ! command -v "deno" &>/dev/null; then
+    curl -fsSL https://deno.land/install.sh | sh
+    echo "✅ Installed deno"
+else
+    echo "✅ Deno already installed"
+fi
+
+echo "🎉 Dev environment setup complete for $USER_NAME on $OS!"

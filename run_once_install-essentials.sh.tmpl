@@ -1,0 +1,244 @@
+#!/usr/bin/env bash
+# vi:set filetype=sh:
+
+# -------------------------------
+# Determine OS and home directory
+# -------------------------------
+OS="{{ .chezmoi.os }}"
+HOME_DIR="{{ .chezmoi.homeDir }}"
+USER_NAME=$(whoami)
+
+echo "OS detected: $OS"
+echo "User: $USER_NAME"
+
+echo "Home directory: $HOME_DIR"
+
+## ╭─────────────────────────────────────────────────────────╮
+## │ Initial Setup                                           │
+## ╰─────────────────────────────────────────────────────────╯
+if [[ "$OS" == "darwin" ]]; then
+    echo "📦 Setting up macOS dev environment..."
+
+    # Install xcode if missing
+    if ! xcode-select -p &>/dev/null; then
+        echo "Installing Xcode Command Line Tools..."
+        xcode-select --install
+    fi
+
+    # Ensure Homebrew is installed
+    if ! command -v brew &>/dev/null; then
+        echo "Installing Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+
+    echo "Updating homebrew..."
+    brew update
+    brew install btop
+    brew install --cask wezterm
+
+elif [[ "$OS" == "linux" ]]; then
+    echo "📦 Setting up Linux dev environment (user: $USER_NAME)..."
+
+    # Check for essential system packages
+    REQUIRED=("git" "curl")
+    MISSING=()
+    for pkg in "${REQUIRED[@]}"; do
+        if ! command -v "$pkg" &>/dev/null; then
+            MISSING+=("$pkg")
+        fi
+    done
+
+    # Install missing packages
+    if [ ${#MISSING[@]} -ne 0 ]; then
+        echo "Installing missing packages: ${MISSING[*]}"
+        if command -v apt-get &>/dev/null; then
+            sudo apt-get update && sudo apt-get install -y "${MISSING[@]}"
+        elif command -v dnf &>/dev/null; then
+            sudo dnf install -y "${MISSING[@]}"
+        elif command -v pacman &>/dev/null; then
+            sudo pacman -S --noconfirm "${MISSING[@]}"
+        else
+            echo "❌ Cannot auto-install, please install manually: ${MISSING[*]}"
+            exit 1
+        fi
+    fi
+
+    # Install wezterm if not present
+    if ! command -v wezterm &>/dev/null; then
+        echo "Installing wezterm..."
+        if command -v rpm-ostree &>/dev/null; then
+            rpm-ostree install wezterm
+        elif command -v apt-get &>/dev/null; then
+            curl -LO https://github.com/wezterm/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu24.04.deb
+            sudo apt install -y ./wezterm-nightly.Ubuntu24.04.deb
+            rm wezterm-nightly.Ubuntu24.04.deb
+        elif command -v pacman &>/dev/null; then
+            sudo pacman -S --noconfirm wezterm
+        elif command -v dnf &>/dev/null; then
+            sudo dnf install -y wezterm
+        else
+            echo "❌ Could not install wezterm — unknown package manager"
+        fi
+        echo "✅ Installed wezterm"
+    else
+        echo "✅ wezterm already installed"
+    fi
+fi
+
+# -------------------------------
+# Ensure zsh is installed
+# -------------------------------
+if ! command -v zsh &>/dev/null; then
+    echo "zsh not found, installing..."
+    if [ "$(uname)" = "Darwin" ]; then
+        brew install zsh
+    elif command -v apt-get &>/dev/null; then
+        sudo apt-get install -y zsh
+    elif command -v dnf &>/dev/null; then
+        sudo dnf install -y zsh
+    elif command -v pacman &>/dev/null; then
+        sudo pacman -S --noconfirm zsh
+    else
+        echo "❌ Could not install zsh — unknown package manager"
+        exit 1
+    fi
+    echo "✅ Installed zsh"
+else
+    echo "✅ zsh already installed ($(zsh --version))"
+fi
+
+# -------------------------------
+# Oh My Zsh for both OS
+# -------------------------------
+if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
+    echo "Installing Oh My Zsh..."
+    RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    echo "✅ Installed Oh My Zsh"
+fi
+
+# Clone the plugins first
+echo "Installing zsh-autosuggestions..."
+if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+fi
+
+echo "Installing zsh-syntax-highlighting..."
+if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]; then
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+fi
+
+# -------------------------------
+# Oh My Posh OS dependant
+# -------------------------------
+if ! command -v "oh-my-posh" &>/dev/null; then
+    if [[ "$OS" == "darwin" ]]; then
+        echo "Installing Oh My Posh..."
+        brew install jandedobbeleer/oh-my-posh/oh-my-posh
+        echo "✅ Installed Oh My Posh"
+    elif [[ "$OS" == "linux" ]]; then
+        echo "Installing Oh My Posh..."
+        curl -s https://ohmyposh.dev/install.sh | bash -s
+        echo "✅ Installed Oh My Posh"
+    else
+        echo "❌ Unsupported OS: $OS"
+        exit 1
+    fi
+else
+    echo "✅ Oh My Posh already installed ($(oh-my-posh --version))"
+fi
+
+# ╭──────────────────────────────────────────────────────────╮
+# │ Setup .zshrc                                             │
+# ╰──────────────────────────────────────────────────────────╯
+if [ -f "$HOME_DIR/.zshrc" ]; then
+
+    # -------------------------------
+    # Zsh aliases and theme
+    # -------------------------------
+
+    if ! grep -q "EDITOR=nvim" "$HOME_DIR/.zshrc"; then
+        echo 'export EDITOR=nvim' >>"$HOME_DIR/.zshrc"
+        echo "✅ Added EDITOR to PATH"
+    fi
+
+    if ! grep -q ".zsh_aliases" "$HOME_DIR/.zshrc"; then
+        echo ". $HOME/.zsh_aliases" >>"$HOME_DIR/.zshrc"
+        echo "✅ Added zsh_aliases to PATH"
+    fi
+
+    if ! grep -q ".zsh_theme" "$HOME_DIR/.zshrc"; then
+        echo ". $HOME/.zsh_theme" >>"$HOME_DIR/.zshrc"
+        echo "✅ Added zsh_theme to PATH"
+    fi
+
+    # Add zsh-autosuggestions and zsh-syntax-highlighting
+    if ! grep -q "zsh-autosuggestions\|zsh-syntax-highlighting" "$HOME_DIR/.zshrc"; then
+        # Add plugins to existing list (preserves current plugins)
+        if [[ "$OS" == "darwin" ]]; then
+            sed -i '' '/^plugins=/ s/)/ zsh-autosuggestions zsh-syntax-highlighting)/' "$HOME_DIR/.zshrc"
+        else
+            sed -i '/^plugins=/ s/)/ zsh-autosuggestions zsh-syntax-highlighting)/' "$HOME_DIR/.zshrc"
+        fi
+        echo "✅ Added zsh plugins to .zshrc"
+    else
+        echo "✅ zsh plugins already present in .zshrc"
+    fi
+
+    # Set zsh as default shell
+    if [[ "$SHELL" != *"zsh"* ]]; then
+        echo "Setting zsh as default shell..."
+        if command -v zsh >/dev/null 2>&1; then
+            chsh -s "$(command -v zsh)" || echo "󰀪 Could not change shell (may require sudo or different permissions)"
+            echo "󰀯 Restart your shell or run 'exec zsh' to use zsh"
+        else
+            echo "󰀪 zsh is not installed"
+        fi
+    fi
+
+fi
+
+# ╭──────────────────────────────────────────────────────────╮
+# │ Mise setup                                               │
+# ╰──────────────────────────────────────────────────────────╯
+if ! command -v mise &>/dev/null; then
+    echo "Installing mise..."
+    curl https://mise.run/zsh | sh
+    export PATH="$HOME/.local/bin:$PATH"
+    echo "✅ Installed mise"
+else
+    echo "✅ mise already installed ($(mise --version))"
+fi
+
+if command -v mise &>/dev/null; then
+    echo "Installing mise tools..."
+    mise install
+    echo "✅ mise tools installed"
+else
+    echo "❌ mise not found, skipping tool install"
+fi
+
+# ╭──────────────────────────────────────────────────────────╮
+# │ Tool integrations                                        │
+# ╰──────────────────────────────────────────────────────────╯
+# shellcheck disable=SC2016
+if ! grep -q 'fzf --zsh' "$HOME_DIR/.zshrc"; then
+    echo 'eval "$(fzf --zsh)"' >>"$HOME_DIR/.zshrc"
+    echo "✅ Added fzf integration to .zshrc"
+fi
+
+# shellcheck disable=SC2016
+if ! grep -q 'zoxide init zsh' "$HOME_DIR/.zshrc"; then
+    echo 'eval "$(zoxide init zsh)"' >>"$HOME_DIR/.zshrc"
+    echo "✅ Added zoxide integration to .zshrc"
+fi
+
+# ╭──────────────────────────────────────────────────────────╮
+# │ Tmux Plugin Manager                                      │
+# ╰──────────────────────────────────────────────────────────╯
+if [ ! -d "$HOME_DIR/.tmux/plugins/tpm" ]; then
+    echo "Installing Tmux Plugin Manager..."
+    git clone https://github.com/tmux-plugins/tpm "$HOME_DIR/.tmux/plugins/tpm"
+    echo "✅ Installed TPM"
+else
+    echo "✅ TPM already installed"
+fi

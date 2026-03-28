@@ -31,6 +31,8 @@ return {
 			end,
 
 			formatters_by_ft = {
+				-- shell
+				sh = { "shfmt" },
 				-- lua
 				lua = { "stylua" },
 				-- base web formats (use a sub-list to run only the first available formatter)
@@ -38,7 +40,10 @@ return {
 				typescript = { "prettier", "prettierd", stop_after_first = true },
 				html = { "prettierd", "prettier", stop_after_first = true },
 				css = { "prettierd", "prettier", stop_after_first = true },
-				markdown = { "marksman", "prettier", stop_after_first = true },
+				markdown = { "prettier" },
+				vue = { "prettier" },
+				yaml = { "prettier" },
+				toml = { "taplo" },
 				-- python = { "isort", "black", stop_after_first = true },
 				python = { "ruff_format", "ruff_organize_imports" },
 				-- svelte
