@@ -1,0 +1,208 @@
+# Reference: https://github.com/i3/i3/blob/next/etc/config
+
+# Start AeroSpace at login
+start-at-login = true
+
+# Possible values: tiles|accordion
+default-root-container-layout = 'tiles'
+
+# i3 doesn't have "normalizations" feature that why we disable them here.
+# But the feature is very helpful.
+# Normalizations eliminate all sorts of weird tree configurations that don't make sense.
+# Give normalizations a chance and enable them back.
+enable-normalization-flatten-containers = false
+enable-normalization-opposite-orientation-for-nested-containers = false
+
+# Mouse follows focus when focused monitor changes
+# Drop it from your config, if you don't like this behavior
+# See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
+# See https://nikitabobko.github.io/AeroSpace/commands#move-mouse
+# Fallback value (if you omit the key): on-focused-monitor-changed = []
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+
+# You can effectively turn off macOS "Hide application" (cmd-h) feature by toggling this flag
+# Useful if you don't use this macOS feature, but accidentally hit cmd-h or cmd-alt-h key
+# Also see: https://nikitabobko.github.io/AeroSpace/goodies#disable-hide-app
+automatically-unhide-macos-hidden-apps = true
+
+# Gaps between windows (inner-*) and between monitor edges (outer-*).
+# Possible values:
+# - Constant:     gaps.outer.top = 8
+# - Per monitor:  gaps.outer.top = [{ monitor.main = 16 }, { monitor."some-pattern" = 32 }, 24]
+#                 In this example, 24 is a default value when there is no match.
+#                 Monitor pattern is the same as for 'workspace-to-monitor-force-assignment'.
+#                 See:
+#                 https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
+[gaps]
+    inner.horizontal = 8
+    inner.vertical =   8
+    outer.left =       8
+    outer.bottom =     8
+    outer.top =        8
+    outer.right =      8
+
+
+
+[mode.main.binding]
+    # See: https://nikitabobko.github.io/AeroSpace/goodies#open-a-new-window-with-applescript
+    # cmd-enter = '''exec-and-forget osascript -e '
+    # tell application "WezTerm"
+    #     do script ""
+    #     activate
+    # end tell'
+    # '''
+
+    cmd-enter = 'exec-and-forget open -na WezTerm'
+
+    # cmd-ctrl-enter = 'exec-and-forget WezTerm cli spawn --new-window'
+
+    # See: https://nikitabobko.github.io/AeroSpace/commands#layout
+    alt-slash = 'layout tiles horizontal vertical'
+    alt-comma = 'layout accordion horizontal vertical'
+
+    # i3 wraps focus by default
+    ctrl-shift-h = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-the-workspace left'
+    ctrl-shift-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-the-workspace down'
+    ctrl-shift-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-the-workspace up'
+    ctrl-shift-l = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-the-workspace right'
+
+    alt-shift-h = 'move left'
+    alt-shift-j = 'move down'
+    alt-shift-k = 'move up'
+    alt-shift-l = 'move right'
+
+    # Consider using 'join-with' command as a 'split' replacement if you want to enable
+    # normalizations
+    # alt-h = 'split horizontal'
+    # alt-v = 'split vertical'
+
+    alt-f = 'fullscreen'
+
+    alt-s = 'layout v_accordion' # 'layout stacking' in i3
+    alt-w = 'layout h_accordion' # 'layout tabbed' in i3
+    alt-e = 'layout tiles horizontal vertical' # 'layout toggle split' in i3
+
+
+    # alt-shift-space = 'layout floating tiling' # 'floating toggle' in i3
+
+    # Not supported, because this command is redundant in AeroSpace mental model.
+    # See: https://nikitabobko.github.io/AeroSpace/guide#floating-windows
+    # alt-shift-t = 'focus toggle_tiling_floating'
+
+    # `focus parent`/`focus child` are not yet supported, and it's not clear whether they
+    # should be supported at all https://github.com/nikitabobko/AeroSpace/issues/5
+    # alt-a = 'focus parent'
+
+    cmd-1 = 'workspace web'
+    cmd-2 = 'workspace code'
+    cmd-3 = 'workspace test'
+    cmd-4 = 'workspace other'
+    cmd-5 = 'workspace social'
+    cmd-6 = 'workspace media'
+    cmd-7 = 'workspace mail'
+    cmd-8 = 'workspace security'
+    cmd-9 = 'workspace security-plus'
+
+    cmd-alt-1 = 'move-node-to-workspace web'
+    cmd-alt-2 = 'move-node-to-workspace code'
+    cmd-alt-3 = 'move-node-to-workspace test'
+    cmd-alt-4 = 'move-node-to-workspace other'
+    cmd-alt-5 = 'move-node-to-workspace social'
+    cmd-alt-6 = 'move-node-to-workspace media'
+    cmd-alt-7 = 'move-node-to-workspace mail'
+    cmd-alt-8 = 'move-node-to-workspace security'
+
+    # See: https://nikitabobko.github.io/AeroSpace/commands#move-workspace-to-monitor
+    cmd-alt-m = 'move-workspace-to-monitor --wrap-around next'
+
+    alt-shift-c = 'reload-config'
+
+    # See: https://nikitabobko.github.io/AeroSpace/commands#mode
+    alt-shift-t = 'layout floating tiling'
+
+    cmd-r = 'mode resize'
+
+[mode.resize.binding]
+    h = 'resize width -50'
+    j = 'resize height +50'
+    k = 'resize height -50'
+    l = 'resize width +50'
+    enter = 'mode main'
+    esc = 'mode main'
+
+[[on-window-detected]]
+    if.app-id = 'com.apple.systempreferences'
+    # if.workspace = 'workspace-name'
+    # if.during-aerospace-startup = true
+    check-further-callbacks = true
+    run = ['layout floating']  
+
+[[on-window-detected]]
+    if.app-name-regex-substring = 'settings'
+    check-further-callbacks = true
+    run = ['layout floating'] 
+
+[[on-window-detected]]
+    if.window-title-regex-substring = 'settings'
+    check-further-callbacks = true
+    run = ['layout floating']
+
+[[on-window-detected]]
+    if.app-id = 'org.localsend.localsendApp'
+    check-further-callbacks = true
+    run = ['layout floating']
+
+[[on-window-detected]]
+    if.app-id = 'com.apple.UserNotificationCenter'
+    check-further-callbacks = true
+    run = ['layout floating']
+
+[[on-window-detected]]
+    if.app-id = 'com.apple.accessibility.universalAccessAuthWarn'
+    check-further-callbacks = true
+    run = ['layout floating']
+
+[[on-window-detected]]
+    if.app-id = 'pro.betterdisplay.BetterDisplay'
+    check-further-callbacks = true
+    run = ['layout floating']
+
+[[on-window-detected]]
+    if.app-id = 'com.1password.1password'
+    check-further-callbacks = true
+    run = ['layout floating']
+
+
+[[on-window-detected]]
+    if.app-id = 'com.electron.dockerdesktop'
+    run = 'move-node-to-workspace test'
+
+[[on-window-detected]]
+    if.app-id = 'com.apple.dt.Xcode'
+    run = 'move-node-to-workspace test'
+
+[[on-window-detected]]
+    if.app-id = 'com.vivaldi.Vivaldi'
+    run = 'move-node-to-workspace web' 
+
+[[on-window-detected]]
+    if.app-id = 'app.zen-browser.zen'
+    run = 'move-node-to-workspace web' 
+
+[[on-window-detected]]
+    if.app-id = 'ch.protonvpn.mac'
+    run = 'move-node-to-workspace security' 
+
+[[on-window-detected]]
+    if.app-id = 'com.hnc.Discord'
+    run = 'move-node-to-workspace social' 
+
+[[on-window-detected]]
+    if.app-id = 'com.apple.mail'
+    run = ['move-node-to-workspace mail'] 
+
+[[on-window-detected]]
+    if.app-id = 'ch.protonmail.desktop'
+    run = ['move-node-to-workspace media'] 
+
+
