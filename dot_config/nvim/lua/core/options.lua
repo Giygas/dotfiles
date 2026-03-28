@@ -6,6 +6,7 @@ opt.laststatus = 3 -- global statusline
 opt.backspace = "indent,eol,start" -- allow backspace on
 opt.pumheight = 10 -- pop up menu height
 opt.conceallevel = 0 -- so that `` is visible in markdown files
+opt.winborder = "rounded"
 
 -- disable netrw
 vim.g.loaded_netrw = 1
