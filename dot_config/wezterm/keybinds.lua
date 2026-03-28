@@ -1,5 +1,18 @@
 local w = require("wezterm")
 
+local function smart_scroll(direction)
+	return w.action_callback(function(win, pane)
+		local proc = pane:get_foreground_process_name() or ""
+		if proc:find("tmux") then
+			-- Send escape sequence so tmux handles it
+			local seq = direction == "up" and "\x1b[5;2~" or "\x1b[6;2~"
+			win:perform_action(w.action.SendString(seq), pane)
+		else
+			win:perform_action(direction == "up" and w.action.ScrollByPage(-1) or w.action.ScrollByPage(1), pane)
+		end
+	end)
+end
+
 return {
 	{
 		key = "c",
@@ -11,6 +24,29 @@ return {
 		mods = "CTRL|SHIFT",
 		action = w.action.ActivateCopyMode,
 	},
+
+	-- Increase font size
+	{
+		key = "=",
+		mods = "CTRL",
+		action = w.action.IncreaseFontSize,
+	},
+	-- Decrease font size
+	{
+		key = "-",
+		mods = "CTRL",
+		action = w.action.DecreaseFontSize,
+	},
+	-- Reset font size
+	{
+		key = "0",
+		mods = "CTRL",
+		action = w.action.ResetFontSize,
+	},
+
+	-- PageUp and PageDown for terminal scrolling
+	{ key = "PageUp", mods = "SHIFT", action = smart_scroll("up") },
+	{ key = "PageDown", mods = "SHIFT", action = smart_scroll("down") },
 
 	-- {
 	-- 	key = "f",
@@ -57,7 +93,7 @@ return {
 
 	-- Debug Overlay
 	{
-		key = "L",
+		key = "l",
 		mods = "CTRL|SHIFT",
 		action = w.action.ShowDebugOverlay,
 	},
@@ -131,7 +167,7 @@ return {
 	},
 	-- Reload config
 	{
-		key = "r",
+		key = "R",
 		mods = "CMD|SHIFT",
 		action = w.action.ReloadConfiguration,
 	},
