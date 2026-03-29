@@ -242,3 +242,32 @@ if [ ! -d "$HOME_DIR/.tmux/plugins/tpm" ]; then
 else
     echo "✅ TPM already installed"
 fi
+
+# ╭──────────────────────────────────────────────────────────╮
+# │ Fonts                                                    │
+# ╰──────────────────────────────────────────────────────────╯
+
+if [[ "$OS" == "darwin" ]]; then
+    brew install --cask font-roboto-mono font-jetbrains-mono-nerd-font
+elif [[ "$OS" == "linux" ]]; then
+    mkdir -p "$HOME/.local/share/fonts"
+
+    # Roboto Mono
+    if ! fc-list | grep -q "Roboto Mono"; then
+        curl -sSL "https://fonts.google.com/download?family=Roboto+Mono" -o /tmp/roboto-mono.zip
+        unzip -o /tmp/roboto-mono.zip -d "$HOME/.local/share/fonts/roboto-mono"
+        rm /tmp/roboto-mono.zip
+        echo "✅ Installed Roboto Mono"
+    fi
+
+    # JetBrains Mono Nerd Font
+    if ! fc-list | grep -q "JetBrainsMono"; then
+        curl -sSL "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip" -o /tmp/jetbrains-nerd.zip
+        unzip -o /tmp/jetbrains-nerd.zip -d "$HOME/.local/share/fonts/jetbrains-mono-nerd"
+        rm /tmp/jetbrains-nerd.zip
+        echo "✅ Installed JetBrains Mono Nerd Font"
+    fi
+
+    fc-cache -fv
+    echo "✅ Font cache updated"
+fi
