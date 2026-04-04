@@ -1,5 +1,4 @@
 local config = {}
-
 -- Colors
 -- config.color_scheme = "Mona Lisa (Gogh)"
 -- config.color_scheme = "Fahrenheit"
@@ -11,19 +10,19 @@ local config = {}
 -- config.color_scheme = "nord"
 -- config.color_scheme = "Everforest Dark Hard (Gogh)"
 -- config.color_scheme = "Everblush (Gogh)"
-
+--
 -- TOP ONES
+-- config.color_scheme = "Sweet Love (terminal.sexy)"
+-- config.color_scheme = "Shaman (Gogh)"
 -- config.color_scheme = "Moonfly (Gogh)"
-config.color_scheme = "Terminix Dark (Gogh)"
+-- config.color_scheme = "Terminix Dark (Gogh)"
+-- config.color_scheme = "AlienBlood"
 -- config.color_scheme = "Mashup Colors (terminal.sexy)"
 -- config.color_scheme = "Embers (dark) (terminal.sexy)"
 -- config.color_scheme = "Nightfly (Gogh)"
 -- config.color_scheme = "GruvboxDarkHard"
--- config.color_scheme = "Sweet Love (terminal.sexy)"
 -- config.color_scheme = "Mellifluous"
 -- config.color_scheme = "VWbug (terminal.sexy)"
--- config.color_scheme = "AlienBlood"
--- config.color_scheme = "Shaman (Gogh)"
 -- config.color_scheme = "Spacedust"
 -- config.color_scheme = "Sequoia Monochrome"
 
@@ -69,22 +68,22 @@ config.color_scheme = "Terminix Dark (Gogh)"
 -- config.color_scheme = "Elemental (Gogh)"
 
 -- Blue
+-- config.color_scheme = "vulcan (base16)"
+-- config.color_scheme = "SeaShells"
+-- config.color_scheme = "terafox"
 -- config.color_scheme = "Icy Dark (base16)"
 -- config.color_scheme = "matrix"
 -- config.color_scheme = "Mirage"
 -- config.color_scheme = "OceanicNext (base16)"
 -- config.color_scheme = "Poimandres"
--- config.color_scheme = "SeaShells"
 -- config.color_scheme = "Solarized Dark - Patched"
 -- config.color_scheme = "Square (Gogh)"
--- config.color_scheme = "terafox"
--- config.color_scheme = "vulcan (base16)"
 -- config.color_scheme = "VisiBlue (terminal.sexy)"
 
 -- Brown
--- config.color_scheme = "Medallion (Gogh)"
 -- config.color_scheme = "s3r0 modified (terminal.sexy)"
 -- config.color_scheme = "Frontend Fun Forrest (Gogh)"
+-- config.color_scheme = "Medallion (Gogh)"
 -- config.color_scheme = "Earthsong (Gogh)"
 -- config.color_scheme = "Ef-Melissa-Dark"
 -- config.color_scheme = "Monokai (terminal.sexy)"
@@ -103,37 +102,62 @@ config.color_scheme = "Terminix Dark (Gogh)"
 -- Soft dark
 -- config.color_scheme = "Floraverse"
 -- config.color_scheme = "Teerb"
-
+--
 -- config.colors = {
 -- 	cursor_bg = "yellow",
 -- 	cursor_border = "yellow",
--- 	-- background = "#0e0e0e",
--- 	background = "#1E1E2E", -- Catppuccin
--- 	-- background = "#232A2E", -- Evergarden
--- 	-- background = "#101010", -- Vesper
--- 	-- background = "#1F2528",
---
--- 	ansi = {
--- 		"#588E6E",
--- 		"#9D4221",
--- 		"#00D5F4",
--- 		"#8F832E",
--- 		"#87A188",
--- 		"#7F4E2F",
--- 		"#588E6E",
--- 		"#D7D0CA",
--- 	},
---
--- 	brights = {
--- 		"#A19F89",
--- 		"#E0502A",
--- 		"#739393",
--- 		"#D7AA4B",
--- 		"#79D9D9",
--- 		"#CD7C54",
--- 		"#739393",
--- 		"#FFFFFF",
--- 	},
 -- }
 
+config.colors = {
+	cursor_bg = "yellow",
+	cursor_border = "yellow",
+	-- background = "#0e0e0e",
+	-- background = "#1E1E2E", -- Catppuccin
+	-- background = "#232A2E", -- Evergarden
+	background = "#101010", -- Vesper
+	-- background = "#1F2528",
+	foreground = "#C0B18B",
+
+	ansi = {
+		"#588E6E",
+		"#9D4221",
+		"#7B8748",
+		"#8F832E",
+		"#402E2E",
+		"#7F4E2F",
+		"#444B4B",
+		"#D7D0CA",
+	},
+
+	brights = {
+		"#614445",
+		"#AC5D2F",
+		"#739393",
+		"#D7AA4B",
+		"#79D9D9",
+		"#CD7C54",
+		"#585C49",
+		"#FFFFFF",
+	},
+}
+-- #DBE6AF green #7B8748
+-- "#585C49" directory
+-- "#C0B18B" normal
+-- "#1F1F1F" background
+-- "#4A3637",
+-- "#D17B49",
+-- "#7B8748",
+-- "#AF865A",
+-- "#535C5C",
+-- "#775759",
+-- "#6D715E",
+-- "#C0B18B",
+-- "#402E2E",
+-- "#AC5D2F",
+-- "#647035",
+-- "#8F6840",
+-- "#444B4B",
+-- "#614445",
+-- "#585C49",
+-- "#978965"
 return config
