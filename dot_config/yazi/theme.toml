@@ -1,2 +1,7 @@
 [flavor]
-dark = "everforest-medium"
+# dark = "everforest-medium"
+# dark = "base16"
+# dark = "ashen"
+# dark = "catppuccin-frappe"
+dark = "sweet-love-2"
+# dark = "sweet-love-var"

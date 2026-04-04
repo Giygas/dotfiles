@@ -5,3 +5,28 @@ deps = []
 use = "Chromium-3-Oxide/everforest-medium"
 rev = "5f9200c"
 hash = "d33fbfce4e5dbc044e289d34fdede65d"
+
+[[flavor.deps]]
+use = "matt-dong-123/base16"
+rev = "b02b7a8"
+hash = "fdb3a7d76f51c0a46bde55322ede9171"
+
+[[flavor.deps]]
+use = "Mintass/rose-pine"
+rev = "d91f8f2"
+hash = "87da3630653b6d272e43658418599188"
+
+[[flavor.deps]]
+use = "ficd0/ashen:ashen"
+rev = "7d18c13"
+hash = "65b56e9ee65dd33eec62d6ca4209611b"
+
+[[flavor.deps]]
+use = "marcosvnmelo/kanagawa-dragon"
+rev = "b9541e8"
+hash = "dc840cf225dbf6f0257617403ad43d8b"
+
+[[flavor.deps]]
+use = "yazi-rs/flavors:catppuccin-frappe"
+rev = "9511cb0"
+hash = "1844f850b0c5d1af511c84399c95e3d7"
