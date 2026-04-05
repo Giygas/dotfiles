@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
 # vi:set filetype=sh:
 
-# -------------------------------
-# Determine OS and home directory
-# -------------------------------
+# ╭──────────────────────────────────────────────────────────╮
+# │ install-essentials                                       │
+# │                                                          │
+# │ Sets up shell environment, mise, fonts and tmux.         │
+# │                                                          │
+# │ Assumes host packages (zsh, wezterm, sway, 1password)    │
+# │ are already installed — either by bootstrap.sh on        │
+# │ Bazzite/atomic, or by the relevant package manager on    │
+# │ other systems.                                           │
+# ╰──────────────────────────────────────────────────────────╯
+
 OS="{{ .chezmoi.os }}"
 HOME_DIR="{{ .chezmoi.homeDir }}"
 USER_NAME=$(whoami)
@@ -32,12 +40,11 @@ detect_pkg_manager() {
 PKG_MANAGER=$(detect_pkg_manager)
 echo "Package manager detected: $PKG_MANAGER"
 
-## ╭─────────────────────────────────────────────────────────╮
-## │ Initial Setup                                           │
-## ╰─────────────────────────────────────────────────────────╯
+# ╭──────────────────────────────────────────────────────────╮
+# │ macOS only — Homebrew + base packages                    │
+# │ On Linux, these are handled by bootstrap.sh              │
+# ╰──────────────────────────────────────────────────────────╯
 if [[ "$OS" == "darwin" ]]; then
-    echo "📦 Setting up macOS dev environment..."
-
     if ! xcode-select -p &>/dev/null; then
         echo "Installing Xcode Command Line Tools..."
         xcode-select --install
@@ -48,117 +55,83 @@ if [[ "$OS" == "darwin" ]]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
-    echo "Updating homebrew..."
     brew update
-    brew install btop
     brew install --cask wezterm
+    echo "✅ macOS base packages ready"
+fi
 
-elif [[ "$OS" == "linux" ]]; then
-    echo "📦 Setting up Linux dev environment (user: $USER_NAME)..."
-
+# ╭──────────────────────────────────────────────────────────╮
+# │ Linux non-atomic — install missing host packages         │
+# │ On atomic Fedora (rpm-ostree) these are skipped since    │
+# │ bootstrap.sh already handled them.                       │
+# ╰──────────────────────────────────────────────────────────╯
+if [[ "$OS" == "linux" ]]; then
     case "$PKG_MANAGER" in
-
-        # -------------------------------------------------------
-        # Atomic Fedora (Bazzite, Silverblue, Kinoite, etc.)
-        #
-        # All host-level packages are installed in a single
-        # rpm-ostree call to avoid multiple reboots on first setup:
-        #   - zsh: must be on host for chsh/login shell
-        #   - wezterm: terminal emulator
-        #   - sway + companions: must be on host so SDDM can see
-        #     the session file in its login screen picker
-        #   - foot: lightweight fallback terminal for Sway with no
-        #     desktop environment dependencies
-        # -------------------------------------------------------
         rpm-ostree)
-            HOST_PACKAGES=(
-                zsh
-                wezterm
-                sway
-                swaybg
-                swaylock
-                swayidle
-                waybar
-                wmenu
-                foot
-            )
-
-            # Only install packages not already present
-            MISSING_PACKAGES=()
-            for pkg in "${HOST_PACKAGES[@]}"; do
-                if ! rpm-ostree status | grep -q "$pkg"; then
-                    MISSING_PACKAGES+=("$pkg")
-                fi
-            done
-
-            if [ ${#MISSING_PACKAGES[@]} -ne 0 ]; then
-                echo "🔵 Installing host packages via rpm-ostree: ${MISSING_PACKAGES[*]}"
-                rpm-ostree install "${MISSING_PACKAGES[@]}"
-                echo "⚠️  Reboot required. Re-run chezmoi apply after rebooting to continue setup."
-                exit 0
-            else
-                echo "✅ All host packages already installed"
-            fi
+            echo "✅ Atomic Fedora — host packages managed by bootstrap.sh, skipping"
             ;;
-
         dnf)
-            sudo dnf install -y zsh wezterm sway swaybg swaylock swayidle waybar wmenu foot
+            sudo dnf install -y zsh wezterm
             ;;
-
         apt)
             sudo apt-get update
-            sudo apt-get install -y zsh sway swaybg swaylock swayidle waybar foot
-            # wezterm via deb on Ubuntu
+            sudo apt-get install -y zsh
             if ! command -v wezterm &>/dev/null; then
                 curl -LO https://github.com/wezterm/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu24.04.deb
                 sudo apt install -y ./wezterm-nightly.Ubuntu24.04.deb
                 rm wezterm-nightly.Ubuntu24.04.deb
             fi
             ;;
-
         pacman)
-            sudo pacman -S --noconfirm zsh wezterm sway swaybg swaylock swayidle waybar wmenu foot
-            ;;
-
-        *)
-            echo "❌ Unknown package manager — please install zsh, wezterm and sway manually."
-            exit 1
+            sudo pacman -S --noconfirm zsh wezterm
             ;;
     esac
 fi
 
 # -------------------------------
-# Ensure zsh is available before continuing
+# Ensure zsh is available
 # -------------------------------
 if ! command -v zsh &>/dev/null; then
-    echo "❌ zsh is not available yet. Please reboot and re-run chezmoi apply."
-    exit 1
+    echo ""
+    echo "⚠️  zsh is not available."
+    if [[ "$PKG_MANAGER" == "rpm-ostree" ]]; then
+        echo "   Run bootstrap.sh first, reboot, then re-run chezmoi apply."
+    else
+        echo "   Please install zsh manually and re-run chezmoi apply."
+    fi
+    echo ""
+    # Continue anyway — .zshrc and config files can still be written
+    # Only chsh will be skipped below
 fi
 
-echo "✅ zsh available ($(zsh --version))"
-
-# -------------------------------
-# Oh My Zsh
-# -------------------------------
+# ╭──────────────────────────────────────────────────────────╮
+# │ Oh My Zsh                                                │
+# ╰──────────────────────────────────────────────────────────╯
 if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
     echo "Installing Oh My Zsh..."
     RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
     echo "✅ Installed Oh My Zsh"
+else
+    echo "✅ Oh My Zsh already installed"
 fi
 
 echo "Installing zsh-autosuggestions..."
 if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
     git clone https://github.com/zsh-users/zsh-autosuggestions "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+else
+    echo "✅ zsh-autosuggestions already installed"
 fi
 
 echo "Installing zsh-syntax-highlighting..."
 if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]; then
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+else
+    echo "✅ zsh-syntax-highlighting already installed"
 fi
 
-# -------------------------------
-# Oh My Posh
-# -------------------------------
+# ╭──────────────────────────────────────────────────────────╮
+# │ Oh My Posh                                               │
+# ╰──────────────────────────────────────────────────────────╯
 if ! command -v "oh-my-posh" &>/dev/null; then
     if [[ "$OS" == "darwin" ]]; then
         brew install jandedobbeleer/oh-my-posh/oh-my-posh
@@ -204,20 +177,24 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
         echo "✅ zsh plugins already present in .zshrc"
     fi
 
+    # Only attempt chsh if zsh is actually available
     if [[ "$SHELL" != *"zsh"* ]]; then
-        echo "Setting zsh as default shell..."
         if command -v zsh >/dev/null 2>&1; then
-            chsh -s "$(command -v zsh)" || echo "󰀪 Could not change shell (may require sudo or different permissions)"
-            echo "󰀯 Restart your shell or run 'exec zsh' to use zsh"
+            echo "Setting zsh as default shell..."
+            chsh -s "$(command -v zsh)" || echo "⚠️  Could not change shell — run 'chsh -s \$(which zsh)' manually after reboot"
         else
-            echo "󰀪 zsh is not installed"
+            echo "⚠️  Skipping chsh — zsh not available yet. Run 'chsh -s \$(which zsh)' after reboot."
         fi
     fi
 
+else
+    echo "⚠️  .zshrc not found — skipping zshrc setup"
+    echo "   chezmoi should have deployed it. Check your dotfiles templates."
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
-# │ Mise setup                                               │
+# │ Mise                                                     │
+# │ Installs to ~/.local/bin — no package manager needed     │
 # ╰──────────────────────────────────────────────────────────╯
 if ! command -v mise &>/dev/null; then
     echo "Installing mise..."
@@ -233,22 +210,7 @@ if command -v mise &>/dev/null; then
     mise install
     echo "✅ mise tools installed"
 else
-    echo "❌ mise not found, skipping tool install"
-fi
-
-# ╭──────────────────────────────────────────────────────────╮
-# │ Tool integrations (.zshrc)                               │
-# ╰──────────────────────────────────────────────────────────╯
-# shellcheck disable=SC2016
-if ! grep -q 'fzf --zsh' "$HOME_DIR/.zshrc"; then
-    echo 'eval "$(fzf --zsh)"' >>"$HOME_DIR/.zshrc"
-    echo "✅ Added fzf integration to .zshrc"
-fi
-
-# shellcheck disable=SC2016
-if ! grep -q 'zoxide init zsh' "$HOME_DIR/.zshrc"; then
-    echo 'eval "$(zoxide init zsh)"' >>"$HOME_DIR/.zshrc"
-    echo "✅ Added zoxide integration to .zshrc"
+    echo "❌ mise not found after install — check ~/.local/bin is in PATH"
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
@@ -275,6 +237,8 @@ elif [[ "$OS" == "linux" ]]; then
         unzip -o /tmp/roboto-mono.zip -d "$HOME/.local/share/fonts/roboto-mono"
         rm /tmp/roboto-mono.zip
         echo "✅ Installed Roboto Mono"
+    else
+        echo "✅ Roboto Mono already installed"
     fi
 
     if ! fc-list | grep -q "JetBrainsMono"; then
@@ -282,8 +246,13 @@ elif [[ "$OS" == "linux" ]]; then
         unzip -o /tmp/jetbrains-nerd.zip -d "$HOME/.local/share/fonts/jetbrains-mono-nerd"
         rm /tmp/jetbrains-nerd.zip
         echo "✅ Installed JetBrains Mono Nerd Font"
+    else
+        echo "✅ JetBrains Mono Nerd Font already installed"
     fi
 
     fc-cache -fv
     echo "✅ Font cache updated"
 fi
+
+echo ""
+echo "🎉 Essentials setup complete for $USER_NAME on $OS!"
