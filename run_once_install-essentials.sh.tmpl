@@ -10,8 +10,27 @@ USER_NAME=$(whoami)
 
 echo "OS detected: $OS"
 echo "User: $USER_NAME"
-
 echo "Home directory: $HOME_DIR"
+
+# -------------------------------
+# Detect Linux package manager
+# -------------------------------
+detect_pkg_manager() {
+    if command -v rpm-ostree &>/dev/null; then
+        echo "rpm-ostree"
+    elif command -v dnf &>/dev/null; then
+        echo "dnf"
+    elif command -v apt-get &>/dev/null; then
+        echo "apt"
+    elif command -v pacman &>/dev/null; then
+        echo "pacman"
+    else
+        echo "unknown"
+    fi
+}
+
+PKG_MANAGER=$(detect_pkg_manager)
+echo "Package manager detected: $PKG_MANAGER"
 
 ## ╭─────────────────────────────────────────────────────────╮
 ## │ Initial Setup                                           │
@@ -19,13 +38,11 @@ echo "Home directory: $HOME_DIR"
 if [[ "$OS" == "darwin" ]]; then
     echo "📦 Setting up macOS dev environment..."
 
-    # Install xcode if missing
     if ! xcode-select -p &>/dev/null; then
         echo "Installing Xcode Command Line Tools..."
         xcode-select --install
     fi
 
-    # Ensure Homebrew is installed
     if ! command -v brew &>/dev/null; then
         echo "Installing Homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -39,76 +56,89 @@ if [[ "$OS" == "darwin" ]]; then
 elif [[ "$OS" == "linux" ]]; then
     echo "📦 Setting up Linux dev environment (user: $USER_NAME)..."
 
-    # Check for essential system packages
-    REQUIRED=("git" "curl")
-    MISSING=()
-    for pkg in "${REQUIRED[@]}"; do
-        if ! command -v "$pkg" &>/dev/null; then
-            MISSING+=("$pkg")
-        fi
-    done
+    case "$PKG_MANAGER" in
 
-    # Install missing packages
-    if [ ${#MISSING[@]} -ne 0 ]; then
-        echo "Installing missing packages: ${MISSING[*]}"
-        if command -v apt-get &>/dev/null; then
-            sudo apt-get update && sudo apt-get install -y "${MISSING[@]}"
-        elif command -v dnf &>/dev/null; then
-            sudo dnf install -y "${MISSING[@]}"
-        elif command -v pacman &>/dev/null; then
-            sudo pacman -S --noconfirm "${MISSING[@]}"
-        else
-            echo "❌ Cannot auto-install, please install manually: ${MISSING[*]}"
+        # -------------------------------------------------------
+        # Atomic Fedora (Bazzite, Silverblue, Kinoite, etc.)
+        #
+        # All host-level packages are installed in a single
+        # rpm-ostree call to avoid multiple reboots on first setup:
+        #   - zsh: must be on host for chsh/login shell
+        #   - wezterm: terminal emulator
+        #   - sway + companions: must be on host so SDDM can see
+        #     the session file in its login screen picker
+        #   - foot: lightweight fallback terminal for Sway with no
+        #     desktop environment dependencies
+        # -------------------------------------------------------
+        rpm-ostree)
+            HOST_PACKAGES=(
+                zsh
+                wezterm
+                sway
+                swaybg
+                swaylock
+                swayidle
+                waybar
+                wmenu
+                foot
+            )
+
+            # Only install packages not already present
+            MISSING_PACKAGES=()
+            for pkg in "${HOST_PACKAGES[@]}"; do
+                if ! rpm-ostree status | grep -q "$pkg"; then
+                    MISSING_PACKAGES+=("$pkg")
+                fi
+            done
+
+            if [ ${#MISSING_PACKAGES[@]} -ne 0 ]; then
+                echo "🔵 Installing host packages via rpm-ostree: ${MISSING_PACKAGES[*]}"
+                rpm-ostree install "${MISSING_PACKAGES[@]}"
+                echo "⚠️  Reboot required. Re-run chezmoi apply after rebooting to continue setup."
+                exit 0
+            else
+                echo "✅ All host packages already installed"
+            fi
+            ;;
+
+        dnf)
+            sudo dnf install -y zsh wezterm sway swaybg swaylock swayidle waybar wmenu foot
+            ;;
+
+        apt)
+            sudo apt-get update
+            sudo apt-get install -y zsh sway swaybg swaylock swayidle waybar foot
+            # wezterm via deb on Ubuntu
+            if ! command -v wezterm &>/dev/null; then
+                curl -LO https://github.com/wezterm/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu24.04.deb
+                sudo apt install -y ./wezterm-nightly.Ubuntu24.04.deb
+                rm wezterm-nightly.Ubuntu24.04.deb
+            fi
+            ;;
+
+        pacman)
+            sudo pacman -S --noconfirm zsh wezterm sway swaybg swaylock swayidle waybar wmenu foot
+            ;;
+
+        *)
+            echo "❌ Unknown package manager — please install zsh, wezterm and sway manually."
             exit 1
-        fi
-    fi
-
-    # Install wezterm if not present
-    if ! command -v wezterm &>/dev/null; then
-        echo "Installing wezterm..."
-        if command -v rpm-ostree &>/dev/null; then
-            rpm-ostree install wezterm
-        elif command -v apt-get &>/dev/null; then
-            curl -LO https://github.com/wezterm/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu24.04.deb
-            sudo apt install -y ./wezterm-nightly.Ubuntu24.04.deb
-            rm wezterm-nightly.Ubuntu24.04.deb
-        elif command -v pacman &>/dev/null; then
-            sudo pacman -S --noconfirm wezterm
-        elif command -v dnf &>/dev/null; then
-            sudo dnf install -y wezterm
-        else
-            echo "❌ Could not install wezterm — unknown package manager"
-        fi
-        echo "✅ Installed wezterm"
-    else
-        echo "✅ wezterm already installed"
-    fi
+            ;;
+    esac
 fi
 
 # -------------------------------
-# Ensure zsh is installed
+# Ensure zsh is available before continuing
 # -------------------------------
 if ! command -v zsh &>/dev/null; then
-    echo "zsh not found, installing..."
-    if [ "$(uname)" = "Darwin" ]; then
-        brew install zsh
-    elif command -v apt-get &>/dev/null; then
-        sudo apt-get install -y zsh
-    elif command -v dnf &>/dev/null; then
-        sudo dnf install -y zsh
-    elif command -v pacman &>/dev/null; then
-        sudo pacman -S --noconfirm zsh
-    else
-        echo "❌ Could not install zsh — unknown package manager"
-        exit 1
-    fi
-    echo "✅ Installed zsh"
-else
-    echo "✅ zsh already installed ($(zsh --version))"
+    echo "❌ zsh is not available yet. Please reboot and re-run chezmoi apply."
+    exit 1
 fi
 
+echo "✅ zsh available ($(zsh --version))"
+
 # -------------------------------
-# Oh My Zsh for both OS
+# Oh My Zsh
 # -------------------------------
 if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
     echo "Installing Oh My Zsh..."
@@ -116,7 +146,6 @@ if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
     echo "✅ Installed Oh My Zsh"
 fi
 
-# Clone the plugins first
 echo "Installing zsh-autosuggestions..."
 if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
     git clone https://github.com/zsh-users/zsh-autosuggestions "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
@@ -128,21 +157,18 @@ if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlig
 fi
 
 # -------------------------------
-# Oh My Posh OS dependant
+# Oh My Posh
 # -------------------------------
 if ! command -v "oh-my-posh" &>/dev/null; then
     if [[ "$OS" == "darwin" ]]; then
-        echo "Installing Oh My Posh..."
         brew install jandedobbeleer/oh-my-posh/oh-my-posh
-        echo "✅ Installed Oh My Posh"
     elif [[ "$OS" == "linux" ]]; then
-        echo "Installing Oh My Posh..."
         curl -s https://ohmyposh.dev/install.sh | bash -s
-        echo "✅ Installed Oh My Posh"
     else
         echo "❌ Unsupported OS: $OS"
         exit 1
     fi
+    echo "✅ Installed Oh My Posh"
 else
     echo "✅ Oh My Posh already installed ($(oh-my-posh --version))"
 fi
@@ -152,28 +178,22 @@ fi
 # ╰──────────────────────────────────────────────────────────╯
 if [ -f "$HOME_DIR/.zshrc" ]; then
 
-    # -------------------------------
-    # Zsh aliases and theme
-    # -------------------------------
-
     if ! grep -q "EDITOR=nvim" "$HOME_DIR/.zshrc"; then
         echo 'export EDITOR=nvim' >>"$HOME_DIR/.zshrc"
-        echo "✅ Added EDITOR to PATH"
+        echo "✅ Added EDITOR to .zshrc"
     fi
 
     if ! grep -q ".zsh_aliases" "$HOME_DIR/.zshrc"; then
         echo ". $HOME/.zsh_aliases" >>"$HOME_DIR/.zshrc"
-        echo "✅ Added zsh_aliases to PATH"
+        echo "✅ Added zsh_aliases to .zshrc"
     fi
 
     if ! grep -q ".zsh_theme" "$HOME_DIR/.zshrc"; then
         echo ". $HOME/.zsh_theme" >>"$HOME_DIR/.zshrc"
-        echo "✅ Added zsh_theme to PATH"
+        echo "✅ Added zsh_theme to .zshrc"
     fi
 
-    # Add zsh-autosuggestions and zsh-syntax-highlighting
     if ! grep -q "zsh-autosuggestions\|zsh-syntax-highlighting" "$HOME_DIR/.zshrc"; then
-        # Add plugins to existing list (preserves current plugins)
         if [[ "$OS" == "darwin" ]]; then
             sed -i '' '/^plugins=/ s/)/ zsh-autosuggestions zsh-syntax-highlighting)/' "$HOME_DIR/.zshrc"
         else
@@ -184,7 +204,6 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
         echo "✅ zsh plugins already present in .zshrc"
     fi
 
-    # Set zsh as default shell
     if [[ "$SHELL" != *"zsh"* ]]; then
         echo "Setting zsh as default shell..."
         if command -v zsh >/dev/null 2>&1; then
@@ -218,7 +237,7 @@ else
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
-# │ Tool integrations                                        │
+# │ Tool integrations (.zshrc)                               │
 # ╰──────────────────────────────────────────────────────────╯
 # shellcheck disable=SC2016
 if ! grep -q 'fzf --zsh' "$HOME_DIR/.zshrc"; then
@@ -246,13 +265,11 @@ fi
 # ╭──────────────────────────────────────────────────────────╮
 # │ Fonts                                                    │
 # ╰──────────────────────────────────────────────────────────╯
-
 if [[ "$OS" == "darwin" ]]; then
     brew install --cask font-roboto-mono font-jetbrains-mono-nerd-font
 elif [[ "$OS" == "linux" ]]; then
     mkdir -p "$HOME/.local/share/fonts"
 
-    # Roboto Mono
     if ! fc-list | grep -q "Roboto Mono"; then
         curl -sSL "https://fonts.google.com/download?family=Roboto+Mono" -o /tmp/roboto-mono.zip
         unzip -o /tmp/roboto-mono.zip -d "$HOME/.local/share/fonts/roboto-mono"
@@ -260,7 +277,6 @@ elif [[ "$OS" == "linux" ]]; then
         echo "✅ Installed Roboto Mono"
     fi
 
-    # JetBrains Mono Nerd Font
     if ! fc-list | grep -q "JetBrainsMono"; then
         curl -sSL "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip" -o /tmp/jetbrains-nerd.zip
         unzip -o /tmp/jetbrains-nerd.zip -d "$HOME/.local/share/fonts/jetbrains-mono-nerd"
