@@ -225,6 +225,21 @@ else
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
+# │ Tool integrations (.zshrc)                               │
+# ╰──────────────────────────────────────────────────────────╯
+# shellcheck disable=SC2016
+if ! grep -q 'fzf --zsh' "$HOME_DIR/.zshrc"; then
+    echo 'eval "$(fzf --zsh)"' >>"$HOME_DIR/.zshrc"
+    echo "✅ Added fzf integration to .zshrc"
+fi
+
+# shellcheck disable=SC2016
+if ! grep -q 'zoxide init zsh' "$HOME_DIR/.zshrc"; then
+    echo 'eval "$(zoxide init zsh)"' >>"$HOME_DIR/.zshrc"
+    echo "✅ Added zoxide integration to .zshrc"
+fi
+
+# ╭──────────────────────────────────────────────────────────╮
 # │ Fonts                                                    │
 # ╰──────────────────────────────────────────────────────────╯
 if [[ "$OS" == "darwin" ]]; then
