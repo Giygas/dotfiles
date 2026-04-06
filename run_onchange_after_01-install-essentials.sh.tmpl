@@ -67,24 +67,24 @@ fi
 # ╰──────────────────────────────────────────────────────────╯
 if [[ "$OS" == "linux" ]]; then
     case "$PKG_MANAGER" in
-        rpm-ostree)
-            echo "✅ Atomic Fedora — host packages managed by bootstrap.sh, skipping"
-            ;;
-        dnf)
-            sudo dnf install -y zsh wezterm
-            ;;
-        apt)
-            sudo apt-get update
-            sudo apt-get install -y zsh
-            if ! command -v wezterm &>/dev/null; then
-                curl -LO https://github.com/wezterm/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu24.04.deb
-                sudo apt install -y ./wezterm-nightly.Ubuntu24.04.deb
-                rm wezterm-nightly.Ubuntu24.04.deb
-            fi
-            ;;
-        pacman)
-            sudo pacman -S --noconfirm zsh wezterm
-            ;;
+    rpm-ostree)
+        echo "✅ Atomic Fedora — host packages managed by bootstrap.sh, skipping"
+        ;;
+    dnf)
+        sudo dnf install -y zsh wezterm
+        ;;
+    apt)
+        sudo apt-get update
+        sudo apt-get install -y zsh
+        if ! command -v wezterm &>/dev/null; then
+            curl -LO https://github.com/wezterm/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu24.04.deb
+            sudo apt install -y ./wezterm-nightly.Ubuntu24.04.deb
+            rm wezterm-nightly.Ubuntu24.04.deb
+        fi
+        ;;
+    pacman)
+        sudo pacman -S --noconfirm zsh wezterm
+        ;;
     esac
 fi
 
@@ -177,13 +177,20 @@ if [ -f "$HOME_DIR/.zshrc" ]; then
         echo "✅ zsh plugins already present in .zshrc"
     fi
 
-    # Only attempt chsh if zsh is actually available
+    # Change Shell
     if [[ "$SHELL" != *"zsh"* ]]; then
         if command -v zsh >/dev/null 2>&1; then
             echo "Setting zsh as default shell..."
-            chsh -s "$(command -v zsh)" || echo "⚠️  Could not change shell — run 'chsh -s \$(which zsh)' manually after reboot"
+            if command -v usermod >/dev/null 2>&1; then
+                sudo usermod --shell "$(which zsh)" "$USER"
+            elif command -v chsh >/dev/null 2>&1; then
+                chsh -s "$(which zsh)"
+            else
+                echo "⚠️  Neither usermod nor chsh found — run manually: sudo usermod --shell \$(which zsh) \$USER"
+            fi
+            echo "✅ Default shell set to zsh — log out and back in to apply"
         else
-            echo "⚠️  Skipping chsh — zsh not available yet. Run 'chsh -s \$(which zsh)' after reboot."
+            echo "⚠️  Skipping shell change — zsh not available yet."
         fi
     fi
 
@@ -248,12 +255,12 @@ elif [[ "$OS" == "linux" ]]; then
     mkdir -p "$HOME/.local/share/fonts"
 
     if ! fc-list | grep -q "Roboto Mono"; then
-        curl -sSL "https://fonts.google.com/download?family=Roboto+Mono" -o /tmp/roboto-mono.zip
+        ROBOTO_VERSION="3.000"
+        curl -sSL "https://github.com/googlefonts/RobotoMono/releases/download/v${ROBOTO_VERSION}/RobotoMono.zip" \
+            -o /tmp/roboto-mono.zip
         unzip -o /tmp/roboto-mono.zip -d "$HOME/.local/share/fonts/roboto-mono"
         rm /tmp/roboto-mono.zip
         echo "✅ Installed Roboto Mono"
-    else
-        echo "✅ Roboto Mono already installed"
     fi
 
     if ! fc-list | grep -q "JetBrainsMono"; then

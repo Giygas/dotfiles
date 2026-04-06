@@ -1,3 +1,5 @@
+-- vi:set filetype=lua
+
 local config = {}
 -- Colors
 -- config.color_scheme = "Mona Lisa (Gogh)"
@@ -108,6 +110,8 @@ local config = {}
 -- 	cursor_border = "yellow",
 -- }
 
+
+{{ if eq .chezmoi.os "darwin"}}
 config.colors = {
 	cursor_bg = "yellow",
 	cursor_border = "yellow",
@@ -140,6 +144,42 @@ config.colors = {
 		"#FFFFFF",
 	},
 }
+{{ else if eq .chezmoi.os "linux" }}
+
+config.colors = {
+	cursor_bg = "yellow",
+	cursor_border = "yellow",
+	-- background = "#0e0e0e",
+	-- background = "#1E1E2E", -- Catppuccin
+	-- background = "#232A2E", -- Evergarden
+	background = "#101010", -- Vesper
+	-- background = "#1F2528",
+	foreground = "#C0B18B",
+
+	ansi = {
+		"#588E6E",
+		"#9D4221",
+		"#7B8748",
+		"#8F832E",
+		"#402E2E",
+		"#7F4E2F",
+		"#444B4B",
+		"#D7D0CA",
+	},
+
+	brights = {
+		"#614445",
+		"#AC5D2F",
+		"#739393",
+		"#D7AA4B",
+		"#8F6840",
+		"#CD7C54",
+		"#79D9D9",
+		"#FFFFFF",
+	},
+}
+
+{{ end }}
 -- #DBE6AF green #7B8748
 -- "#585C49" directory
 -- "#C0B18B" normal

@@ -125,9 +125,9 @@ return {
 
 	-- Send "CTRL-A" to the terminal when pressing CTRL-A, CTRL-A
 	{
-		key = "a",
+		key = "b",
 		mods = "LEADER|CTRL",
-		action = w.action.SendKey({ key = "a", mods = "CTRL" }),
+		action = w.action.SendKey({ key = "b", mods = "CTRL" }),
 	},
 	-- Copy to clipboard
 	{

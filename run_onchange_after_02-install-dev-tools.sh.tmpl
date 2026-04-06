@@ -16,15 +16,6 @@ OS="{{ .chezmoi.os }}"
 HOME_DIR="{{ .chezmoi.homeDir }}"
 USER_NAME=$(whoami)
 
-SENTINEL="$HOME_DIR/.local/share/chezmoi/.dev-tools-installed"
-
-# Skip if already completed successfully
-if [ -f "$SENTINEL" ]; then
-    echo "✅ Dev tools already installed (sentinel found). Skipping."
-    echo "   To reinstall, remove: $SENTINEL"
-    exit 0
-fi
-
 echo "OS detected: $OS"
 echo "User: $USER_NAME"
 echo "Home directory: $HOME_DIR"
@@ -89,65 +80,65 @@ elif [[ "$OS" == "linux" ]]; then
 
     case "$PKG_MANAGER" in
 
-        # -------------------------------------------------------
-        # Atomic Fedora (Bazzite, Silverblue, Kinoite, etc.)
-        #
-        # Use toolbox for dev tools — keeps the host image clean,
-        # no reboot needed, full dnf available inside the container.
-        # -------------------------------------------------------
-        rpm-ostree)
-            echo "🔵 Atomic Fedora — using toolbox for dev tools..."
+    # -------------------------------------------------------
+    # Atomic Fedora (Bazzite, Silverblue, Kinoite, etc.)
+    #
+    # Use toolbox for dev tools — keeps the host image clean,
+    # no reboot needed, full dnf available inside the container.
+    # -------------------------------------------------------
+    rpm-ostree)
+        echo "🔵 Atomic Fedora — using toolbox for dev tools..."
 
-            TOOLBOX_NAME="dev"
+        TOOLBOX_NAME="dev"
 
-            if ! toolbox list --containers | grep -q "^$TOOLBOX_NAME$"; then
-                echo "Creating toolbox container '$TOOLBOX_NAME'..."
-                toolbox create "$TOOLBOX_NAME"
-                echo "✅ Toolbox container '$TOOLBOX_NAME' created"
-            else
-                echo "✅ Toolbox container '$TOOLBOX_NAME' already exists"
-            fi
+        if ! toolbox list --containers | grep -q "^$TOOLBOX_NAME$"; then
+            echo "Creating toolbox container '$TOOLBOX_NAME'..."
+            toolbox create "$TOOLBOX_NAME"
+            echo "✅ Toolbox container '$TOOLBOX_NAME' created"
+        else
+            echo "✅ Toolbox container '$TOOLBOX_NAME' already exists"
+        fi
 
-            echo "Installing dev tools inside toolbox '$TOOLBOX_NAME'..."
-            toolbox run --container "$TOOLBOX_NAME" sudo dnf install -y \
-                gnupg2 \
-                ffmpeg \
-                ghostscript \
-                ImageMagick \
-                luarocks \
-                watchman \
-                git-filter-repo
+        echo "Installing dev tools inside toolbox '$TOOLBOX_NAME'..."
+        toolbox run --container "$TOOLBOX_NAME" sudo dnf install -y \
+            gnupg2 \
+            ffmpeg \
+            ghostscript \
+            ImageMagick \
+            luarocks \
+            watchman \
+            git-filter-repo
 
-            echo "✅ Dev tools installed inside toolbox '$TOOLBOX_NAME'"
-            echo ""
-            echo "💡 Enter the container with:    toolbox enter $TOOLBOX_NAME"
-            echo "   Run a single command with:   toolbox run --container $TOOLBOX_NAME <command>"
-            ;;
+        echo "✅ Dev tools installed inside toolbox '$TOOLBOX_NAME'"
+        echo ""
+        echo "💡 Enter the container with:    toolbox enter $TOOLBOX_NAME"
+        echo "   Run a single command with:   toolbox run --container $TOOLBOX_NAME <command>"
+        ;;
 
-        dnf)
-            sudo dnf install -y \
-                gnupg2 ffmpeg ghostscript ImageMagick \
-                luarocks watchman git-filter-repo
-            ;;
+    dnf)
+        sudo dnf install -y \
+            gnupg2 ffmpeg ghostscript ImageMagick \
+            luarocks watchman git-filter-repo
+        ;;
 
-        apt)
-            sudo apt update
-            sudo apt install -y \
-                gnupg ffmpeg ghostscript imagemagick \
-                liblua5.1-0-dev luarocks watchman git-filter-repo
-            ;;
+    apt)
+        sudo apt update
+        sudo apt install -y \
+            gnupg ffmpeg ghostscript imagemagick \
+            liblua5.1-0-dev luarocks watchman git-filter-repo
+        ;;
 
-        pacman)
-            sudo pacman -S --noconfirm \
-                gnupg ffmpeg ghostscript imagemagick \
-                luarocks watchman git-filter-repo
-            ;;
+    pacman)
+        sudo pacman -S --noconfirm \
+            gnupg ffmpeg ghostscript imagemagick \
+            luarocks watchman git-filter-repo
+        ;;
 
-        *)
-            echo "❌ Unknown package manager — skipping."
-            echo "Please install manually: gnupg, ffmpeg, ghostscript, imagemagick, luarocks, watchman, git-filter-repo"
-            exit 1
-            ;;
+    *)
+        echo "❌ Unknown package manager — skipping."
+        echo "Please install manually: gnupg, ffmpeg, ghostscript, imagemagick, luarocks, watchman, git-filter-repo"
+        exit 1
+        ;;
     esac
 fi
 
@@ -161,10 +152,6 @@ if ! command -v "deno" &>/dev/null; then
 else
     echo "✅ Deno already installed"
 fi
-
-# Write sentinel — only reached on full success
-mkdir -p "$(dirname "$SENTINEL")"
-touch "$SENTINEL"
 
 echo ""
 echo "🎉 Dev environment setup complete for $USER_NAME on $OS!"
