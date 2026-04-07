@@ -223,13 +223,18 @@ fi
 # ╭──────────────────────────────────────────────────────────╮
 # │ Tmux Plugin Manager                                      │
 # ╰──────────────────────────────────────────────────────────╯
-if [ ! -d "$HOME_DIR/.tmux/plugins/tpm" ]; then
+TPM_PATH="${HOME_DIR}/tmux/plugins/tpm"
+if [ ! -d "$TPM_PATH" ]; then
     echo "Installing Tmux Plugin Manager..."
     git clone https://github.com/tmux-plugins/tpm "$HOME_DIR/.tmux/plugins/tpm"
     echo "✅ Installed TPM"
 else
     echo "✅ TPM already installed"
 fi
+
+# Install plugins (this can run even if tmux server isn't started)
+echo "Installing tmux plugins..."
+"$TPM_PATH/bin/install_plugins"
 
 # ╭──────────────────────────────────────────────────────────╮
 # │ Tool integrations (.zshrc)                               │
@@ -254,13 +259,12 @@ if [[ "$OS" == "darwin" ]]; then
 elif [[ "$OS" == "linux" ]]; then
     mkdir -p "$HOME/.local/share/fonts"
 
-    if ! fc-list | grep -q "Roboto Mono"; then
-        ROBOTO_VERSION="3.000"
-        curl -sSL "https://github.com/googlefonts/RobotoMono/releases/download/v${ROBOTO_VERSION}/RobotoMono.zip" \
+    if ! fc-list | grep -q "RobotoMono"; then
+        curl -sSL "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/RobotoMono.zip" \
             -o /tmp/roboto-mono.zip
         unzip -o /tmp/roboto-mono.zip -d "$HOME/.local/share/fonts/roboto-mono"
         rm /tmp/roboto-mono.zip
-        echo "✅ Installed Roboto Mono"
+        echo "✅ Installed RobotoMono Nerd Font"
     fi
 
     if ! fc-list | grep -q "JetBrainsMono"; then
