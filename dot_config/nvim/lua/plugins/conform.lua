@@ -53,6 +53,7 @@ return {
 				typescriptreact = { "prettierd", "prettier", stop_after_first = true },
 				-- json
 				json = { "prettierd", "prettier", stop_after_first = true },
+				jsonc = { "prettierd", "prettier", stop_after_first = true },
 				-- everything else will use lsp format
 			},
 		},
