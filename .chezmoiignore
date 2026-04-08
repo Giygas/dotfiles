@@ -10,6 +10,10 @@
 */tmux/plugins/*
 !*/tmux/plugins/tmux-sessionx
 
+node_modules/
+bun.lock
+package.json
+
 # OS-specific files
 **/.DS_Store
 **/Thumbs.db
