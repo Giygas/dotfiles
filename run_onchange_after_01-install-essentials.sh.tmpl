@@ -150,13 +150,13 @@ fi
 # │ Mise                                                     │
 # │ Installs to ~/.local/bin — no package manager needed     │
 # ╰──────────────────────────────────────────────────────────╯
-if ! command -v mise &>/dev/null; then
+if ! command -v "$HOME/.local/bin/mise" &>/dev/null; then
     echo "Installing mise..."
-    curl https://mise.run/zsh | sh
+    curl https://mise.run | sh
     export PATH="$HOME/.local/bin:$PATH"
     echo "✅ Installed mise"
 else
-    echo "✅ mise already installed ($(mise --version))"
+    echo "✅ mise already installed ($("$HOME/.local/bin/mise" --version))"
 fi
 
 if command -v mise &>/dev/null; then
@@ -168,56 +168,22 @@ else
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
-# │ Setup .zshrc                                             │
+# │ Set default shell to zsh                                 │
 # ╰──────────────────────────────────────────────────────────╯
-if [ -f "$HOME_DIR/.zshrc" ]; then
-
-    if ! grep -q "EDITOR=nvim" "$HOME_DIR/.zshrc"; then
-        echo 'export EDITOR=nvim' >>"$HOME_DIR/.zshrc"
-        echo "✅ Added EDITOR to .zshrc"
-    fi
-
-    if ! grep -q ".zsh_aliases" "$HOME_DIR/.zshrc"; then
-        echo ". $HOME/.zsh_aliases" >>"$HOME_DIR/.zshrc"
-        echo "✅ Added zsh_aliases to .zshrc"
-    fi
-
-    if ! grep -q ".zsh_theme" "$HOME_DIR/.zshrc"; then
-        echo ". $HOME/.zsh_theme" >>"$HOME_DIR/.zshrc"
-        echo "✅ Added zsh_theme to .zshrc"
-    fi
-
-    if ! grep -q "zsh-autosuggestions\|zsh-syntax-highlighting" "$HOME_DIR/.zshrc"; then
-        if [[ "$OS" == "darwin" ]]; then
-            sed -i '' '/^plugins=/ s/)/ zsh-autosuggestions zsh-syntax-highlighting)/' "$HOME_DIR/.zshrc"
+if [[ "$SHELL" != *"zsh"* ]]; then
+    if command -v zsh >/dev/null 2>&1; then
+        echo "Setting zsh as default shell..."
+        if command -v usermod >/dev/null 2>&1; then
+            sudo usermod --shell "$(which zsh)" "$USER"
+        elif command -v chsh >/dev/null 2>&1; then
+            chsh -s "$(which zsh)"
         else
-            sed -i '/^plugins=/ s/)/ zsh-autosuggestions zsh-syntax-highlighting)/' "$HOME_DIR/.zshrc"
+            echo "⚠️  Neither usermod nor chsh found — run manually: sudo usermod --shell \$(which zsh) \$USER"
         fi
-        echo "✅ Added zsh plugins to .zshrc"
+        echo "✅ Default shell set to zsh — log out and back in to apply"
     else
-        echo "✅ zsh plugins already present in .zshrc"
+        echo "⚠️  Skipping shell change — zsh not available yet."
     fi
-
-    # Change Shell
-    if [[ "$SHELL" != *"zsh"* ]]; then
-        if command -v zsh >/dev/null 2>&1; then
-            echo "Setting zsh as default shell..."
-            if command -v usermod >/dev/null 2>&1; then
-                sudo usermod --shell "$(which zsh)" "$USER"
-            elif command -v chsh >/dev/null 2>&1; then
-                chsh -s "$(which zsh)"
-            else
-                echo "⚠️  Neither usermod nor chsh found — run manually: sudo usermod --shell \$(which zsh) \$USER"
-            fi
-            echo "✅ Default shell set to zsh — log out and back in to apply"
-        else
-            echo "⚠️  Skipping shell change — zsh not available yet."
-        fi
-    fi
-
-else
-    echo "⚠️  .zshrc not found — skipping zshrc setup"
-    echo "   chezmoi should have deployed it. Check your dotfiles templates."
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
@@ -235,21 +201,6 @@ fi
 # Install plugins (this can run even if tmux server isn't started)
 echo "Installing tmux plugins..."
 "$TPM_PATH/bin/install_plugins"
-
-# ╭──────────────────────────────────────────────────────────╮
-# │ Tool integrations (.zshrc)                               │
-# ╰──────────────────────────────────────────────────────────╯
-# shellcheck disable=SC2016
-if ! grep -q 'fzf --zsh' "$HOME_DIR/.zshrc"; then
-    echo 'eval "$(fzf --zsh)"' >>"$HOME_DIR/.zshrc"
-    echo "✅ Added fzf integration to .zshrc"
-fi
-
-# shellcheck disable=SC2016
-if ! grep -q 'zoxide init zsh' "$HOME_DIR/.zshrc"; then
-    echo 'eval "$(zoxide init zsh)"' >>"$HOME_DIR/.zshrc"
-    echo "✅ Added zoxide integration to .zshrc"
-fi
 
 # ╭──────────────────────────────────────────────────────────╮
 # │ Fonts                                                    │
