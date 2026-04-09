@@ -5,7 +5,8 @@
 # │ install-dev-tools                                        │
 # │                                                          │
 # │ Installs packages that mise does not cover.              │
-# │ On atomic Fedora, uses toolbox to keep the host clean.   │
+# │ On atomic Fedora, uses toolbox or distrobox (whichever   │
+# │ is available) to keep the host clean.                     │
 # │                                                          │
 # │ Uses a sentinel file to track completion, since this     │
 # │ script is run_onchange_ and could be re-triggered by     │
@@ -34,6 +35,18 @@ detect_pkg_manager() {
         echo "pacman"
     else
         echo "unknown"
+    fi
+}
+
+# Detect available container tool for atomic Fedora hosts.
+# Toolbox is standard on Silverblue/Kinoite; distrobox ships on Bazzite.
+detect_container_tool() {
+    if command -v toolbox &>/dev/null; then
+        echo "toolbox"
+    elif command -v distrobox &>/dev/null; then
+        echo "distrobox"
+    else
+        echo "none"
     fi
 }
 
@@ -87,32 +100,83 @@ elif [[ "$OS" == "linux" ]]; then
     # no reboot needed, full dnf available inside the container.
     # -------------------------------------------------------
     rpm-ostree)
-        echo "🔵 Atomic Fedora — using toolbox for dev tools..."
+        CONTAINER_TOOL=$(detect_container_tool)
+        CONTAINER_NAME="dev"
 
-        TOOLBOX_NAME="dev"
-
-        if ! toolbox list --containers | grep -q "^$TOOLBOX_NAME$"; then
-            echo "Creating toolbox container '$TOOLBOX_NAME'..."
-            toolbox create "$TOOLBOX_NAME"
-            echo "✅ Toolbox container '$TOOLBOX_NAME' created"
-        else
-            echo "✅ Toolbox container '$TOOLBOX_NAME' already exists"
+        if [[ "$CONTAINER_TOOL" == "none" ]]; then
+            echo "❌ Neither toolbox nor distrobox found — skipping."
+            echo "   Install one of them and re-run this script."
+            exit 1
         fi
 
-        echo "Installing dev tools inside toolbox '$TOOLBOX_NAME'..."
-        toolbox run --container "$TOOLBOX_NAME" sudo dnf install -y \
-            gnupg2 \
-            ffmpeg \
-            ghostscript \
-            ImageMagick \
-            luarocks \
-            watchman \
-            git-filter-repo
+        echo "🔵 Atomic Fedora — using $CONTAINER_TOOL for dev tools..."
 
-        echo "✅ Dev tools installed inside toolbox '$TOOLBOX_NAME'"
+        # --- Create the container if it doesn't exist ---
+        case "$CONTAINER_TOOL" in
+        toolbox)
+            if ! toolbox list --containers 2>/dev/null | grep -q "$CONTAINER_NAME"; then
+                echo "Creating toolbox container '$CONTAINER_NAME'..."
+                toolbox create "$CONTAINER_NAME"
+            else
+                echo "✅ Toolbox container '$CONTAINER_NAME' already exists"
+            fi
+            ;;
+        distrobox)
+            if ! distrobox list | grep -q "$CONTAINER_NAME"; then
+                # Auto-fix missing subuid/subgid
+                if ! grep -q "^$USER_NAME:" /etc/subuid 2>/dev/null ||
+                    ! grep -q "^$USER_NAME:" /etc/subgid 2>/dev/null; then
+                    echo "⚠️  Missing subuid/subgid — adding entries for $USER_NAME..."
+                    sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 "$USER_NAME"
+                    podman system migrate
+                    echo "✅ subuid/subgid added"
+                fi
+
+                FEDORA_VERSION=$(rpm -E %fedora 2>/dev/null || echo "latest")
+                IMAGE="fedora:$FEDORA_VERSION"
+
+                echo "Pulling container image $IMAGE..."
+                if ! podman pull "$IMAGE"; then
+                    echo "⚠️  Could not pull $IMAGE, falling back to fedora:latest"
+                    IMAGE="fedora:latest"
+                    podman pull "$IMAGE"
+                fi
+
+                echo "Creating distrobox container '$CONTAINER_NAME' ($IMAGE)..."
+                distrobox create --name "$CONTAINER_NAME" --image "$IMAGE"
+            else
+                echo "✅ Distrobox container '$CONTAINER_NAME' already exists"
+            fi
+            ;;
+        esac
+
+        # --- Install packages inside the container ---
+        echo "Installing dev tools inside $CONTAINER_TOOL '$CONTAINER_NAME'..."
+        case "$CONTAINER_TOOL" in
+        toolbox)
+            toolbox run --container "$CONTAINER_NAME" sudo dnf install -y \
+                gnupg2 ffmpeg ghostscript ImageMagick \
+                luarocks watchman git-filter-repo
+            ;;
+        distrobox)
+            distrobox enter --name "$CONTAINER_NAME" -- sudo dnf install -y \
+                gnupg2 ffmpeg ghostscript ImageMagick \
+                luarocks watchman git-filter-repo
+            ;;
+        esac
+
+        echo "✅ Dev tools installed inside $CONTAINER_TOOL '$CONTAINER_NAME'"
         echo ""
-        echo "💡 Enter the container with:    toolbox enter $TOOLBOX_NAME"
-        echo "   Run a single command with:   toolbox run --container $TOOLBOX_NAME <command>"
+        case "$CONTAINER_TOOL" in
+        toolbox)
+            echo "💡 Enter the container with:    toolbox enter $CONTAINER_NAME"
+            echo "   Run a single command with:   toolbox run --container $CONTAINER_NAME <command>"
+            ;;
+        distrobox)
+            echo "💡 Enter the container with:    distrobox enter $CONTAINER_NAME"
+            echo "   Run a single command with:   distrobox enter --name $CONTAINER_NAME -- <command>"
+            ;;
+        esac
         ;;
 
     dnf)
