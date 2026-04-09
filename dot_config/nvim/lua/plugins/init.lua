@@ -103,7 +103,9 @@ return {
 	-- undotree
 	{
 		"mbbill/undotree",
-		vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle),
+		keys = {
+			{ "<leader>u", "<cmd>UndotreeToggle<cr>", desc = "Toggle undotree" },
+		},
 	},
 
 	-- clipboard access
