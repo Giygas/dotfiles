@@ -147,6 +147,27 @@ else
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
+# │ Mise                                                     │
+# │ Installs to ~/.local/bin — no package manager needed     │
+# ╰──────────────────────────────────────────────────────────╯
+if ! command -v mise &>/dev/null; then
+    echo "Installing mise..."
+    curl https://mise.run/zsh | sh
+    export PATH="$HOME/.local/bin:$PATH"
+    echo "✅ Installed mise"
+else
+    echo "✅ mise already installed ($(mise --version))"
+fi
+
+if command -v mise &>/dev/null; then
+    echo "Installing mise tools..."
+    mise install
+    echo "✅ mise tools installed"
+else
+    echo "❌ mise not found after install — check ~/.local/bin is in PATH"
+fi
+
+# ╭──────────────────────────────────────────────────────────╮
 # │ Setup .zshrc                                             │
 # ╰──────────────────────────────────────────────────────────╯
 if [ -f "$HOME_DIR/.zshrc" ]; then
@@ -200,33 +221,12 @@ else
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
-# │ Mise                                                     │
-# │ Installs to ~/.local/bin — no package manager needed     │
-# ╰──────────────────────────────────────────────────────────╯
-if ! command -v mise &>/dev/null; then
-    echo "Installing mise..."
-    curl https://mise.run/zsh | sh
-    export PATH="$HOME/.local/bin:$PATH"
-    echo "✅ Installed mise"
-else
-    echo "✅ mise already installed ($(mise --version))"
-fi
-
-if command -v mise &>/dev/null; then
-    echo "Installing mise tools..."
-    mise install
-    echo "✅ mise tools installed"
-else
-    echo "❌ mise not found after install — check ~/.local/bin is in PATH"
-fi
-
-# ╭──────────────────────────────────────────────────────────╮
 # │ Tmux Plugin Manager                                      │
 # ╰──────────────────────────────────────────────────────────╯
-TPM_PATH="${HOME_DIR}/tmux/plugins/tpm"
+TPM_PATH="${HOME_DIR}/.tmux/plugins/tpm"
 if [ ! -d "$TPM_PATH" ]; then
     echo "Installing Tmux Plugin Manager..."
-    git clone https://github.com/tmux-plugins/tpm "$HOME_DIR/.tmux/plugins/tpm"
+    git clone https://github.com/tmux-plugins/tpm "$TPM_PATH"
     echo "✅ Installed TPM"
 else
     echo "✅ TPM already installed"
