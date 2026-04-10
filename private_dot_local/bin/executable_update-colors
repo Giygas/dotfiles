@@ -4,6 +4,7 @@
 
 # wal already sourced colors.sh for us when using -o
 # but source again to be safe (works standalone too)
+set -a
 source "${HOME}/.cache/wal/colors.sh"
 set +a
 
@@ -11,7 +12,13 @@ set +a
 envsubst <"${HOME}/.config/yazi/flavors/wal.yazi/flavor.toml.tpl" \
     >"${HOME}/.config/yazi/flavors/wal.yazi/flavor.toml"
 
+# --- Oh-my-posh ---
+# Only substitute wal color vars — avoid $schema, literal $, etc.
+envsubst '$color0 $color1 $color2 $color3 $color4 $color5 $color6 $color7 $color8 $color9 $color10 $color11 $color12 $color13 $color14 $color15 $background $foreground $cursor' \
+    <"${HOME}/.config/oh-my-posh/illusi0n-box.omp.json.tpl" \
+    >"${HOME}/.config/oh-my-posh/illusi0n-box.omp.json"
+
 # --- Add more apps here later ---
 # envsubst < ~/.config/something/template > ~/.config/something/config
 
-echo "Colors updated: yazi"
+echo "Colors updated: yazi, oh-my-posh"
