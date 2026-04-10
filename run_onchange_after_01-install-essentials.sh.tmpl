@@ -231,5 +231,16 @@ elif [[ "$OS" == "linux" ]]; then
     echo "✅ Font cache updated"
 fi
 
+# ╭──────────────────────────────────────────────────────────╮
+# │ Other essentials                                         │
+# ╰──────────────────────────────────────────────────────────╯
+if ! command -v wal &>/dev/null; then
+    if [[ "$OS" == "darwin" ]]; then
+        brew install pywal
+    elif [[ "$OS" == "linux" ]]; then
+        pipx install pywal
+    fi
+fi
+
 echo ""
 echo "🎉 Essentials setup complete for $USER_NAME on $OS!"
