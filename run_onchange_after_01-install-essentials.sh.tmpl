@@ -232,14 +232,36 @@ elif [[ "$OS" == "linux" ]]; then
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
+# │ Cursors (Bibata Modern Classic)                          │
+# ╰──────────────────────────────────────────────────────────╯
+if [[ "$OS" == "linux" ]]; then
+    mkdir -p "$HOME/.local/share/icons"
+    if [ ! -d "$HOME/.local/share/icons/Bibata-Modern-Classic" ]; then
+        echo "Installing Bibata Modern Classic cursor theme..."
+        DOWNLOAD_URL=$(curl -s https://api.github.com/repos/ful1e5/Bibata_Cursor/releases/latest |
+            grep "browser_download_url.*Bibata-Modern-Classic\.tar\.xz\"" |
+            grep -v "Right" |
+            head -1 |
+            cut -d '"' -f 4)
+        curl -fL "$DOWNLOAD_URL" | tar -xJ -C "$HOME/.local/share/icons/"
+        echo "✅ Installed Bibata Modern Classic cursors"
+    else
+        echo "✅ Bibata Modern Classic cursors already installed"
+    fi
+fi
+
+# ╭──────────────────────────────────────────────────────────╮
 # │ Other essentials                                         │
 # ╰──────────────────────────────────────────────────────────╯
-if ! command -v wal &>/dev/null; then
-    if [[ "$OS" == "darwin" ]]; then
-        brew install pywal
-    elif [[ "$OS" == "linux" ]]; then
-        pipx install pywal
+if ! command -v matugen &>/dev/null; then
+    echo "Installing wallust..."
+    if cargo install wallust; then
+        echo "✅ Installed wallust"
+    else
+        echo "❌ Failed to install wallust"
     fi
+else
+    echo "✅ wallust already installed"
 fi
 
 echo ""

@@ -26,12 +26,10 @@ python = { version = "latest" , postinstall = "pip install pipx"}
 
 go = "latest"
 "go:golang.org/x/tools/gopls" = "latest"
-
-{{ if eq .chezmoi.os "linux" }}
+{{- if eq .chezmoi.os "linux" }}
 btop = "latest"
-{{ end }}
-
-
+{{- end }}
+rust = "latest"
 opencode = "latest"
 shellcheck = "latest"
 shfmt = "latest"
