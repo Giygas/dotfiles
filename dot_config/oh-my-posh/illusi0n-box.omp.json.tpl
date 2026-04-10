@@ -52,7 +52,7 @@
           "type": "session"
         },
         {
-          "foreground": "$color9",
+          "foreground": "$color7",
           "options": {
             "folder_separator_icon": "/",
             "style": "full"
@@ -63,7 +63,7 @@
         {
           "foreground": "$color6",
           "foreground_templates": [
-            "{{ if or (.Working.Changed) (.Staging.Changed) }}$color2{{ end }}",
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}$color1{{ end }}",
             "{{ if and (gt .Ahead 0) (gt .Behind 0) }}$color4{{ end }}",
             "{{ if gt .Ahead 0 }}$color5{{ end }}",
             "{{ if gt .Behind 0 }}$color1{{ end }}"

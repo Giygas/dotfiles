@@ -52,7 +52,7 @@
           "type": "session"
         },
         {
-          "foreground": "#5757AC",
+          "foreground": "#c5c7cd",
           "options": {
             "folder_separator_icon": "/",
             "style": "full"
@@ -63,7 +63,7 @@
         {
           "foreground": "#5E97E1",
           "foreground_templates": [
-            "{{ if or (.Working.Changed) (.Staging.Changed) }}#5065B5{{ end }}",
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#5757AC{{ end }}",
             "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#903AB1{{ end }}",
             "{{ if gt .Ahead 0 }}#935CCF{{ end }}",
             "{{ if gt .Behind 0 }}#5757AC{{ end }}"
