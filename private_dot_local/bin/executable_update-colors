@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# update-colors.sh — post-wal hook to propagate colors to all apps
+# Called by: wal -i <wallpaper> -o update-colors.sh
+
+# wal already sourced colors.sh for us when using -o
+# but source again to be safe (works standalone too)
+source "${HOME}/.cache/wal/colors.sh"
+set +a
+
+# --- Yazi ---
+envsubst <"${HOME}/.config/yazi/flavors/wal.yazi/flavor.toml.tpl" \
+    >"${HOME}/.config/yazi/flavors/wal.yazi/flavor.toml"
+
+# --- Add more apps here later ---
+# envsubst < ~/.config/something/template > ~/.config/something/config
+
+echo "Colors updated: yazi"
