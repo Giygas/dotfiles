@@ -206,7 +206,7 @@ echo "Installing tmux plugins..."
 # │ Fonts                                                    │
 # ╰──────────────────────────────────────────────────────────╯
 if [[ "$OS" == "darwin" ]]; then
-    brew install --cask font-roboto-mono font-jetbrains-mono-nerd-font
+    brew install --cask font-roboto-mono font-jetbrains-mono-nerd-font font-fira-sans
 elif [[ "$OS" == "linux" ]]; then
     mkdir -p "$HOME/.local/share/fonts"
 
@@ -216,6 +216,8 @@ elif [[ "$OS" == "linux" ]]; then
         unzip -o /tmp/roboto-mono.zip -d "$HOME/.local/share/fonts/roboto-mono"
         rm /tmp/roboto-mono.zip
         echo "✅ Installed RobotoMono Nerd Font"
+    else
+        echo "✅ RobotoMono Nerd Font already installed"
     fi
 
     if ! fc-list | grep -q "JetBrainsMono"; then
@@ -225,6 +227,18 @@ elif [[ "$OS" == "linux" ]]; then
         echo "✅ Installed JetBrains Mono Nerd Font"
     else
         echo "✅ JetBrains Mono Nerd Font already installed"
+    fi
+
+    if ! fc-list | grep -q "Fira Sans"; then
+        mkdir -p "$HOME/.local/share/fonts/fira-sans"
+        curl -sSL "https://github.com/mozilla/Fira/archive/refs/heads/master.zip" \
+            -o /tmp/fira-sans.zip
+        unzip -o /tmp/fira-sans.zip "*/ttf/*" -d /tmp/fira-sans-extract
+        find /tmp/fira-sans-extract -name "*.ttf" -exec mv {} "$HOME/.local/share/fonts/fira-sans/" \;
+        rm -rf /tmp/fira-sans.zip /tmp/fira-sans-extract
+        echo "✅ Installed Fira Sans"
+    else
+        echo "✅ Fira Sans already installed"
     fi
 
     fc-cache -fv
