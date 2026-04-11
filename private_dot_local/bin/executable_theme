@@ -1,0 +1,5 @@
+#!/bin/sh
+hyprctl hyprpaper preload "$1" && hyprctl hyprpaper wallpaper ",$1"
+wallust run --no-hooks --skip-sequences "$1"
+pkill -SIGUSR2 waybar
+hyprctl reload
