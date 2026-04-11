@@ -78,9 +78,9 @@ if [[ "$OS" == "darwin" ]]; then
     brew install \
         cocoapods colima docker \
         ffmpeg ghostscript imagemagick \
-        git-filter-repo gnupg icu4c@76 \
+        gnupg icu4c@76 \
         mongosh pinentry-mac plow \
-        watchman wrk luarocks
+        luarocks
 
 # ╭──────────────────────────────────────────────────────────╮
 # │ Linux                                                    │
@@ -156,12 +156,12 @@ elif [[ "$OS" == "linux" ]]; then
         toolbox)
             toolbox run --container "$CONTAINER_NAME" sudo dnf install -y \
                 gnupg2 ffmpeg ghostscript ImageMagick \
-                luarocks watchman git-filter-repo
+                luarocks
             ;;
         distrobox)
             distrobox enter --name "$CONTAINER_NAME" -- sudo dnf install -y \
                 gnupg2 ffmpeg ghostscript ImageMagick \
-                luarocks watchman git-filter-repo
+                luarocks
             ;;
         esac
 
@@ -182,25 +182,25 @@ elif [[ "$OS" == "linux" ]]; then
     dnf)
         sudo dnf install -y \
             gnupg2 ffmpeg ghostscript ImageMagick \
-            luarocks watchman git-filter-repo
+            luarocks
         ;;
 
     apt)
         sudo apt update
         sudo apt install -y \
             gnupg ffmpeg ghostscript imagemagick \
-            liblua5.1-0-dev luarocks watchman git-filter-repo
+            liblua5.1-0-dev luarocks
         ;;
 
     pacman)
         sudo pacman -S --noconfirm \
             gnupg ffmpeg ghostscript imagemagick \
-            luarocks watchman git-filter-repo
+            luarocks
         ;;
 
     *)
         echo "❌ Unknown package manager — skipping."
-        echo "Please install manually: gnupg, ffmpeg, ghostscript, imagemagick, luarocks, watchman, git-filter-repo"
+        echo "Please install manually: gnupg, ffmpeg, ghostscript, imagemagick, luarocks"
         exit 1
         ;;
     esac

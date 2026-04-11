@@ -2,14 +2,13 @@
 # vi:set filetype=sh:
 
 # ╭──────────────────────────────────────────────────────────╮
-# │ install-essentials                                       │
+# │ install-essentials                                        │
 # │                                                          │
-# │ Sets up shell environment, mise, fonts and tmux.         │
+# │ Sets up shell environment, fonts, cursors and theming.   │
+# │ Also installs host-level packages on non-atomic systems   │
+# │ (atomic systems get their packages from Bootstrap.sh).    │
 # │                                                          │
-# │ Assumes host packages (zsh, wezterm, sway, 1password)    │
-# │ are already installed — either by bootstrap.sh on        │
-# │ Bazzite/atomic, or by the relevant package manager on    │
-# │ other systems.                                           │
+# │ Works on: macOS, Debian/Ubuntu, Fedora, Arch, atomic     │
 # ╰──────────────────────────────────────────────────────────╯
 
 OS="{{ .chezmoi.os }}"
@@ -20,9 +19,10 @@ echo "OS detected: $OS"
 echo "User: $USER_NAME"
 echo "Home directory: $HOME_DIR"
 
-# -------------------------------
-# Detect Linux package manager
-# -------------------------------
+# ╭──────────────────────────────────────────────────────────╮
+# │ Package Manager Detection                                 │
+# ╰──────────────────────────────────────────────────────────╯
+
 detect_pkg_manager() {
     if command -v rpm-ostree &>/dev/null; then
         echo "rpm-ostree"
@@ -41,8 +41,7 @@ PKG_MANAGER=$(detect_pkg_manager)
 echo "Package manager detected: $PKG_MANAGER"
 
 # ╭──────────────────────────────────────────────────────────╮
-# │ macOS only — Homebrew + base packages                    │
-# │ On Linux, these are handled by bootstrap.sh              │
+# │ macOS                                                     │
 # ╰──────────────────────────────────────────────────────────╯
 if [[ "$OS" == "darwin" ]]; then
     if ! xcode-select -p &>/dev/null; then
@@ -56,82 +55,244 @@ if [[ "$OS" == "darwin" ]]; then
     fi
 
     brew update
-    brew install --cask wezterm
+    brew install --cask wezterm 1password
+    brew install 1password-cli
     echo "✅ macOS base packages ready"
-fi
 
 # ╭──────────────────────────────────────────────────────────╮
-# │ Linux non-atomic — install missing host packages         │
-# │ On atomic Fedora (rpm-ostree) these are skipped since    │
-# │ bootstrap.sh already handled them.                       │
+# │ Linux                                                     │
 # ╰──────────────────────────────────────────────────────────╯
-if [[ "$OS" == "linux" ]]; then
+elif [[ "$OS" == "linux" ]]; then
+
+    # Get distro details for package-specific decisions
+    LINUX_ID="unknown"
+    LINUX_VERSION_ID="unknown"
+    if [ -f /etc/os-release ]; then
+        # shellcheck disable=SC1091
+        eval "$(grep -E '^(ID|VERSION_ID)=' /etc/os-release | sed 's/^/LINUX_/')"
+    fi
+
+    echo "Distro: $LINUX_ID $LINUX_VERSION_ID"
+
     case "$PKG_MANAGER" in
+
+    # -----------------------------------------------------------
+    # Atomic Fedora (Bazzite, Silverblue, Kinoite, Sericea, etc.)
+    # Host packages installed by Bootstrap.sh before chezmoi ran.
+    # -----------------------------------------------------------
     rpm-ostree)
-        echo "✅ Atomic Fedora — host packages managed by bootstrap.sh, skipping"
+        echo "✅ Atomic Fedora — host packages managed by Bootstrap.sh, skipping"
         ;;
+
+    # -----------------------------------------------------------
+    # Fedora (Workstation, Server, etc.)
+    # -----------------------------------------------------------
     dnf)
-        sudo dnf install -y zsh wezterm
+        # --- 1Password repo ---
+        if [ ! -f /etc/yum.repos.d/1password.repo ]; then
+            echo "Adding 1Password repository..."
+            sudo tee /etc/yum.repos.d/1password.repo > /dev/null <<'REPO'
+[1password]
+name=1Password Stable Channel
+baseurl=https://downloads.1password.com/linux/rpm/stable/$basearch
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://downloads.1password.com/linux/keys/1password.asc
+REPO
+            echo "✅ 1Password repo added"
+        fi
+
+        # --- WezTerm COPR ---
+        WEZTERM_REPO="/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:wezfurlong:wezterm-nightly.repo"
+        if [ ! -f "$WEZTERM_REPO" ]; then
+            FEDORA_VER=$(rpm -E %fedora 2>/dev/null || echo "41")
+            echo "Adding WezTerm COPR repository..."
+            sudo wget -q \
+                "https://copr.fedorainfracloud.org/coprs/wezfurlong/wezterm-nightly/repo/fedora-${FEDORA_VER}/wezfurlong-wezterm-nightly-fedora-${FEDORA_VER}.repo" \
+                -O "$WEZTERM_REPO"
+            echo "✅ WezTerm repo added"
+        fi
+
+        sudo dnf install -y zsh wezterm 1password 1password-cli nautilus
+        echo "✅ Fedora packages installed"
         ;;
+
+    # -----------------------------------------------------------
+    # Debian / Ubuntu
+    # -----------------------------------------------------------
     apt)
         sudo apt-get update
-        sudo apt-get install -y zsh
-        if ! command -v wezterm &>/dev/null; then
-            curl -LO https://github.com/wezterm/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu24.04.deb
-            sudo apt install -y ./wezterm-nightly.Ubuntu24.04.deb
-            rm wezterm-nightly.Ubuntu24.04.deb
+
+        # --- 1Password repo ---
+        if ! command -v 1password &>/dev/null; then
+            echo "Adding 1Password repository..."
+            curl -fsSL https://downloads.1password.com/linux/keys/1password.asc | \
+                sudo gpg --yes --dearmor -o /usr/share/keyrings/1password-archive-keyring.gpg
+            echo "deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main" | \
+                sudo tee /etc/apt/sources.list.d/1password.list > /dev/null
+            sudo apt-get update
         fi
+
+        sudo apt-get install -y zsh 1password 1password-cli nautilus
+
+        # --- WezTerm ---
+        if ! command -v wezterm &>/dev/null; then
+            WEZTERM_DEB=""
+            case "$LINUX_ID" in
+                ubuntu)
+                    WEZTERM_DEB="wezterm-nightly.Ubuntu${LINUX_VERSION_ID}.deb"
+                    ;;
+                *)
+                    # Debian and others — try Ubuntu 22.04 deb (widely compatible)
+                    WEZTERM_DEB="wezterm-nightly.Ubuntu22.04.deb"
+                    ;;
+            esac
+
+            echo "Downloading WezTerm (${WEZTERM_DEB})..."
+            if curl -fLO "https://github.com/wezterm/wezterm/releases/download/nightly/${WEZTERM_DEB}"; then
+                sudo apt-get install -y "./${WEZTERM_DEB}"
+                rm -f "$WEZTERM_DEB"
+                echo "✅ WezTerm installed"
+            else
+                rm -f "$WEZTERM_DEB" 2>/dev/null
+                echo "⚠️  Could not download WezTerm deb."
+                echo "   Install manually: https://wezfurlong.org/wezterm/install/linux.html"
+            fi
+        fi
+
+        echo "✅ Debian/Ubuntu packages installed"
         ;;
+
+    # -----------------------------------------------------------
+    # Arch / Manjaro / EndeavourOS
+    # -----------------------------------------------------------
     pacman)
-        sudo pacman -S --noconfirm zsh wezterm
+        # wezterm and zsh are in official repos
+        sudo pacman -S --noconfirm --needed zsh wezterm nautilus
+
+        # 1Password: only in AUR, not installable via pacman directly
+        if ! command -v 1password &>/dev/null; then
+            echo ""
+            echo "⚠️  1Password is only available in the AUR."
+            echo "   Install with your AUR helper, e.g.:"
+            echo "     yay -S 1password 1password-cli"
+            echo "     paru -S 1password 1password-cli"
+            echo ""
+        fi
+
+        echo "✅ Arch packages installed"
+        ;;
+
+    *)
+        echo "⚠️  Unknown package manager — skipping host packages."
+        echo "   Please install manually: zsh, wezterm, 1password, 1password-cli, nautilus"
         ;;
     esac
-fi
 
-# -------------------------------
-# Ensure zsh is available
-# -------------------------------
-if ! command -v zsh &>/dev/null; then
-    echo ""
-    echo "⚠️  zsh is not available."
-    if [[ "$PKG_MANAGER" == "rpm-ostree" ]]; then
-        echo "   Run bootstrap.sh first, reboot, then re-run chezmoi apply."
-    else
-        echo "   Please install zsh manually and re-run chezmoi apply."
+    # ╭──────────────────────────────────────────────────────────╮
+    # │ Hyprland (Linux, non-atomic)                             │
+    # ╰──────────────────────────────────────────────────────────╯
+
+    # Skip on atomic — Bootstrap.sh already handled it
+    if [[ "$PKG_MANAGER" != "rpm-ostree" ]]; then
+        echo ""
+        echo "--- Hyprland Window Manager ---"
+
+        if command -v hyprland &>/dev/null; then
+            echo "✅ Hyprland already installed"
+        else
+            echo "Do you want to install Hyprland window manager? (y/n)"
+            printf "→ "
+            read -n 1 -r HYPRL_RESP
+            echo ""
+
+            if [[ "$HYPRL_RESP" =~ ^[yY]$ ]]; then
+                case "$PKG_MANAGER" in
+
+                # Fedora — COPR repos + dnf
+                dnf)
+                    FEDORA_VER=$(rpm -E %fedora 2>/dev/null || echo "41")
+
+                    HYPRLAND_REPO="/etc/yum.repos.d/solopasha-hyprland-fedora.repo"
+                    if [ ! -f "$HYPRLAND_REPO" ]; then
+                        echo "Adding Hyprland COPR repository..."
+                        sudo wget -q \
+                            "https://copr.fedorainfracloud.org/coprs/solopasha/hyprland/repo/fedora-${FEDORA_VER}/solopasha-hyprland-fedora-${FEDORA_VER}.repo" \
+                            -O "$HYPRLAND_REPO"
+                        echo "✅ Hyprland repo added"
+                    fi
+
+                    SWAYNC_REPO="/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:erikreider:SwayNotificationCenter.repo"
+                    if [ ! -f "$SWAYNC_REPO" ]; then
+                        echo "Adding SwayNotificationCenter COPR repository..."
+                        sudo wget -q \
+                            "https://copr.fedorainfracloud.org/coprs/erikreider/SwayNotificationCenter/repo/fedora-${FEDORA_VER}/erikreider-SwayNotificationCenter-fedora-${FEDORA_VER}.repo" \
+                            -O "$SWAYNC_REPO"
+                        echo "✅ SwayNotificationCenter repo added"
+                    fi
+
+                    sudo dnf install -y \
+                        hyprland hyprlock hypridle hyprpaper \
+                        wlogout waybar rofi foot \
+                        xdg-desktop-portal-hyprland \
+                        SwayNotificationCenter
+                    echo "✅ Hyprland installed via dnf"
+                    ;;
+
+                # Arch — all in official repos
+                pacman)
+                    sudo pacman -S --noconfirm --needed \
+                        hyprland hyprlock hypridle hyprpaper \
+                        wlogout waybar rofi foot \
+                        xdg-desktop-portal-hyprland \
+                        swaync
+                    echo "✅ Hyprland installed via pacman"
+                    ;;
+
+                # Debian/Ubuntu — too fragmented to automate
+                apt)
+                    echo ""
+                    echo "⚠️  Hyprland is not available in Debian/Ubuntu repos."
+                    echo "   Options:"
+                    echo "     Ubuntu — PPA: https://github.com/Ja-KooList/Hyprland-PPA"
+                    echo "     Debian — build from source: https://wiki.hyprland.org/Nix/"
+                    echo ""
+                    ;;
+                esac
+            fi
+        fi
     fi
-    echo ""
-    # Continue anyway — .zshrc and config files can still be written
-    # Only chsh will be skipped below
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
-# │ Oh My Zsh                                                │
+# │ Zsh Plugins                                               │
 # ╰──────────────────────────────────────────────────────────╯
-if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
-    echo "Installing Oh My Zsh..."
-    RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    echo "✅ Installed Oh My Zsh"
-else
-    echo "✅ Oh My Zsh already installed"
-fi
+
+echo ""
+echo "--- Shell Setup ---"
+
+ZSH_PLUGINS="$HOME_DIR/.zsh/plugins"
+mkdir -p "$ZSH_PLUGINS"
 
 echo "Installing zsh-autosuggestions..."
-if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
-    git clone https://github.com/zsh-users/zsh-autosuggestions "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+if [ ! -d "$ZSH_PLUGINS/zsh-autosuggestions" ]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_PLUGINS/zsh-autosuggestions"
 else
     echo "✅ zsh-autosuggestions already installed"
 fi
 
 echo "Installing zsh-syntax-highlighting..."
-if [ ! -d "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]; then
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME_DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+if [ ! -d "$ZSH_PLUGINS/zsh-syntax-highlighting" ]; then
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_PLUGINS/zsh-syntax-highlighting"
 else
     echo "✅ zsh-syntax-highlighting already installed"
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
-# │ Oh My Posh                                               │
+# │ Oh My Posh                                                │
 # ╰──────────────────────────────────────────────────────────╯
+
 if ! command -v "oh-my-posh" &>/dev/null; then
     if [[ "$OS" == "darwin" ]]; then
         brew install jandedobbeleer/oh-my-posh/oh-my-posh
@@ -147,9 +308,10 @@ else
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
-# │ Mise                                                     │
-# │ Installs to ~/.local/bin — no package manager needed     │
+# │ Mise                                                      │
+# │ Installs to ~/.local/bin — no package manager needed      │
 # ╰──────────────────────────────────────────────────────────╯
+
 if ! command -v "$HOME/.local/bin/mise" &>/dev/null; then
     echo "Installing mise..."
     curl https://mise.run | sh
@@ -168,17 +330,19 @@ else
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
-# │ Set default shell to zsh                                 │
+# │ Set default shell to zsh                                  │
 # ╰──────────────────────────────────────────────────────────╯
+
 if [[ "$SHELL" != *"zsh"* ]]; then
     if command -v zsh >/dev/null 2>&1; then
         echo "Setting zsh as default shell..."
         if command -v usermod >/dev/null 2>&1; then
-            sudo usermod --shell "$(which zsh)" "$USER"
+            sudo usermod --shell "$(which zsh)" "$USER_NAME"
         elif command -v chsh >/dev/null 2>&1; then
             chsh -s "$(which zsh)"
         else
-            echo "⚠️  Neither usermod nor chsh found — run manually: sudo usermod --shell \$(which zsh) \$USER"
+            echo "⚠️  Neither usermod nor chsh found — run manually:"
+            echo "   sudo usermod --shell \$(which zsh) \$USER"
         fi
         echo "✅ Default shell set to zsh — log out and back in to apply"
     else
@@ -187,8 +351,12 @@ if [[ "$SHELL" != *"zsh"* ]]; then
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
-# │ Tmux Plugin Manager                                      │
+# │ Tmux Plugin Manager                                       │
 # ╰──────────────────────────────────────────────────────────╯
+
+echo ""
+echo "--- Tmux ---"
+
 TPM_PATH="${HOME_DIR}/.tmux/plugins/tpm"
 if [ ! -d "$TPM_PATH" ]; then
     echo "Installing Tmux Plugin Manager..."
@@ -203,11 +371,13 @@ echo "Installing tmux plugins..."
 "$TPM_PATH/bin/install_plugins"
 
 # ╭──────────────────────────────────────────────────────────╮
-# │ Fonts                                                    │
+# │ Fonts (Linux only)                                        │
 # ╰──────────────────────────────────────────────────────────╯
-if [[ "$OS" == "darwin" ]]; then
-    brew install --cask font-roboto-mono font-jetbrains-mono-nerd-font font-fira-sans
-elif [[ "$OS" == "linux" ]]; then
+
+echo ""
+echo "--- Fonts ---"
+
+if [[ "$OS" == "linux" ]]; then
     mkdir -p "$HOME/.local/share/fonts"
 
     if ! fc-list | grep -q "RobotoMono"; then
@@ -221,7 +391,8 @@ elif [[ "$OS" == "linux" ]]; then
     fi
 
     if ! fc-list | grep -q "JetBrainsMono"; then
-        curl -sSL "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip" -o /tmp/jetbrains-nerd.zip
+        curl -sSL "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip" \
+            -o /tmp/jetbrains-nerd.zip
         unzip -o /tmp/jetbrains-nerd.zip -d "$HOME/.local/share/fonts/jetbrains-mono-nerd"
         rm /tmp/jetbrains-nerd.zip
         echo "✅ Installed JetBrains Mono Nerd Font"
@@ -243,11 +414,18 @@ elif [[ "$OS" == "linux" ]]; then
 
     fc-cache -fv
     echo "✅ Font cache updated"
+else
+    echo "✅ Fonts managed by Homebrew on macOS"
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
-# │ Cursors (Bibata Modern Classic)                          │
+# │ Cursors (Linux only)                                      │
+# │ Bibata Modern Classic                                     │
 # ╰──────────────────────────────────────────────────────────╯
+
+echo ""
+echo "--- Cursors ---"
+
 if [[ "$OS" == "linux" ]]; then
     mkdir -p "$HOME/.local/share/icons"
     if [ ! -d "$HOME/.local/share/icons/Bibata-Modern-Classic" ]; then
@@ -262,20 +440,33 @@ if [[ "$OS" == "linux" ]]; then
     else
         echo "✅ Bibata Modern Classic cursors already installed"
     fi
+else
+    echo "✅ Cursors not applicable on macOS"
 fi
 
 # ╭──────────────────────────────────────────────────────────╮
-# │ Other essentials                                         │
+# │ Wallust (Linux only)                                      │
+# │ Color scheme generator from wallpapers                    │
 # ╰──────────────────────────────────────────────────────────╯
-if ! command -v matugen &>/dev/null; then
-    echo "Installing wallust..."
-    if cargo install wallust; then
-        echo "✅ Installed wallust"
+
+echo ""
+echo "--- Color Theming ---"
+
+if [[ "$OS" == "linux" ]]; then
+    if ! command -v wallust &>/dev/null; then
+        echo "Installing wallust..."
+        if command -v cargo &>/dev/null; then
+            cargo install wallust
+            echo "✅ Installed wallust via cargo"
+        else
+            echo "⚠️  cargo not found — skipping wallust."
+            echo "   Install Rust first (https://rustup.rs) then: cargo install wallust"
+        fi
     else
-        echo "❌ Failed to install wallust"
+        echo "✅ wallust already installed"
     fi
 else
-    echo "✅ wallust already installed"
+    echo "✅ wallust not applicable on macOS"
 fi
 
 echo ""
