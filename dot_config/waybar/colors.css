@@ -1,0 +1,55 @@
+/*
+ * Colors from wallpaper
+ * Generated with wallust
+ */
+
+/* Raw palette */
+
+@define-color color0 #362C3F;
+
+@define-color color1 #6A3E9B;
+
+@define-color color2 #406DA9;
+
+@define-color color3 #681656;
+
+@define-color color4 #3C1252;
+
+@define-color color5 #112140;
+
+@define-color color6 #22487D;
+
+@define-color color7 #90A8CB;
+
+@define-color color8 #65768E;
+
+@define-color color9 #8E53CF;
+
+@define-color color10 #5592E1;
+
+@define-color color11 #8A1E73;
+
+@define-color color12 #50186E;
+
+@define-color color13 #172B55;
+
+@define-color color14 #2D5FA7;
+
+@define-color color15 #90A8CB;
+
+@define-color cursor #8BB0E1;
+@define-color background #211829;
+@define-color foreground #B7C8E0;
+
+/* Semantic aliases — adjust colorN to taste */
+@define-color primary #6A3E9B;
+@define-color secondary #406DA9;
+@define-color tertiary #681656;
+@define-color error #6A3E9B;
+@define-color on_surface #B7C8E0;
+@define-color surface #211829;
+@define-color surface_container #2C2434;
+@define-color primary_container #7999C3;
+@define-color secondary_container #775986;
+@define-color tertiary_container #647FA4;
+@define-color outline #65768E;

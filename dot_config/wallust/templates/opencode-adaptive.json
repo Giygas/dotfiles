@@ -1,0 +1,234 @@
+{
+  "defs": {
+    "adaptive_bg": "{{ background | lighten(0.06) }}",
+    "adaptive_fg": "{{ foreground }}",
+    "adaptive_black": "{{ color0 }}",
+    "adaptive_red": "{{ color11 }}",
+    "adaptive_orange": "{{ color3 | lighten(0.1) }}",
+    "adaptive_green": "{{ color2 }}",
+    "adaptive_lime": "{{ color2 | lighten(0.3) }}",
+    "adaptive_yellow": "{{ color11 }}",
+    "adaptive_aqua": "{{ color6 | lighten(0.2) }}",
+    "adaptive_skye": "{{ color6 | lighten(0.1) }}",
+    "adaptive_blue": "{{ color6 }}",
+    "adaptive_purple": "{{ color5 }}",
+    "adaptive_pink": "{{ color5 | lighten(0.2) }}",
+    "adaptive_white": "{{ color7 }}",
+    "adaptive_bright_black": "{{ color8 }}",
+    "adaptive_bright_red": "{{ color9 }}",
+    "adaptive_bright_green": "{{ color10 }}",
+    "adaptive_bright_yellow": "{{ color11 }}",
+    "adaptive_bright_blue": "{{ color4 | lighten(0.3) }}",
+    "adaptive_bright_cyan": "{{ color14 }}",
+    "adaptive_bright_white": "{{ color15 }}",
+    "adaptive_muted_fg": "{{ color8 }}",
+    "adaptive_subtle": "{{ background | lighten(0.10) }}",
+    "adaptive_surface": "{{ background | lighten(0.03) }}",
+    "adaptive_surface_dim": "{{ background }}",
+    "adaptive_dark_red": "{{ color1 | darken(0.5) }}",
+    "adaptive_dark_green": "{{ color2 | darken(0.5) }}"
+  },
+
+  "theme": {
+    "primary": {
+      "dark": "adaptive_red",
+      "light": "adaptive_red"
+    },
+    "secondary": {
+      "dark": "adaptive_blue",
+      "light": "adaptive_blue"
+    },
+    "accent": {
+      "dark": "adaptive_green",
+      "light": "adaptive_green"
+    },
+    "error": {
+      "dark": "adaptive_red",
+      "light": "adaptive_red"
+    },
+    "warning": {
+      "dark": "adaptive_orange",
+      "light": "adaptive_orange"
+    },
+    "success": {
+      "dark": "adaptive_bright_green",
+      "light": "adaptive_bright_green"
+    },
+    "info": {
+      "dark": "adaptive_bright_blue",
+      "light": "adaptive_bright_blue"
+    },
+    "text": {
+      "dark": "adaptive_fg",
+      "light": "adaptive_fg"
+    },
+    "textMuted": {
+      "dark": "adaptive_muted_fg",
+      "light": "adaptive_muted_fg"
+    },
+    "background": {
+      "dark": "none",
+      "light": "none"
+    },
+    "backgroundPanel": {
+      "dark": "adaptive_surface_dim",
+      "light": "adaptive_surface_dim"
+    },
+    "backgroundElement": {
+      "dark": "adaptive_subtle",
+      "light": "adaptive_subtle"
+    },
+    "border": {
+      "dark": "adaptive_black",
+      "light": "adaptive_black"
+    },
+    "borderActive": {
+      "dark": "adaptive_red",
+      "light": "adaptive_red"
+    },
+    "borderSubtle": {
+      "dark": "adaptive_surface_dim",
+      "light": "adaptive_surface_dim"
+    },
+    "diffAdded": {
+      "dark": "adaptive_green",
+      "light": "adaptive_green"
+    },
+    "diffRemoved": {
+      "dark": "adaptive_red",
+      "light": "adaptive_red"
+    },
+    "diffContext": {
+      "dark": "adaptive_muted_fg",
+      "light": "adaptive_muted_fg"
+    },
+    "diffHunkHeader": {
+      "dark": "adaptive_bright_black",
+      "light": "adaptive_bright_black"
+    },
+    "diffHighlightAdded": {
+      "dark": "adaptive_bright_green",
+      "light": "adaptive_bright_green"
+    },
+    "diffHighlightRemoved": {
+      "dark": "adaptive_bright_red",
+      "light": "adaptive_bright_red"
+    },
+    "diffAddedBg": {
+      "dark": "adaptive_dark_green",
+      "light": "adaptive_dark_green"
+    },
+    "diffRemovedBg": {
+      "dark": "adaptive_dark_red",
+      "light": "adaptive_dark_red"
+    },
+    "diffContextBg": {
+      "dark": "adaptive_bg",
+      "light": "adaptive_bg"
+    },
+    "diffLineNumber": {
+      "dark": "adaptive_black",
+      "light": "adaptive_black"
+    },
+    "diffAddedLineNumberBg": {
+      "dark": "adaptive_dark_green",
+      "light": "adaptive_dark_green"
+    },
+    "diffRemovedLineNumberBg": {
+      "dark": "adaptive_dark_red",
+      "light": "adaptive_dark_red"
+    },
+    "markdownText": {
+      "dark": "adaptive_fg",
+      "light": "adaptive_fg"
+    },
+    "markdownHeading": {
+      "dark": "adaptive_red",
+      "light": "adaptive_red"
+    },
+    "markdownLink": {
+      "dark": "adaptive_purple",
+      "light": "adaptive_purple"
+    },
+    "markdownLinkText": {
+      "dark": "adaptive_bright_blue",
+      "light": "adaptive_bright_blue"
+    },
+    "markdownCode": {
+      "dark": "adaptive_green",
+      "light": "adaptive_green"
+    },
+    "markdownBlockQuote": {
+      "dark": "adaptive_muted_fg",
+      "light": "adaptive_muted_fg"
+    },
+    "markdownEmph": {
+      "dark": "adaptive_white",
+      "light": "adaptive_white"
+    },
+    "markdownStrong": {
+      "dark": "adaptive_yellow",
+      "light": "adaptive_yellow"
+    },
+    "markdownHorizontalRule": {
+      "dark": "adaptive_subtle",
+      "light": "adaptive_subtle"
+    },
+    "markdownListItem": {
+      "dark": "adaptive_red",
+      "light": "adaptive_red"
+    },
+    "markdownListEnumeration": {
+      "dark": "adaptive_pink",
+      "light": "adaptive_pink"
+    },
+    "markdownImage": {
+      "dark": "adaptive_bright_cyan",
+      "light": "adaptive_bright_cyan"
+    },
+    "markdownImageText": {
+      "dark": "adaptive_bright_blue",
+      "light": "adaptive_bright_blue"
+    },
+    "markdownCodeBlock": {
+      "dark": "adaptive_fg",
+      "light": "adaptive_fg"
+    },
+    "syntaxComment": {
+      "dark": "adaptive_muted_fg",
+      "light": "adaptive_muted_fg"
+    },
+    "syntaxKeyword": {
+      "dark": "adaptive_red",
+      "light": "adaptive_red"
+    },
+    "syntaxFunction": {
+      "dark": "adaptive_purple",
+      "light": "adaptive_purple"
+    },
+    "syntaxVariable": {
+      "dark": "adaptive_orange",
+      "light": "adaptive_orange"
+    },
+    "syntaxString": {
+      "dark": "adaptive_lime",
+      "light": "adaptive_lime"
+    },
+    "syntaxNumber": {
+      "dark": "adaptive_yellow",
+      "light": "adaptive_yellow"
+    },
+    "syntaxType": {
+      "dark": "adaptive_red",
+      "light": "adaptive_red"
+    },
+    "syntaxOperator": {
+      "dark": "adaptive_orange",
+      "light": "adaptive_orange"
+    },
+    "syntaxPunctuation": {
+      "dark": "adaptive_white",
+      "light": "adaptive_white"
+    }
+  }
+}

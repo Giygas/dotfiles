@@ -74,6 +74,19 @@ elif [[ "$OS" == "linux" ]]; then
 
     echo "Distro: $LINUX_ID $LINUX_VERSION_ID"
 
+    # GPU detection for NVIDIA-specific config
+    detect_gpu() {
+        if command -v lspci &>/dev/null; then
+            if lspci 2>/dev/null | grep -iE 'nvidia' >/dev/null; then
+                echo "nvidia"
+                return
+            fi
+        fi
+        echo "other"
+    }
+
+    GPU=$(detect_gpu)
+
     case "$PKG_MANAGER" in
 
     # -----------------------------------------------------------
@@ -263,6 +276,78 @@ REPO
             fi
         fi
     fi
+fi
+
+# ╭──────────────────────────────────────────────────────────╮
+# │ NVIDIA Kernel Args (Linux, non-atomic)                    │
+# ╰──────────────────────────────────────────────────────────╯
+
+if [[ "$OS" == "linux" && "$PKG_MANAGER" != "rpm-ostree" && "$GPU" == "nvidia" ]]; then
+    echo ""
+    echo "--- NVIDIA Kernel Parameters ---"
+
+    case "$PKG_MANAGER" in
+
+    # Fedora — grubby
+    dnf)
+        KARGS=$(grubby --info=ALL 2>/dev/null | grep -oP 'args="[^"]*"' | head -1 || echo "")
+
+        if ! echo "$KARGS" | grep -q 'nvidia_drm.modeset=1'; then
+            sudo grubby --update-kernel=ALL --args='nvidia_drm.modeset=1'
+            echo "✅ Added nvidia_drm.modeset=1"
+        else
+            echo "✅ nvidia_drm.modeset=1 already set"
+        fi
+
+        if ! echo "$KARGS" | grep -q 'nvidia_drm.fbdev=1'; then
+            sudo grubby --update-kernel=ALL --args='nvidia_drm.fbdev=1'
+            echo "✅ Added nvidia_drm.fbdev=1"
+        else
+            echo "✅ nvidia_drm.fbdev=1 already set"
+        fi
+        ;;
+
+    # Arch / Debian — edit /etc/default/grub
+    pacman|apt)
+        GRUB_DEFAULT="/etc/default/grub"
+
+        if [ -f "$GRUB_DEFAULT" ]; then
+            CHANGED=false
+
+            if ! grep -q 'nvidia_drm.modeset=1' "$GRUB_DEFAULT"; then
+                sudo sed -i 's|GRUB_CMDLINE_LINUX_DEFAULT="|&nvidia_drm.modeset=1 |' "$GRUB_DEFAULT"
+                echo "✅ Added nvidia_drm.modeset=1 to GRUB config"
+                CHANGED=true
+            else
+                echo "✅ nvidia_drm.modeset=1 already in GRUB config"
+            fi
+
+            if ! grep -q 'nvidia_drm.fbdev=1' "$GRUB_DEFAULT"; then
+                sudo sed -i 's|GRUB_CMDLINE_LINUX_DEFAULT="|&nvidia_drm.fbdev=1 |' "$GRUB_DEFAULT"
+                echo "✅ Added nvidia_drm.fbdev=1 to GRUB config"
+                CHANGED=true
+            else
+                echo "✅ nvidia_drm.fbdev=1 already in GRUB config"
+            fi
+
+            if [[ "$CHANGED" == true ]]; then
+                if command -v grub-mkconfig &>/dev/null; then
+                    sudo grub-mkconfig -o /boot/grub/grub.cfg
+                    echo "✅ GRUB config regenerated"
+                elif command -v update-grub &>/dev/null; then
+                    sudo update-grub
+                    echo "✅ GRUB config regenerated"
+                else
+                    echo "⚠️  Could not auto-regenerate GRUB config."
+                    echo "   Run manually: sudo grub-mkconfig -o /boot/grub/grub.cfg"
+                fi
+            fi
+        else
+            echo "⚠️  /etc/default/grub not found — skipping NVIDIA kernel args."
+            echo "   Add manually: nvidia_drm.modeset=1 nvidia_drm.fbdev=1"
+        fi
+        ;;
+    esac
 fi
 
 # ╭──────────────────────────────────────────────────────────╮

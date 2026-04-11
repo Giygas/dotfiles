@@ -1,0 +1,23 @@
+{
+  "ansi": {
+    "color0": "#362C3F",
+    "color1": "#6A3E9B",
+    "color2": "#406DA9",
+    "color3": "#681656",
+    "color4": "#3C1252",
+    "color5": "#112140",
+    "color6": "#22487D",
+    "color7": "#90A8CB"
+  },
+
+  "brights": {
+    "color8": "#65768E",
+    "color9": "#8E53CF",
+    "color10": "#5592E1",
+    "color11": "#8A1E73",
+    "color12": "#50186E",
+    "color13": "#172B55",
+    "color14": "#2D5FA7",
+    "color15": "#90A8CB"
+  }
+}

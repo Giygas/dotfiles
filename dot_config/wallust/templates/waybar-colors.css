@@ -1,0 +1,25 @@
+/*
+ * Colors from wallpaper
+ * Generated with wallust
+ */
+
+/* Raw palette */
+{% for i in range(16) %}
+@define-color color{{ i }} {{ colors[i] }};
+{% endfor %}
+@define-color cursor {{ cursor }};
+@define-color background {{ background }};
+@define-color foreground {{ foreground }};
+
+/* Semantic aliases — adjust colorN to taste */
+@define-color primary {{ color1 }};
+@define-color secondary {{ color2  }};
+@define-color tertiary {{ color3 }};
+@define-color error {{ color1 }};
+@define-color on_surface {{ foreground }};
+@define-color surface {{ background }};
+@define-color surface_container {{ background | lighten(0.05) }};
+@define-color primary_container {{ color2 | lighten(0.3) }};
+@define-color secondary_container {{ color4 | lighten(0.3) }};
+@define-color tertiary_container {{ color6 | lighten(0.3) }};
+@define-color outline {{ color8 }};

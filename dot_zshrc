@@ -1,9 +1,48 @@
-# Completions search path
+# ── History ──────────────────────────────────────────────────
+
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt appendhistory
+setopt sharehistory
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+
+# ── Completions ─────────────────────────────────────────────
+
 if [[ ":$FPATH:" != *":$HOME/.zsh/completions:"* ]]; then
     export FPATH="$HOME/.zsh/completions:$FPATH"
 fi
 
-# Zsh plugins
+# ── Shell behavior ──────────────────────────────────────────
+
+bindkey -e
+setopt autocd
+
+# ── Keybindings ─────────────────────────────────────────────
+
+# Use terminfo where available, fallback to hardcoded escape sequences
+# (tmux and some terminals don't define all arrow key capabilities)
+
+# Home / End / Delete
+bindkey "${terminfo[khome]:-\E[1~}"  beginning-of-line
+bindkey "${terminfo[kend]:-\E[4~}"   end-of-line
+bindkey "${terminfo[kdch1]:-\E[3~}"  delete-char
+
+# Word movement — Ctrl+Arrow
+bindkey "${terminfo[kLFT5]:-\E[1;5D}" backward-word
+bindkey "${terminfo[kRFT5]:-\E[1;5C}" forward-word
+
+# Word movement — Alt+Arrow
+bindkey "${terminfo[kLFT3]:-\E[1;3D}" backward-word
+bindkey "${terminfo[kRFT3]:-\E[1;3C}" forward-word
+
+# Delete word — Ctrl+Backspace / Alt+Backspace
+bindkey '\E^?' backward-kill-word
+
+# ── Plugins ─────────────────────────────────────────────────
+
 source ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 

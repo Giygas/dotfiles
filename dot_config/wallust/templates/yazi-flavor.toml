@@ -1,0 +1,210 @@
+# Yazi Flavor — Generated with wallust
+#
+# Color mapping (adjust colorN numbers to taste):
+#   primary           = color2   (accents, borders, icons)
+#   secondary         = color4   (secondary accents, permissions)
+#   tertiary          = color6   (tertiary accents, markers)
+#   error             = color1   (errors, warnings)
+#   surface           = background
+#   on_surface        = foreground
+#   surface_container = background lightened
+#   outline           = color8   (muted, borders)
+#   primary_container = color2 lightened
+
+{%- set primary = color2 %}
+{%- set secondary = color4 %}
+{%- set tertiary = color6 %}
+{%- set error = color1 %}
+{%- set surface = background %}
+{%- set on_surface = foreground %}
+{%- set surface_container = background | lighten(0.05) %}
+{%- set outline = color8 %}
+{%- set primary_container = color2 | lighten(0.3) %}
+{%- set secondary_container = color4 | lighten(0.3) %}
+{%- set on_error = foreground %}
+
+# : Manager
+
+[mgr]
+cwd = { fg = "{{ primary }}" }
+
+# Find
+find_keyword = { fg = "{{ on_surface }}", bold = true, italic = true, underline = true }
+find_position = { fg = "{{ error }}", bg = "reset", bold = true, italic = true }
+
+# Marker
+marker_copied = { fg = "{{ tertiary }}", bg = "{{ tertiary }}" }
+marker_cut = { fg = "{{ error }}", bg = "{{ error }}" }
+marker_marked = { fg = "{{ primary }}", bg = "{{ primary }}" }
+marker_selected = { fg = "{{ secondary_container }}", bg = "{{ secondary_container }}" }
+
+# Count
+count_copied = { fg = "{{ surface }}", bg = "{{ tertiary }}" }
+count_cut = { fg = "{{ surface }}", bg = "{{ tertiary }}" }
+count_selected = { fg = "{{ surface }}", bg = "{{ secondary_container }}" }
+
+# Border
+border_symbol = "│"
+border_style = { fg = "{{ outline }}" }
+
+
+# : Tabs
+[tabs]
+active = { fg = "{{ surface }}", bg = "{{ primary }}", bold = true }
+inactive = { fg = "{{ primary }}", bg = "{{ surface_container }}" }
+
+
+# : Mode
+[mode]
+normal_main = { fg = "{{ surface }}", bg = "{{ primary }}", bold = true }
+normal_alt = { fg = "{{ primary }}", bg = "{{ surface_container }}" }
+
+# Select mode
+select_main = { fg = "{{ surface }}", bg = "{{ secondary }}", bold = true }
+select_alt = { fg = "{{ secondary }}", bg = "{{ surface_container }}" }
+
+# Unset mode
+unset_main = { fg = "{{ on_error }}", bg = "{{ error }}", bold = true }
+unset_alt = { fg = "{{ error }}", bg = "{{ surface_container }}" }
+
+
+# : Status bar
+
+[status]
+# Permissions
+perm_sep = { fg = "{{ outline }}" }
+perm_type = { fg = "{{ primary }}" }
+perm_read = { fg = "{{ secondary }}" }
+perm_write = { fg = "{{ primary_container }}" }
+perm_exec = { fg = "{{ tertiary }}" }
+
+# Progress
+progress_label = { fg = "{{ on_surface }}", bold = true }
+progress_normal = { fg = "{{ tertiary }}", bg = "{{ outline }}" }
+progress_error = { fg = "{{ error }}", bg = "{{ primary_container }}" }
+
+
+# : Pick
+
+[pick]
+border = { fg = "{{ primary }}" }
+active = { fg = "{{ error }}", bold = true }
+inactive = {}
+
+
+# : Input
+
+[input]
+border = { fg = "{{ primary }}" }
+title = {}
+value = {}
+selected = { reversed = true }
+
+
+# : Completion
+
+[cmp]
+border = { fg = "{{ primary }}" }
+
+
+# : Tasks
+
+[tasks]
+border = { fg = "{{ primary }}" }
+title = {}
+hovered = { fg = "{{ error }}", bold = true }
+
+
+# : Which
+
+[which]
+mask = { bg = "{{ surface_container }}" }
+cand = { fg = "{{ primary }}" }
+rest = { fg = "{{ surface_container }}" }
+desc = { fg = "{{ error }}" }
+separator = "  "
+separator_style = { fg = "{{ outline }}" }
+
+
+# : Help
+
+[help]
+on = { fg = "{{ primary }}" }
+run = { fg = "{{ error }}" }
+hovered = { reversed = true, bold = true }
+footer = { fg = "{{ on_surface }}", bg = "{{ surface }}" }
+
+
+# : Spotter
+
+[spot]
+border = { fg = "{{ primary }}" }
+title = { fg = "{{ primary }}" }
+tbl_col = { fg = "{{ secondary }}" }
+tbl_cell = { fg = "{{ error }}", bg = "{{ surface_container }}" }
+
+
+# : Notification
+
+[notify]
+title_info = { fg = "{{ tertiary }}" }
+title_warn = { fg = "{{ secondary }}" }
+title_error = { fg = "{{ error }}" }
+
+
+[indicator]
+padding = { open = "▐", close = "▌" }
+
+# : File-specific styles
+
+[filetype]
+rules = [
+  # Image
+  { mime = "image/*", fg = "{{ primary }}" },
+  # Media
+  { mime = "{audio,video}/*", fg = "{{ secondary }}" },
+  # Archive
+  { mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", fg = "{{ primary_container }}" },
+  # Document
+  { mime = "application/{pdf,doc,rtf}", fg = "{{ tertiary }}" },
+  # Virtual file system
+  { mime = "vfs/{absent,stale}", fg = "{{ surface_container }}" },
+  # Fallback
+  { url = "*", fg = "{{ on_surface }}" },
+  { url = "*/", fg = "{{ primary }}" },
+]
+
+
+[icon]
+dirs = [
+  { name = ".config", text = "", fg = "{{ primary_container }}" },
+  { name = ".git", text = "", fg = "{{ error }}" },
+  { name = ".github", text = "", fg = "{{ primary }}" },
+  { name = ".npm", text = "", fg = "{{ primary }}" },
+  { name = "Desktop", text = "", fg = "{{ secondary }}" },
+  { name = "Development", text = "", fg = "{{ secondary }}" },
+  { name = "Documents", text = "", fg = "{{ secondary }}" },
+  { name = "Downloads", text = "", fg = "{{ secondary }}" },
+  { name = "Library", text = "", fg = "{{ secondary }}" },
+  { name = "Movies", text = "", fg = "{{ secondary }}" },
+  { name = "Music", text = "", fg = "{{ secondary }}" },
+  { name = "Pictures", text = "", fg = "{{ secondary }}" },
+  { name = "Public", text = "", fg = "{{ secondary }}" },
+  { name = "Videos", text = "", fg = "{{ secondary }}" },
+]
+conds = [
+  # Special files
+  { if = "orphan", text = "", fg = "{{ on_surface }}" },
+  { if = "link", text = "", fg = "{{ outline }}" },
+  { if = "block", text = "", fg = "{{ secondary }}" },
+  { if = "char", text = "", fg = "{{ secondary }}" },
+  { if = "fifo", text = "", fg = "{{ secondary }}" },
+  { if = "sock", text = "", fg = "{{ secondary }}" },
+  { if = "sticky", text = "", fg = "{{ secondary }}" },
+  { if = "dummy", text = "", fg = "{{ error }}" },
+  # Fallback
+  { if = "dir & hovered", text = "", fg = "{{ primary }}" },
+  { if = "dir", text = "", fg = "{{ primary }}" },
+  { if = "exec", text = "", fg = "{{ tertiary }}" },
+  { if = "!dir", text = "", fg = "{{ on_surface }}" },
+]
