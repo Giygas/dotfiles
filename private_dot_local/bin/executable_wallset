@@ -1,0 +1,33 @@
+#!/bin/bash
+WALL="$1"
+
+if [ -z "$WALL" ]; then
+    echo "Usage: wallset <path-to-image>"
+    exit 1
+fi
+
+# Try thresholds high to low, pick first that succeeds
+# Higher thresholds produce fewer, more distinct base colors
+# If the image is complex enough, high thresholds succeed and give the best result
+# If the image is monotone, high thresholds fail and we gracefully fall to lower ones
+best_th=""
+for TH in 12 11 10 9 8; do
+    if wallust run --print-scheme --skip-templates --skip-sequences -t "$TH" -n "$WALL" >/dev/null 2>&1; then
+        best_th="$TH"
+        break
+    fi
+done
+
+# Run the winner, or fallback to dynamic mode
+if [ -z "$best_th" ]; then
+    echo "All thresholds failed, falling back to dynamic mode..."
+    wallust run --dynamic-threshold -w "$WALL"
+else
+    echo "Using threshold: $best_th"
+    wallust run -t "$best_th" --skip-sequences -w "$WALL"
+fi
+
+hyprctl hyprpaper unload unused
+hyprctl hyprpaper preload "$WALL"
+hyprctl hyprpaper wallpaper ",$WALL"
+pkill -SIGUSR1 swaync 2>/dev/null

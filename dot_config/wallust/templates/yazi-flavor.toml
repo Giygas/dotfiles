@@ -1,26 +1,27 @@
 # Yazi Flavor — Generated with wallust
 #
-# Color mapping (adjust colorN numbers to taste):
-#   primary           = color2   (accents, borders, icons)
-#   secondary         = color4   (secondary accents, permissions)
-#   tertiary          = color6   (tertiary accents, markers)
-#   error             = color1   (errors, warnings)
+# Color mapping (Material You approximation via wallust filters):
+#   primary           = color9   (bright purple — accents, borders, icons)
+#   secondary         = color14  (steel blue — secondary accents, permissions)
+#   tertiary          = color10  (bright blue — tertiary accents, markers)
+#   error             = color3   (deep magenta — errors, warnings)
 #   surface           = background
 #   on_surface        = foreground
 #   surface_container = background lightened
 #   outline           = color8   (muted, borders)
-#   primary_container = color2 lightened
+#   primary_container = color9 lightened
+#   secondary_container = color14 lightened
 
-{%- set primary = color2 %}
-{%- set secondary = color4 %}
-{%- set tertiary = color6 %}
-{%- set error = color1 %}
+{%- set primary = color9 %}
+{%- set secondary = color14 %}
+{%- set tertiary = color10 %}
+{%- set error = color3 %}
 {%- set surface = background %}
 {%- set on_surface = foreground %}
 {%- set surface_container = background | lighten(0.05) %}
 {%- set outline = color8 %}
-{%- set primary_container = color2 | lighten(0.3) %}
-{%- set secondary_container = color4 | lighten(0.3) %}
+{%- set primary_container = color9 | lighten(0.3) %}
+{%- set secondary_container = color14 | lighten(0.3) %}
 {%- set on_error = foreground %}
 
 # : Manager

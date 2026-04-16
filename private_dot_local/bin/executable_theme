@@ -1,5 +1,6 @@
 #!/bin/sh
 hyprctl hyprpaper preload "$1" && hyprctl hyprpaper wallpaper ",$1"
 wallust run --no-hooks --skip-sequences "$1"
-pkill -SIGUSR2 waybar
+pkill -SIGUSR1 swaync 2>/dev/null
+quickshell ipc call randomwallpaper apply "$1" 2>/dev/null
 hyprctl reload

@@ -95,6 +95,27 @@ elif [[ "$OS" == "linux" ]]; then
     # -----------------------------------------------------------
     rpm-ostree)
         echo "✅ Atomic Fedora — host packages managed by Bootstrap.sh, skipping"
+
+        # Install media packages via Homebrew to avoid layering
+        if command -v brew &>/dev/null; then
+            echo ""
+            echo "--- Homebrew packages (media) ---"
+            BREW_PKGS=()
+            for pkg in mpd mpc rmpc; do
+                if ! command -v "$pkg" &>/dev/null; then
+                    BREW_PKGS+=("$pkg")
+                fi
+            done
+            if [ ${#BREW_PKGS[@]} -ne 0 ]; then
+                brew install "${BREW_PKGS[@]}"
+                echo "✅ Homebrew media packages installed"
+            else
+                echo "✅ All brew media packages already installed"
+            fi
+        else
+            echo "⚠️  Homebrew not found — install media packages manually:"
+            echo "   brew install cava mpd mpc rmpc"
+        fi
         ;;
 
     # -----------------------------------------------------------
@@ -104,7 +125,7 @@ elif [[ "$OS" == "linux" ]]; then
         # --- 1Password repo ---
         if [ ! -f /etc/yum.repos.d/1password.repo ]; then
             echo "Adding 1Password repository..."
-            sudo tee /etc/yum.repos.d/1password.repo > /dev/null <<'REPO'
+            sudo tee /etc/yum.repos.d/1password.repo >/dev/null <<'REPO'
 [1password]
 name=1Password Stable Channel
 baseurl=https://downloads.1password.com/linux/rpm/stable/$basearch
@@ -127,7 +148,7 @@ REPO
             echo "✅ WezTerm repo added"
         fi
 
-        sudo dnf install -y zsh wezterm 1password 1password-cli nautilus
+        sudo dnf install -y zsh wezterm 1password 1password-cli nautilus sddm qt6-qtmultimedia
         echo "✅ Fedora packages installed"
         ;;
 
@@ -140,26 +161,26 @@ REPO
         # --- 1Password repo ---
         if ! command -v 1password &>/dev/null; then
             echo "Adding 1Password repository..."
-            curl -fsSL https://downloads.1password.com/linux/keys/1password.asc | \
+            curl -fsSL https://downloads.1password.com/linux/keys/1password.asc |
                 sudo gpg --yes --dearmor -o /usr/share/keyrings/1password-archive-keyring.gpg
-            echo "deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main" | \
-                sudo tee /etc/apt/sources.list.d/1password.list > /dev/null
+            echo "deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main" |
+                sudo tee /etc/apt/sources.list.d/1password.list >/dev/null
             sudo apt-get update
         fi
 
-        sudo apt-get install -y zsh 1password 1password-cli nautilus
+        sudo apt-get install -y zsh 1password 1password-cli nautilus sddm qt6-multimedia-dev
 
         # --- WezTerm ---
         if ! command -v wezterm &>/dev/null; then
             WEZTERM_DEB=""
             case "$LINUX_ID" in
-                ubuntu)
-                    WEZTERM_DEB="wezterm-nightly.Ubuntu${LINUX_VERSION_ID}.deb"
-                    ;;
-                *)
-                    # Debian and others — try Ubuntu 22.04 deb (widely compatible)
-                    WEZTERM_DEB="wezterm-nightly.Ubuntu22.04.deb"
-                    ;;
+            ubuntu)
+                WEZTERM_DEB="wezterm-nightly.Ubuntu${LINUX_VERSION_ID}.deb"
+                ;;
+            *)
+                # Debian and others — try Ubuntu 22.04 deb (widely compatible)
+                WEZTERM_DEB="wezterm-nightly.Ubuntu22.04.deb"
+                ;;
             esac
 
             echo "Downloading WezTerm (${WEZTERM_DEB})..."
@@ -182,7 +203,7 @@ REPO
     # -----------------------------------------------------------
     pacman)
         # wezterm and zsh are in official repos
-        sudo pacman -S --noconfirm --needed zsh wezterm nautilus
+        sudo pacman -S --noconfirm --needed zsh wezterm nautilus sddm qt6-multimedia
 
         # 1Password: only in AUR, not installable via pacman directly
         if ! command -v 1password &>/dev/null; then
@@ -245,11 +266,21 @@ REPO
                         echo "✅ SwayNotificationCenter repo added"
                     fi
 
+                    QUICKSHELL_REPO="/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:errornointernet:quickshell.repo"
+                    if [ ! -f "$QUICKSHELL_REPO" ]; then
+                        echo "Adding Quickshell COPR repository..."
+                        sudo wget -q \
+                            "https://copr.fedorainfracloud.org/coprs/errornointernet/quickshell/repo/fedora-${FEDORA_VER}/errornointernet-quickshell-fedora-${FEDORA_VER}.repo" \
+                            -O "$QUICKSHELL_REPO"
+                        echo "✅ Quickshell repo added"
+                    fi
+
                     sudo dnf install -y \
                         hyprland hyprlock hypridle hyprpaper \
-                        wlogout waybar rofi foot blueman \
+                        wlogout quickshell rofi foot blueman \
                         xdg-desktop-portal-hyprland \
-                        SwayNotificationCenter
+                        SwayNotificationCenter \
+                        cava mpd mpc
                     echo "✅ Hyprland installed via dnf"
                     ;;
 
@@ -257,10 +288,16 @@ REPO
                 pacman)
                     sudo pacman -S --noconfirm --needed \
                         hyprland hyprlock hypridle hyprpaper \
-                        wlogout waybar rofi foot blueman \
+                        wlogout quickshell rofi foot blueman \
                         xdg-desktop-portal-hyprland \
-                        swaync
+                        swaync cava mpd mpc
                     echo "✅ Hyprland installed via pacman"
+
+                    if ! command -v rmpc &>/dev/null; then
+                        echo ""
+                        echo "ℹ️  rmpc available via AUR (yay -S rmpc) or will be installed via cargo below."
+                        echo ""
+                    fi
                     ;;
 
                 # Debian/Ubuntu — too fragmented to automate
@@ -271,9 +308,29 @@ REPO
                     echo "     Ubuntu — PPA: https://github.com/Ja-KooList/Hyprland-PPA"
                     echo "     Debian — build from source: https://wiki.hyprland.org/Nix/"
                     echo ""
+                    echo "   Quickshell — build from source: https://git.outfoxxed.me/outfoxxed/quickshell"
+                    echo ""
+                    sudo apt-get install -y cava mpd mpc 2>/dev/null || true
                     ;;
                 esac
             fi
+        fi
+    fi
+
+    # ╭──────────────────────────────────────────────────────────╮
+    # │ rmpc (MPD TUI client) — not in most repos               │
+    # ╰──────────────────────────────────────────────────────────╯
+
+    if [[ "$PKG_MANAGER" != "rpm-ostree" ]] && ! command -v rmpc &>/dev/null; then
+        echo ""
+        echo "--- rmpc (MPD client) ---"
+        if command -v cargo &>/dev/null; then
+            echo "Installing rmpc via cargo..."
+            cargo install rmpc
+            echo "✅ Installed rmpc via cargo"
+        else
+            echo "⚠️  cargo not found — skipping rmpc."
+            echo "   Install Rust (https://rustup.rs) then: cargo install rmpc"
         fi
     fi
 fi
@@ -308,7 +365,7 @@ if [[ "$OS" == "linux" && "$PKG_MANAGER" != "rpm-ostree" && "$GPU" == "nvidia" ]
         ;;
 
     # Arch / Debian — edit /etc/default/grub
-    pacman|apt)
+    pacman | apt)
         GRUB_DEFAULT="/etc/default/grub"
 
         if [ -f "$GRUB_DEFAULT" ]; then
@@ -537,21 +594,37 @@ fi
 echo ""
 echo "--- Color Theming ---"
 
-if [[ "$OS" == "linux" ]]; then
-    if ! command -v wallust &>/dev/null; then
-        echo "Installing wallust..."
-        if command -v cargo &>/dev/null; then
-            cargo install wallust
-            echo "✅ Installed wallust via cargo"
-        else
-            echo "⚠️  cargo not found — skipping wallust."
-            echo "   Install Rust first (https://rustup.rs) then: cargo install wallust"
-        fi
+if ! command -v wallust &>/dev/null; then
+    echo "Installing wallust..."
+    if command -v cargo &>/dev/null; then
+        cargo install wallust
+        echo "✅ Installed wallust via cargo"
+    elif command -v brew &>/dev/null; then
+        brew install wallust
+        echo "✅ Installed wallust via brew"
     else
-        echo "✅ wallust already installed"
+        echo "⚠️  cargo and brew not found — skipping wallust."
+        echo "   Install Rust first (https://rustup.rs) then: cargo install wallust"
     fi
 else
-    echo "✅ wallust not applicable on macOS"
+    echo "✅ wallust already installed"
+fi
+
+# ╭──────────────────────────────────────────────────────────╮
+# │ Essentials                                               │
+# ╰──────────────────────────────────────────────────────────╯
+if ! command -v wormhole &>/dev/null; then
+    if command -v pipx &>/dev/null; then
+        pipx install magic-wormhole
+        echo "✅ Installed wormhole via pipx"
+    else
+        echo "⚠️  pipx not found — skipping wormhole."
+        echo "   Install pipx first then: pipx install magic-wormhole"
+    fi
+
+else
+    echo "✅ Wormhole already installed"
+
 fi
 
 echo ""

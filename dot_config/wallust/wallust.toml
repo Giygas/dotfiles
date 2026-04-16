@@ -1,9 +1,9 @@
 # wallust config
-# Usage: wallust run --no-hooks --skip-sequences <image>
+# Usage: wallust run <image>
 
 backend = "wal"
-color_space = "salience"
-palette = "dark16"
+color_space = "labmixed"
+palette = "harddark16"
 
 [templates]
 hyprland = { template = 'hyprland-colors.conf', target = '~/.config/hypr/colors.conf' }
@@ -13,3 +13,5 @@ omp = { template = 'oh-my-posh.json.j2', target = '~/.config/oh-my-posh/illusi0n
 wezterm = { template = 'colorscheme.lua', target = '~/.config/wezterm/colorscheme.lua' }
 wallust = { template = 'colors.json', target = '~/.config/wallust/colors.json' }
 opencode = { template = 'opencode-adaptive.json', target = '~/.config/opencode/themes/adaptive.json' }
+rofi = { template = 'rofi-colors.rasi', target = '~/.config/rofi/colors.rasi' }
+nvim = { template = 'nvim-colorscheme.lua', target = '~/.config/nvim/colors/adaptive.lua' }

@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+# vi:set filetype=sh:
+
+# ╭──────────────────────────────────────────────────────────╮
+# │ setup-sddm                                                │
+# │                                                          │
+# │ Deploys SDDM themes and config.                          │
+# │ Must run after 01-install-essentials (deps must exist).  │
+# │                                                          │
+# │ Theme source:  ~/.local/share/sddm-themes/<name>/        │
+# │ Theme target:  /etc/sddm/themes/<name>/                  │
+# │ Config:        /etc/sddm.conf (ThemeDir + Current)       │
+# ╰──────────────────────────────────────────────────────────╯
+
+set -euo pipefail
+
+OS="{{ .chezmoi.os }}"
+HOME_DIR="{{ .chezmoi.homeDir }}"
+
+# Only applies to Linux
+if [[ "$OS" != "linux" ]]; then
+    echo "⏭️  SDDM not applicable on $OS"
+    exit 0
+fi
+
+# ╭──────────────────────────────────────────────────────────╮
+# │ Prerequisites                                             │
+# ╰──────────────────────────────────────────────────────────╯
+
+if ! command -v sddm &>/dev/null; then
+    echo "⚠️  sddm not installed — skipping theme setup"
+    exit 0
+fi
+
+# Check video support (warning only, not fatal)
+HAS_MULTIMEDIA=false
+if rpm -q qt6-qtmultimedia &>/dev/null 2>/dev/null; then
+    HAS_MULTIMEDIA=true
+elif dpkg -s qt6-multimedia-dev &>/dev/null 2>/dev/null; then
+    HAS_MULTIMEDIA=true
+elif pacman -Qi qt6-multimedia &>/dev/null 2>/dev/null; then
+    HAS_MULTIMEDIA=true
+fi
+
+if [[ "$HAS_MULTIMEDIA" == false ]]; then
+    echo "⚠️  qt6-qtmultimedia not found — video themes will not work"
+    echo "   Install it and re-run: chezmoi apply"
+fi
+
+# ╭──────────────────────────────────────────────────────────╮
+# │ Deploy Themes                                             │
+# ╰──────────────────────────────────────────────────────────╯
+
+THEME_SRC="${HOME_DIR}/.local/share/sddm-themes"
+THEME_DST="/etc/sddm/themes"
+
+if [ ! -d "$THEME_SRC" ]; then
+    echo "⚠️  No themes found at $THEME_SRC — skipping"
+    exit 0
+fi
+
+echo ""
+echo "--- SDDM Themes ---"
+
+mkdir -p "$THEME_DST"
+
+for theme_dir in "$THEME_SRC"/*/; do
+    theme_name=$(basename "$theme_dir")
+
+    echo "Deploying SDDM theme: $theme_name"
+    sudo rsync -a --delete "$theme_dir" "$THEME_DST/$theme_name/"
+    echo "✅ Theme '$theme_name' deployed"
+done
+
+# ╭──────────────────────────────────────────────────────────╮
+# │ SDDM Config                                               │
+# ╰──────────────────────────────────────────────────────────╯
+
+SDDM_CONF="/etc/sddm.conf"
+
+if [ -f "$SDDM_CONF" ]; then
+    # Set ThemeDir
+    if ! grep -q '^ThemeDir=' "$SDDM_CONF"; then
+        echo "ThemeDir=$THEME_DST" | sudo tee -a "$SDDM_CONF" >/dev/null
+    elif ! grep -q "^ThemeDir=$THEME_DST" "$SDDM_CONF"; then
+        sudo sed -i "s|^ThemeDir=.*|ThemeDir=$THEME_DST|" "$SDDM_CONF"
+    fi
+    echo "✅ ThemeDir set to $THEME_DST"
+else
+    echo "⚠️  $SDDM_CONF not found — create it manually with ThemeDir=$THEME_DST"
+fi
+
+# ╭──────────────────────────────────────────────────────────╮
+# │ Enable SDDM                                               │
+# ╰──────────────────────────────────────────────────────────╯
+
+if ! systemctl is-enabled sddm &>/dev/null 2>/dev/null; then
+    echo "Enabling SDDM service..."
+    sudo systemctl enable sddm
+    echo "✅ SDDM enabled"
+else
+    echo "✅ SDDM already enabled"
+fi
+
+echo ""
+echo "✅ SDDM setup complete"
+echo "   Active theme is controlled by 'Current=' in $SDDM_CONF"

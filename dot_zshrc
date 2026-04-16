@@ -41,6 +41,13 @@ bindkey "${terminfo[kRFT3]:-\E[1;3C}" forward-word
 # Delete word — Ctrl+Backspace / Alt+Backspace
 bindkey '\E^?' backward-kill-word
 
+# Arrow Up/Down — search history by current line prefix
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "${terminfo[kcuu1]:-\E[A}" up-line-or-beginning-search
+bindkey "${terminfo[kcud1]:-\E[B}" down-line-or-beginning-search
+
 # ── Plugins ─────────────────────────────────────────────────
 
 source ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -66,6 +73,11 @@ eval "$(zoxide init zsh)"    # zoxide (z command)
 
 autoload -Uz compinit
 compinit
+
 export EDITOR=nvim
+export VISUAL=nvim
+export SUDO_EDITOR=nvim
 
 . "$HOME/.zsh_aliases"
+
+alias debug-waybar='echo "=== WAYBAR COUNT ===" && pgrep -c waybar && echo "=== WAYBAR PROCS WITH PARENTS ===" && ps -eo pid,ppid,start,args | grep "[w]aybar" && echo "=== PROCESS TREE ===" && pstree -sp $(pgrep -d"," waybar) && echo "=== RECENT SPAWNS ===" && journalctl --user -b --since "10 min ago" --no-pager 2>/dev/null | grep -iE "waybar|hyprlock|lock|dpms|sleep|suspend|awake|resume"'

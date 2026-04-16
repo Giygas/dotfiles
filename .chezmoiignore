@@ -6,13 +6,14 @@
 **/.gitattributes
 **/.gitmodules
 
+**/opencode/package*.json
+**/opencode/bun.lock
+**/node_modules
+
 # tmux plugins
 */tmux/plugins/*
 !*/tmux/plugins/tmux-sessionx
 
-node_modules/
-bun.lock
-package.json
 
 # OS-specific files
 **/.DS_Store
@@ -28,4 +29,21 @@ package.json
 # MacOS only files
 {{ if ne .chezmoi.os "darwin" }}
 .aerospace.toml
+{{ end }}
+
+# Linux only files
+{{ if ne .chezmoi.os "linux" }}
+.config/hypr/
+.config/waybar/
+.config/wlogout/
+.config/xdg-desktop-portal/
+.config/wal/
+.config/wallust/
+.config/rofi/
+.config/quickshell/
+.config/swaync/
+.config/cava/
+.config/rmpc/
+.config/mpd/
+.local/share/sddm-themes/
 {{ end }}

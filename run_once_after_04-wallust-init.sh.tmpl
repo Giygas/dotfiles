@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# vi:set filetype=sh:
+
+# ╭──────────────────────────────────────────────────────────╮
+# │ wallust-init                                               │
+# │                                                           │
+# │ Generates initial color scheme on first setup.            │
+# │ Runs after all config files are applied and wallust is    │
+# │ installed.                                                │
+# ╰──────────────────────────────────────────────────────────╯
+
+HOME_DIR="{{ .chezmoi.homeDir }}"
+OS="{{ .chezmoi.os }}"
+
+if [[ "$OS" != "linux" ]]; then
+    echo "Skipping wallust init on non-Linux"
+    exit 0
+fi
+
+if ! command -v wallust &>/dev/null; then
+    echo "⚠️  wallust not found — skipping initial color generation."
+    echo "   Install wallust and run: wallust run <image>"
+    exit 0
+fi
+
+echo "--- Generating initial color scheme ---"
+
+WALLUST_CONF="$HOME_DIR/.config/wallust/wallust.toml"
+
+if [ ! -f "$WALLUST_CONF" ]; then
+    echo "⚠️  wallust config not found at $WALLUST_CONF — skipping"
+    exit 0
+fi
+
+# Find the current wallpaper from hyprpaper config
+WALLPAPER=""
+HYPRLPAPER_CONF="$HOME_DIR/.config/hypr/hyprpaper.conf"
+if [ -f "$HYPRLPAPER_CONF" ]; then
+    WALLPAPER=$(grep -m1 '^wallpaper' "$HYPRLPAPER_CONF" | sed 's|^wallpaper[^,]*,\s*||' | sed "s|^~/|$HOME_DIR/|" | tr -d ' ')
+fi
+
+# Fallback: check if there's a current symlink
+if [ -z "$WALLPAPER" ] || [ ! -f "$WALLPAPER" ]; then
+    WALLPAPER=$(readlink -f "$HOME_DIR/Pictures/Wallpapers/current" 2>/dev/null)
+fi
+
+WALLSET="$HOME_DIR/.local/bin/wallset"
+
+if [ -n "$WALLPAPER" ] && [ -f "$WALLPAPER" ]; then
+    echo "Using wallpaper: $WALLPAPER"
+    if [ -x "$WALLSET" ]; then
+        "$WALLSET" "$WALLPAPER"
+    else
+        wallust run --skip-sequences "$WALLPAPER"
+    fi
+    echo "✅ Initial color scheme generated"
+else
+    echo "⚠️  No wallpaper found — run wallset manually after setting a wallpaper:"
+    echo "   wallset <path-to-image>"
+fi

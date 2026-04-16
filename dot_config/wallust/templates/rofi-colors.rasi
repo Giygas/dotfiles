@@ -1,0 +1,65 @@
+* {
+    /* Primary: purple accent */
+    primary: {{ color9 }};
+    primary-fixed: {{ color9 | lighten(0.3) }};
+    primary-fixed-dim: {{ color9 | lighten(0.2) }};
+    on-primary: {{ foreground }};
+    on-primary-fixed: {{ color0 | darken(0.15) }};
+    on-primary-fixed-variant: {{ color4 }};
+    primary-container: {{ color4 }};
+    on-primary-container: {{ color9 | lighten(0.4) }};
+    inverse-primary: {{ color5 }};
+
+    /* Secondary: blue tones */
+    secondary: {{ color14 | lighten(0.2) }};
+    secondary-fixed: {{ color14 | lighten(0.4) }};
+    secondary-fixed-dim: {{ color14 | lighten(0.2) }};
+    on-secondary: {{ color0 }};
+    on-secondary-fixed: {{ color0 | darken(0.1) }};
+    on-secondary-fixed-variant: {{ color13 }};
+    secondary-container: {{ color13 }};
+    on-secondary-container: {{ color14 | lighten(0.4) }};
+
+    /* Tertiary: bright blue */
+    tertiary: {{ color10 | lighten(0.2) }};
+    tertiary-fixed: {{ color10 | lighten(0.4) }};
+    tertiary-fixed-dim: {{ color10 | lighten(0.2) }};
+    on-tertiary: {{ color0 }};
+    on-tertiary-fixed: {{ color0 | darken(0.1) }};
+    on-tertiary-fixed-variant: {{ color2 }};
+    tertiary-container: {{ color2 }};
+    on-tertiary-container: {{ color10 | lighten(0.4) }};
+
+    /* Error */
+    error: {{ color3 | lighten(0.3) }};
+    on-error: {{ color0 }};
+    error-container: {{ color11 }};
+    on-error-container: {{ color3 | lighten(0.4) }};
+
+    /* Surfaces */
+    surface: {{ background }};
+    on-surface: {{ foreground }};
+    on-surface-variant: {{ color8 | lighten(0.2) }};
+    surface-dim: {{ background }};
+    surface-bright: {{ color8 }};
+    surface-container-lowest: {{ background | darken(0.03) }};
+    surface-container-low: {{ background | lighten(0.03) }};
+    surface-container: {{ background | lighten(0.05) }};
+    surface-container-high: {{ background | lighten(0.08) }};
+    surface-container-highest: {{ background | lighten(0.12) }};
+
+    /* Outlines */
+    outline: {{ color8 }};
+    outline-variant: {{ color8 | darken(0.15) }};
+
+    /* Shadow */
+    shadow: #000000;
+    scrim: #000000;
+
+    /* Inverse */
+    inverse-surface: {{ color7 }};
+    inverse-on-surface: {{ color0 }};
+
+    /* Background with alpha for floating windows */
+    background: {{ background | hexa }};
+}

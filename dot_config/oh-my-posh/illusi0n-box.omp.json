@@ -5,13 +5,13 @@
     {
       "segments": [
         {
-          "foreground": "#406DA9",
+          "foreground": "#865CC5",
           "style": "diamond",
           "template": "{{ round .PhysicalPercentUsed .Precision }}%",
           "type": "sysinfo"
         },
         {
-          "foreground": "#406DA9",
+          "foreground": "#865CC5",
           "style": "diamond",
           "template": "{{ (div ((sub .PhysicalTotalMemory .PhysicalAvailableMemory)|float64) 1073741824.0) }}/{{ (div .PhysicalTotalMemory 1073741824.0) }}GB ",
           "type": "sysinfo"
@@ -23,7 +23,7 @@
       "alignment": "left",
       "segments": [
         {
-          "foreground": "#406DA9",
+          "foreground": "#8658C2",
           "options": {
             "macos": "mac"
           },
@@ -32,7 +32,7 @@
           "type": "os"
         },
         {
-          "foreground": "#3C1252",
+          "foreground": "#6378AD",
           "style": "plain",
           "template": "in {{ .Value }} ",
           "type": "envvar",
@@ -41,19 +41,19 @@
           }
         },
         {
-          "foreground": "#406DA9",
+          "foreground": "#8658C2",
           "style": "plain",
           "template": "$",
           "type": "text"
         },
         {
-          "foreground": "#406DA9",
+          "foreground": "#8658C2",
           "style": "plain",
           "template": "{{ .UserName }}:",
           "type": "session"
         },
         {
-          "foreground": "#B7C8E0",
+          "foreground": "#827297",
           "options": {
             "folder_separator_icon": "/",
             "style": "full"
@@ -62,12 +62,12 @@
           "type": "path"
         },
         {
-          "foreground": "#406DA9",
+          "foreground": "#8658C2",
           "foreground_templates": [
-            "{{ if or (.Working.Changed) (.Staging.Changed) }}#6A3E9B{{ end }}",
-            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#3C1252{{ end }}",
-            "{{ if gt .Ahead 0 }}#22487D{{ end }}",
-            "{{ if gt .Behind 0 }}#6A3E9B{{ end }}"
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#614793{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#84A1E7{{ end }}",
+            "{{ if gt .Ahead 0 }}#865CC5{{ end }}",
+            "{{ if gt .Behind 0 }}#614793{{ end }}"
           ],
           "options": {
             "branch_template": "{{ trunc 25 .Branch }}",
@@ -75,11 +75,11 @@
             "fetch_upstream_icon": true
           },
           "style": "plain",
-          "template": "<#6A3E9B>on</> {{.UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
+          "template": "<#84A1E7>on</> {{.UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
-          "foreground": "#6A3E9B",
+          "foreground": "#84A1E7",
           "style": "plain",
           "template": "\u276f ",
           "type": "text"
