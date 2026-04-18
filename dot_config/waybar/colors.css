@@ -103,3 +103,50 @@
 /* Inverse */
 @define-color inverse_surface #BAA3D8;
 @define-color inverse_on_surface #304145;
+
+/* ── Catppuccin-compatible aliases (for BrewLand style) ────────── */
+
+@define-color rosewater #D5C4EA;
+@define-color flamingo #644594;
+@define-color pink #6375AC;
+@define-color mauve #8658C2;
+@define-color red #614793;
+@define-color maroon #644292;
+@define-color peach #815FC5;
+@define-color yellow #84A1E7;
+@define-color green #865CC5;
+@define-color teal #6378AD;
+@define-color sky #849CE5;
+@define-color sapphire #4C6E9F;
+@define-color blue #6592D4;
+@define-color lavender #827297;
+@define-color text #D5C4EA;
+@define-color subtext1 #BAA3D8;
+@define-color subtext0 #BAA3D8;
+@define-color overlay2 #8F80A1;
+@define-color overlay1 #827297;
+@define-color overlay0 #756788;
+@define-color surface2 #483A5A;
+@define-color surface1 #403153;
+@define-color surface0 #392A4D;
+@define-color base #2F1F44;
+@define-color mantle #2E1E42;
+@define-color crust #2C1D40;
+
+/* Catppuccin translucent variants (75% opacity) */
+@define-color rosewatert rgba(213,196,234, 0.75);
+@define-color flamingot rgba(100,69,148, 0.75);
+@define-color pinkt rgba(99,117,172, 0.75);
+@define-color mauvet rgba(134,88,194, 0.75);
+@define-color redt rgba(97,71,147, 0.75);
+@define-color maroont rgba(100,66,146, 0.75);
+@define-color peacht rgba(129,95,197, 0.75);
+@define-color yellowt rgba(132,161,231, 0.75);
+@define-color greent rgba(134,92,197, 0.75);
+@define-color tealt rgba(99,120,173, 0.75);
+@define-color skyt rgba(132,156,229, 0.75);
+@define-color sapphiret rgba(76,110,159, 0.75);
+@define-color bluet rgba(101,146,212, 0.75);
+@define-color lavendert rgba(130,114,151, 0.75);
+@define-color baset rgba(47,31,68, 0.75);
+@define-color backgroundt rgba(47,31,68, 0.75);

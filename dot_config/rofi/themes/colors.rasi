@@ -1,0 +1,23 @@
+* {
+    /* Wallust dynamic colors — generated from wallpaper */
+    bg-col:         #473168FF;
+    bg-col-light:   #403153;
+    border-col:     #483A5A;
+    accent:         #8658C2;
+    fg-col:         #D5C4EA;
+    fg-col2:        #614793;
+    grey:           #827297;
+    network:        #6378AD;
+    bluetooth:      #644594;
+    wallpaper:      #6375AC;
+    music:          #865CC5;
+
+    /* Aliases */
+    background:     @bg-col;
+    background-alt: @bg-col-light;
+    foreground:     @fg-col;
+    selected:       @accent;
+
+    width:          600;
+    font:           "JetBrainsMono Nerd Font 13";
+}

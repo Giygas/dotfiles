@@ -40,7 +40,6 @@
 .config/wal/
 .config/wallust/
 .config/rofi/
-.config/quickshell/
 .config/swaync/
 .config/cava/
 .config/rmpc/

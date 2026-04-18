@@ -21,23 +21,6 @@ config.disable_default_key_bindings = true
 -- Disable ligatures
 config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
 
--- PLUGINS
--- Smart splits plugin
--- local smart_splits = wezterm.plugin.require("https://github.com/mrjones2014/smart-splits.nvim")
--- smart_splits.apply_to_config(config)
-
--- local wpr = wezterm.plugin.require("https://github.com/vieitesss/workspacesionizer.wezterm")
---
--- wpr.apply_to_config(config, {
--- 	paths = { "~/Projects/", "~/.config" },
--- 	git_repos = true,
--- 	show = "full",
--- 	binding = {
--- 		key = "f",
--- 		mods = "CTRL",
--- 	},
--- })
-
 -- local wezterm_resurrect = require("config.wezterm_resurrect")
 -- wezterm_resurrect.apply_keybinds(config)
 
@@ -94,12 +77,13 @@ config.window_decorations = "NONE"
 config.integrated_title_buttons = {}
 config.hide_tab_bar_if_only_one_tab = true
 config.use_fancy_tab_bar = false
-{{ if eq .chezmoi.os "linux"}}
+{{- if eq .chezmoi.os "linux"}}
 -- config.kde_window_background_blur = true
 config.window_background_opacity = 0.6
-{{ else if eq .chezmoi.os "darwin"}}
+{{- else if eq .chezmoi.os "darwin"}}
 config.macos_window_background_blur = 30
-{{ end }}
+{{- end }}
+
 -- Miscellaneous
 config.scrollback_lines = 5000
 config.max_fps = 120
@@ -114,23 +98,5 @@ end)
 wezterm.on("format-tab-title", functions.custom_tab)
 
 wezterm.on("update-right-status", functions.right_status)
-
--- -- loads the state whenever I create a new workspace
--- wezterm.on("smart_workspace_switcher.workspace_switcher.created", function(window, path, label)
--- 	local workspace_state = resurrect.workspace_state
---
--- 	workspace_state.restore_workspace(resurrect.load_state(label, "workspace"), {
--- 		window = window,
--- 		relative = true,
--- 		restore_text = true,
--- 		on_pane_restore = resurrect.tab_state.default_on_pane_restore,
--- 	})
--- end)
---
--- -- Saves the state whenever I select a workspace
--- wezterm.on("smart_workspace_switcher.workspace_switcher.selected", function(window, path, label)
--- 	local workspace_state = resurrect.workspace_state
--- 	resurrect.save_state(workspace_state.get_workspace_state())
--- end)
 
 return config

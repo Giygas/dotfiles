@@ -1,0 +1,187 @@
+@import "colors/current_colors.css";
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  border-radius: 10px;
+  color: @text;
+}
+
+/* --- Notifications --- */
+
+.floating-notifications {
+  background: transparent;
+}
+
+.notification-row {
+  outline: none;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  transition: background 0.15s ease-in-out;
+}
+
+.notification-row:hover,
+.notification-row:focus {
+  background: transparent;
+  opacity: 1;
+}
+
+.notification {
+  background: alpha(@base, .55);
+  color: @text;
+  margin: 10px 10px 10px 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.notification .app-icon {
+  margin-right: 16px;
+}
+
+.close-button {
+  background: @red;
+  color: @base;
+  text-shadow: none;
+  padding: 0;
+  margin-top: 5px;
+  margin-right: 5px;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  border: none;
+}
+
+.notification:hover .close-button {
+  opacity: 1;
+}
+
+.close-button:hover {
+  background: @maroon;
+  box-shadow: none;
+}
+
+.summary {
+  font-family: "iMWritingMono Nerd Font Propo";
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  padding-top: 2px;
+  padding-bottom: 1px;
+  margin-bottom: 4px;
+  background: transparent;
+  color: @sapphire;
+}
+
+.time {
+  font-size: 14px;
+  font-weight: 600;
+  color: @text;
+  margin-right: 18px;
+}
+
+.body {
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 800;
+  color: @text;
+}
+
+.notification-group {
+  background-color: @base;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+  padding: 8px;
+  margin: 10px 10px 10px 0;
+}
+
+/* --- Control Center --- */
+
+.control-center {
+  min-height: 800px;
+  background: alpha(@base, .55);
+  color: @text;
+  border-radius: 20px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.35);
+  padding: 16px 10px 10px 10px;
+}
+
+.control-center .notification-row:hover,
+.control-center .notification-row:focus {
+  background: @mantle;
+  opacity: 1;
+}
+
+.widget-title {
+  color: @mauve;
+  background: @mantle;
+  border-radius: 16px;
+  padding: 12px 16px;
+  margin: 6px 10px 16px 10px;
+  font-size: 1.4rem;
+  border-bottom: none;
+}
+
+.widget-title > button {
+  font-size: 1rem;
+  color: @text;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+}
+
+.widget-title > button:hover {
+  background: @red;
+  color: @base;
+  border-radius: 10px;
+}
+
+.widget-dnd {
+  margin: 0 10px 16px 10px;
+  padding: 12px 16px;
+  background: @mantle;
+  color: @text;
+  border-radius: 16px;
+  font-weight: 600;
+}
+
+.widget-dnd:hover {
+  background: @surface0;
+}
+
+.notification-action > button {
+  color: @text;
+  background: @crust;
+  border: 1px solid @surface0;
+  box-shadow: none;
+}
+
+.notification-action > button:hover {
+  background-color: @mantle;
+}
+
+.inline-reply-entry {
+  background: @mantle;
+  color: @text;
+  caret-color: @text;
+  border: 1px solid @surface0;
+}
+
+.inline-reply-button {
+  margin-top: 4px;
+  margin-left: 4px;
+  background: @crust;
+  border: 1px solid @surface0;
+  color: @text;
+}
+
+.inline-reply-button:hover {
+  background: @mauve;
+}
+
+.inline-reply-button:disabled {
+  background: transparent;
+  color: @subtext0;
+  border: 1px solid transparent;
+}

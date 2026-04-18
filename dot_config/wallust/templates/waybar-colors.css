@@ -73,3 +73,50 @@
 /* Inverse */
 @define-color inverse_surface {{ color7 }};
 @define-color inverse_on_surface {{ color0 }};
+
+/* ── Catppuccin-compatible aliases (for BrewLand style) ────────── */
+
+@define-color rosewater {{ foreground }};
+@define-color flamingo {{ color2 }};
+@define-color pink {{ color5 }};
+@define-color mauve {{ color9 }};
+@define-color red {{ color3 }};
+@define-color maroon {{ color1 }};
+@define-color peach {{ color11 }};
+@define-color yellow {{ color14 }};
+@define-color green {{ color10 }};
+@define-color teal {{ color6 }};
+@define-color sky {{ color13 }};
+@define-color sapphire {{ color4 }};
+@define-color blue {{ color12 }};
+@define-color lavender {{ color8 }};
+@define-color text {{ foreground }};
+@define-color subtext1 {{ color7 }};
+@define-color subtext0 {{ color15 }};
+@define-color overlay2 {{ color8 | lighten(0.1) }};
+@define-color overlay1 {{ color8 }};
+@define-color overlay0 {{ color8 | darken(0.1) }};
+@define-color surface2 {{ background | lighten(0.12) }};
+@define-color surface1 {{ background | lighten(0.08) }};
+@define-color surface0 {{ background | lighten(0.05) }};
+@define-color base {{ background }};
+@define-color mantle {{ background | darken(0.03) }};
+@define-color crust {{ background | darken(0.06) }};
+
+/* Catppuccin translucent variants (75% opacity) */
+@define-color rosewatert rgba({{ foreground | rgb }}, 0.75);
+@define-color flamingot rgba({{ color2 | rgb }}, 0.75);
+@define-color pinkt rgba({{ color5 | rgb }}, 0.75);
+@define-color mauvet rgba({{ color9 | rgb }}, 0.75);
+@define-color redt rgba({{ color3 | rgb }}, 0.75);
+@define-color maroont rgba({{ color1 | rgb }}, 0.75);
+@define-color peacht rgba({{ color11 | rgb }}, 0.75);
+@define-color yellowt rgba({{ color14 | rgb }}, 0.75);
+@define-color greent rgba({{ color10 | rgb }}, 0.75);
+@define-color tealt rgba({{ color6 | rgb }}, 0.75);
+@define-color skyt rgba({{ color13 | rgb }}, 0.75);
+@define-color sapphiret rgba({{ color4 | rgb }}, 0.75);
+@define-color bluet rgba({{ color12 | rgb }}, 0.75);
+@define-color lavendert rgba({{ color8 | rgb }}, 0.75);
+@define-color baset rgba({{ background | rgb }}, 0.75);
+@define-color backgroundt rgba({{ background | rgb }}, 0.75);

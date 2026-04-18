@@ -1,0 +1,249 @@
+/* --- Base Setup --- */
+* {
+    font-family: 'JetBrainsMono Nerd Font', sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    min-height: 0;
+    border-radius: 0px;
+}
+
+@import "colors.css";
+
+window#waybar {
+    background-color: @base;
+    border-radius: 0;
+    transition-property: background-color;
+    transition-duration: .5s;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+button {
+    box-shadow: inset 0 -3px transparent;
+    border: none;
+    border-radius: 0px;
+}
+
+/* --- Modules --- */
+#workspaces {
+    color: @mauve;
+    font-weight: normal;
+    font-style: normal;
+}
+
+#workspaces button {
+    border-radius: 0px;
+    min-width: 20px;
+    color: @mauve;
+    transition: all 0.1s ease-in-out;
+}
+
+#workspaces button.active {
+    background: @mauve;
+    color: @base;
+    border-radius: 0px;
+    min-width: 30px;
+    background-size: 400% 400%;
+    transition: all 0.1s ease-in-out;
+}
+
+#workspaces button:hover {
+    background: @mauve;
+    color: @base;
+    border-radius: 0px;
+    min-width: 30px;
+}
+
+#clock,
+#bluetooth,
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#network,
+#pulseaudio,
+#wireplumber,
+#custom-media,
+#tray,
+#mode,
+#idle_inhibitor,
+#scratchpad,
+#power-profiles-daemon,
+#mpd {
+    padding: 0 10px;
+    color: @text;
+    margin: 0 0px;
+}
+
+#idle_inhibitor {
+    color: @peach;
+    min-width: 20px;
+    border-radius: 0px;
+}
+
+#idle_inhibitor.activated {
+    background-color: @peacht;
+    color: @base;
+}
+
+#idle_inhibitor:hover {
+    background-color: @peach;
+    color: @base;
+}
+
+#tray {
+    border-radius: 0px;
+    color: @lavender;
+}
+
+#mpris,
+#mpd {
+    border-radius: 0px;
+    color: @green;
+    padding: 0 10px;
+}
+
+#mpris:hover,
+#mpd:hover {
+    background-color: @green;
+    color: @base;
+}
+
+#custom-start {
+    min-width: 20px;
+    border-radius: 0px;
+    color: @teal;
+}
+
+#custom-start:hover {
+    background-color: @teal;
+    min-width: 20px;
+    color: @base;
+}
+
+#custom-logo {
+    border-radius: 0px;
+    min-width: 40px;
+    color: @sky;
+}
+
+#custom-logo:hover {
+    background-color: @sky;
+    color: @base;
+}
+
+#window,
+#workspaces {
+    margin: 0 0px;
+}
+
+.modules-left>widget:first-child>#workspaces {
+    margin-left: 0px;
+}
+
+.modules-right>widget:last-child>#workspaces {
+    margin-right: 0;
+}
+
+#clock {
+    border-radius: 0px;
+    color: @yellow;
+}
+
+#clock:hover {
+    background-color: @yellow;
+    color: @base;
+}
+
+#hardware {
+    border-radius: 0px;
+    background-color: transparent;
+}
+
+#hardware:hover {
+    background-color: transparent;
+}
+
+#network {
+    margin-right: 0px;
+    border-radius: 0px;
+    color: @lavender;
+    transition: background-color 0.5s ease;
+}
+
+#network:hover {
+    background-color: @lavender;
+    color: @base;
+}
+
+#network.disconnected {
+    border-radius: 0px;
+    background-color: @red;
+    color: @crust;
+}
+
+#bluetooth {
+    margin-right: 4px;
+    margin-left: 4px;
+    border-radius: 0px;
+    min-width: 20px;
+    color: @flamingo;
+}
+
+#bluetooth:hover {
+    background-color: @flamingo;
+    color: @base;
+}
+
+#battery {
+    color: @rosewater;
+}
+
+#battery:hover {
+    background-color: @rosewater;
+    color: @base;
+}
+
+#battery.charging,
+#battery.plugged {
+    color: @green;
+}
+
+@keyframes blink {
+    to {
+        background-color: @crust;
+        color: @text;
+    }
+}
+
+#battery.critical:not(.charging) {
+    color: @red;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: steps(12);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#pulseaudio {
+    border-radius: 0px;
+    color: @sapphire;
+}
+
+#pulseaudio.muted {
+    border-radius: 0px;
+    background-color: @red;
+    color: @crust;
+}
+
+#pulseaudio:hover {
+    background-color: @sapphire;
+    color: @base;
+}
+
+label:focus {
+    background-color: @base;
+}

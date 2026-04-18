@@ -20,4 +20,4 @@ function ColorMyPencils(color)
 	-- ]])
 end
 
-ColorMyPencils("evergarden")
+ColorMyPencils("adaptive")

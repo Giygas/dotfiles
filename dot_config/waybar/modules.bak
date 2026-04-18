@@ -1,0 +1,220 @@
+{
+  "sway/workspaces": {
+    "on-click": "activate",
+    "format": "{icon}",
+    "format-icons": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7",
+      "8": "8",
+      "9": "9",
+      "focused": "󱓻"
+    },
+    "persistent-workspaces": {
+      "1": [],
+      "2": [],
+      "3": [],
+      "4": [],
+      "5": []
+    }
+  },
+  "niri/workspaces": {
+    "on-click": "activate",
+    "format": "{icon}",
+    "format-icons": {
+      "1": "I",
+      "2": "II",
+      "3": "III",
+      "4": "IV",
+      "5": "V",
+      "6": "VI",
+      "7": "VII",
+      "8": "VIII",
+      "9": "IX",
+      "10": "X",
+      "focused": "󱓻"
+    },
+    "persistent-workspaces": {
+      "1": [],
+      "2": [],
+      "3": [],
+      "4": [],
+      "5": []
+    }
+  },
+  "sway/scratchpad": {
+    "format": " {count}",
+    "show-empty": false,
+    "tooltip": true,
+    "tooltip-format": "{app}: {title}"
+  },
+  "hyprland/workspaces": {
+    "on-scroll-up": "hyprctl dispatch workspace r-1",
+    "on-scroll-down": "hyprctl dispatch workspace r+1",
+    "on-click": "activate",
+    "active-only": false,
+    "all-outputs": true,
+    "format": "{}",
+    "format-icons": {
+      "urgent": "",
+      "active": "",
+      "default": ""
+    }
+  },
+  "hyprland/window": {
+    "max-length": 60,
+    "rewrite": {
+      "(.*) - Brave": "$1",
+      "(.*) - Chromium": "$1",
+      "(.*) - Brave Search": "$1",
+      "(.*) - Outlook": "$1",
+      "(.*) Microsoft Teams": "$1"
+    },
+    "separate-outputs": true
+  },
+  "custom/notification": {
+    "tooltip": true,
+    "format": "<span size='16pt'>{icon}</span>",
+    "format-icons": {
+      "notification": "󱅫",
+      "none": "󰂜",
+      "dnd-notification": "󰂠",
+      "dnd-none": "󰪓",
+      "inhibited-notification": "󰂛",
+      "inhibited-none": "󰪑",
+      "dnd-inhibited-notification": "󰂛",
+      "dnd-inhibited-none": "󰪑"
+    },
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "escape": true
+  },
+  "custom/empty": {
+    "format": ""
+  },
+  "bluetooth": {
+    "format": "{icon}",
+    "format-disabled": "󰂲",
+    "format-on": "󰂯",
+    "format-connected": "󰂱",
+    "tooltip": true,
+    "on-click": "blueman-manager & sleep 1 && pkill blueman-tray"
+  },
+  "network": {
+    "format-wifi": "{signalStrength}%",
+    "format-ethernet": "󰈀 Ethernet",
+    "format-linked": "󰖪 Linked",
+    "format-disconnected": "󰤭 Disconnected",
+    "tooltip": false,
+    "on-click": "nm-connection-editor"
+  },
+  "battery": {
+    "states": {
+      "warning": 30,
+      "critical": 20
+    },
+    "format": "{icon} {capacity}%",
+    "format-full": "{icon}{capacity}%",
+    "format-plugged": " {capacity}%",
+    "format-charging": " {capacity}%",
+    "format-alt": "{icon}{capacity}%",
+    "format-icons": ["", "", "", "", ""],
+    "tooltip-format": "{time}",
+    "interval": 30,
+    "cursor": false
+  },
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "{icon} {percent}%",
+    "format-icons": ["", ""]
+  },
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": " {volume}%",
+    "format-bluetooth": "󰂯{volume}%",
+    "format-bluetooth-muted": " {volume}%",
+    "format-icons": {
+      "headphone": "",
+      "headset": "",
+      "default": [""]
+    },
+    "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+  },
+  "tray": {
+    "icon-size": 20,
+    "spacing": 6,
+    "cursor": true
+  },
+  "custom/power/2": {
+    "format": " ",
+    "tooltip": false,
+    "on-click": "hyprctl dispatch exit"
+  },
+  "custom/power": {
+    "format": "󰤆",
+    "tooltip": false,
+    "on-click": "wlogout"
+  },
+  "clock": {
+    "format": "{:%a %d/%m/%Y ~ %H:%M}",
+    "tooltip-format": "<span size='11000' font-family='Awaita Mono' line_height='1'><tt>{calendar}</tt></span>",
+    "calendar": {
+      "mode": "month",
+      "format": {
+        "months": "<span color='#777777'>{}</span>",
+        "weekdays": "<span color='#999999'>{}</span>",
+        "days": "<span color='#555555'>{}</span>",
+        "today": "<span color='#FFFFFF'>{}</span>"
+      }
+    },
+    "on-click": "swaync-client -t -sw"
+  },
+  "sway/window": {
+    "format": "{title}",
+    "max-length": 50,
+    "rewrite": {
+      "(.*) - Mozilla Firefox": "🌎 $1",
+      "(.*) - vim": " $1",
+      "(.*) - zsh": " [$1]"
+    }
+  },
+  "custom/logo": {
+    "format": " ",
+    "tooltip": false,
+    "on-click": "rofi -show drun"
+  },
+  "custom/separator": {
+    "format": "|"
+  },
+  "disk": {
+    "interval": 60,
+    "format": "󰋊 {percentage_used}%",
+    "tooltip-format": "{used}/{total}",
+    "path": "/home"
+  },
+  "cpu": {
+    "interval": 1,
+    "format": " {usage}%",
+    "tooltip-format": "{usage}%",
+    "on-click": "swaymsg exec gnome-system-monitor"
+  },
+  "backlight": {
+    "device": "intel_backlight",
+    "scroll-step": 5,
+    "format": " {percent}%",
+    "tooltip": false
+  },
+  "memory": {
+    "interval": 1,
+    "format": " {}%",
+    "tooltip-format": "{used}/{total} GiB",
+    "on-click": "swaymsg exec gnome-system-monitor"
+  }
+}

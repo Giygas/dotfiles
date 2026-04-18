@@ -266,18 +266,9 @@ REPO
                         echo "✅ SwayNotificationCenter repo added"
                     fi
 
-                    QUICKSHELL_REPO="/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:errornointernet:quickshell.repo"
-                    if [ ! -f "$QUICKSHELL_REPO" ]; then
-                        echo "Adding Quickshell COPR repository..."
-                        sudo wget -q \
-                            "https://copr.fedorainfracloud.org/coprs/errornointernet/quickshell/repo/fedora-${FEDORA_VER}/errornointernet-quickshell-fedora-${FEDORA_VER}.repo" \
-                            -O "$QUICKSHELL_REPO"
-                        echo "✅ Quickshell repo added"
-                    fi
-
                     sudo dnf install -y \
                         hyprland hyprlock hypridle hyprpaper \
-                        wlogout quickshell rofi foot blueman \
+                        wlogout waybar rofi foot blueman \
                         xdg-desktop-portal-hyprland \
                         SwayNotificationCenter \
                         cava mpd mpc
@@ -288,7 +279,7 @@ REPO
                 pacman)
                     sudo pacman -S --noconfirm --needed \
                         hyprland hyprlock hypridle hyprpaper \
-                        wlogout quickshell rofi foot blueman \
+                        wlogout waybar rofi foot blueman \
                         xdg-desktop-portal-hyprland \
                         swaync cava mpd mpc
                     echo "✅ Hyprland installed via pacman"
@@ -308,7 +299,7 @@ REPO
                     echo "     Ubuntu — PPA: https://github.com/Ja-KooList/Hyprland-PPA"
                     echo "     Debian — build from source: https://wiki.hyprland.org/Nix/"
                     echo ""
-                    echo "   Quickshell — build from source: https://git.outfoxxed.me/outfoxxed/quickshell"
+                    echo "   Waybar — build from source: https://github.com/Alexays/Waybar"
                     echo ""
                     sudo apt-get install -y cava mpd mpc 2>/dev/null || true
                     ;;
@@ -552,6 +543,28 @@ if [[ "$OS" == "linux" ]]; then
         echo "✅ Installed Fira Sans"
     else
         echo "✅ Fira Sans already installed"
+    fi
+
+    # Inter — UI font
+    if ! fc-list | grep -q "InterVariable"; then
+        mkdir -p "$HOME/.local/share/fonts/inter"
+        curl -sSL "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip" \
+            -o /tmp/inter.zip
+        unzip -o /tmp/inter.zip "InterVariable.ttf" "InterVariable-Italic.ttf" -d "$HOME/.local/share/fonts/inter"
+        rm /tmp/inter.zip
+        echo "✅ Installed Inter"
+    else
+        echo "✅ Inter already installed"
+    fi
+
+    # Material Design Icons — icon font
+    if ! fc-list | grep -q "Material Design Icons"; then
+        mkdir -p "$HOME/.local/share/fonts/mdi"
+        curl -sSL "https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/fonts/materialdesignicons-webfont.ttf" \
+            -o "$HOME/.local/share/fonts/mdi/materialdesignicons-webfont.ttf"
+        echo "✅ Installed Material Design Icons"
+    else
+        echo "✅ Material Design Icons already installed"
     fi
 
     fc-cache -fv

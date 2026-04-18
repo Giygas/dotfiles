@@ -1,0 +1,173 @@
+{
+    /* --- Layout --- */
+    "layer": "top",
+    "position": "top",
+    "spacing": 4,
+    "height": 30,
+    "modules-left": [
+        "custom/start",
+        "clock",
+        "mpris"
+    ],
+    "modules-center": [
+        "hyprland/workspaces"
+    ],
+    "modules-right": [
+        "idle_inhibitor",
+        "group/hardware"
+    ],
+    /* --- Grouping --- */
+    "group/hardware": {
+        "format": "  ",
+        "orientation": "horizontal",
+        "modules": [
+            "custom/logo",
+            "pulseaudio",
+            "battery",
+            "bluetooth",
+            "network"
+        ],
+        "drawer": {
+            "transition-duration": 500,
+            "children-class": "drawer-child",
+            "transition-left-to-right": false
+        }
+    },
+    /* --- System --- */
+    "hyprland/workspaces": {
+        "on-click": "activate",
+        "format": "{icon}",
+        "format-icons": {
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "9": "9",
+            "10": "10"
+        },
+        "persistent-workspaces": {
+            "1": [],
+            "2": [],
+            "3": []
+        }
+    },
+    "mpris": {
+        "format": "{status_icon} {title} - {artist}",
+        "format-paused": "{status_icon} <i>{title} - {artist}</i>",
+        "player-icons": {
+            "default": "▶",
+            "spotify": "",
+            "firefox": "󰈹",
+            "vlc": "󰕼"
+        },
+        "status-icons": {
+            "playing": "",
+            "paused": "⏸"
+        },
+        "max-length": 35,
+        "interval": 1,
+        "on-click": "playerctl play-pause",
+        "on-scroll-up": "playerctl next",
+        "on-scroll-down": "playerctl previous",
+        "tooltip-format": "Player: {player}\nTitle: {title}\nArtist: {artist}\nAlbum: {album}"
+    },
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": "",
+            "deactivated": ""
+        },
+        "tooltip": true,
+        "tooltip-format-activated": "Caffeine Mode: Active (Stay Awake)",
+        "tooltip-format-deactivated": "Caffeine Mode: Inactive (Sleep Enabled)"
+    },
+    "clock": {
+        "tooltip-format": "{calendar}",
+        "format-alt": "{:%a, %d %b %Y}",
+        "format": "{:%I:%M %p}"
+    },
+    "pulseaudio": {
+        "format": "{volume}% {icon}",
+        "format-bluetooth": "{volume}% {icon}  {format_source}",
+        "format-bluetooth-muted": "{icon} {format_source}",
+        "format-muted": "{format_source}",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": [
+                "󰕿",
+                "󰖀",
+                "󰕾"
+            ]
+        },
+        "on-click-middle": "pavucontrol",
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+    },
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon}",
+        "format-full": "{icon}",
+        "format-charging": "󰂄",
+        "format-plugged": "",
+        "format-alt": "{capacity}% ",
+        "format-icons": [
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]
+    },
+    "network": {
+        "format-wifi": "󰤨 {essid}",
+        "format-off": "󰤭",
+        "format-ethernet": "{ipaddr}/{cidr} ",
+        "tooltip-format": "{ifname} via {gwaddr} ",
+        "format-linked": "{ifname} (No IP) ",
+        "format-disconnected": "Disconnected 󰤮",
+        "on-click": "nm-connection-editor"
+    },
+    "bluetooth": {
+        "format-on": "",
+        "format-off": "󰂲",
+        "format-disabled": "",
+        "format-connected": "󰂱 {num_connections}",
+        "tooltip-format-connected": "{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+        "on-click": "wezterm start --class bluetui -e bluetui"
+    },
+    /* --- Custom Scripts --- */
+    "custom/start": {
+        "format": "  ",
+        "tooltip": false,
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "rofi -show drun",
+        "escape": true
+    },
+    "custom/logo": {
+        "format": "   ",
+        "tooltip": false,
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "on-click-middle": "$HOME/.config/rofi/scripts/wallpaper_menu.sh",
+        "escape": true
+    }
+}

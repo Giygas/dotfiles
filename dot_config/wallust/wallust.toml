@@ -8,10 +8,12 @@ palette = "harddark16"
 [templates]
 hyprland = { template = 'hyprland-colors.conf', target = '~/.config/hypr/colors.conf' }
 waybar = { template = 'waybar-colors.css', target = '~/.config/waybar/colors.css' }
+pywal = { template = 'colors-pywal.json', target = '~/.cache/wal/colors.json' }
 yazi = { template = 'yazi-flavor.toml', target = '~/.config/yazi/flavors/wal.yazi/flavor.toml' }
 omp = { template = 'oh-my-posh.json.j2', target = '~/.config/oh-my-posh/illusi0n-box.omp.json' }
 wezterm = { template = 'colorscheme.lua', target = '~/.config/wezterm/colorscheme.lua' }
 wallust = { template = 'colors.json', target = '~/.config/wallust/colors.json' }
 opencode = { template = 'opencode-adaptive.json', target = '~/.config/opencode/themes/adaptive.json' }
-rofi = { template = 'rofi-colors.rasi', target = '~/.config/rofi/colors.rasi' }
+rofi = { template = 'rofi-colors.rasi', target = '~/.config/rofi/themes/colors.rasi' }
+swaync = { template = 'swaync-colors.css', target = '~/.config/swaync/colors/current_colors.css' }
 nvim = { template = 'nvim-colorscheme.lua', target = '~/.config/nvim/colors/adaptive.lua' }

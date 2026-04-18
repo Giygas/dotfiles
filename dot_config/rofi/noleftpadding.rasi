@@ -1,0 +1,18 @@
+/* NoLeftPadding Layout (Emoji) */
+@import "base.rasi"
+
+entry {
+    placeholder:                 "Emoji...";
+}
+
+listview {
+    enabled:                     true;
+    columns:                     1;
+    lines:                       8;
+    cycle:                       true;
+    dynamic:                     true;
+    scrollbar:                   false;
+    layout:                      vertical;
+    fixed-height:                false;
+    fixed-columns:               true;
+}
